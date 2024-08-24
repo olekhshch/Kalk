@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --white: #F0F4F8
+}
+
+#canvas {
+    display: flex;
+    background-image: linear-gradient(#cce4e5 1px, transparent 1px), linear-gradient(to right, #cce4e5 1px, transparent 1px);
+        background-size: 10px 10px;
+        background-color: #f0f4f8;
+}
+
+#layout {
+    display: grid;
+    height: 100vh;
+    grid-template-rows: 114px 1fr 24px;
+}
+
+svg {
+    stroke: var(--white);
+}
