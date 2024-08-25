@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./index.css";
 import BottomPanel from "./layout/BottomPanel/BottomPanel";
 import Canvas from "./layout/Canvas/Canvas";
@@ -6,6 +7,9 @@ import TopPanel from "./layout/Top panel/TopPanel";
 import "@xyflow/react/dist/style.css";
 
 const App = () => {
+  useEffect(() => {
+    console.log("APP RERENDERED");
+  });
   return (
     <>
       <div id="layout">

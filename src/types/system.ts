@@ -1,6 +1,6 @@
 import React from "react";
 
-export type Tab = "All" | "Math" | "Matrices" | "Organize";
+export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
 export type Action = {
   title: string;

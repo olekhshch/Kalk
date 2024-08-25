@@ -9,19 +9,19 @@ const actions: Actions = {
   Math: [
     {
       title: "Number",
-      icon: "",
+      icon: "number",
     },
     {
       title: "Sum",
-      icon: "./",
+      icon: "sum",
     },
     {
       title: "Multiply",
-      icon: "./",
+      icon: "multiply",
     },
     {
       title: "Divide",
-      icon: "./",
+      icon: "divide",
     },
   ],
   Matrices: [
@@ -31,6 +31,12 @@ const actions: Actions = {
     },
   ],
   Organize: [{ title: "Single-line text", icon: "." }],
+  File: [
+    {
+      title: "File overview",
+      icon: "",
+    },
+  ],
 };
 
 export default actions;

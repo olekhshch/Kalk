@@ -4,9 +4,7 @@ type props = {
   children: React.ReactNode;
   bottom: number;
 };
-const Menu = ({ children, bottom }: props) => {
-  console.log(bottom);
-
+const Dialog = ({ children, bottom }: props) => {
   return (
     <div className={`bg-main fixed`} style={{ bottom: bottom }}>
       {children}
@@ -14,4 +12,4 @@ const Menu = ({ children, bottom }: props) => {
   );
 };
 
-export default Menu;
+export default Dialog;

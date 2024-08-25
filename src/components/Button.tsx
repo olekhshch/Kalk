@@ -5,9 +5,9 @@ type props = {
   showIcon: boolean;
   hideTitle?: boolean;
   onClick?: () => void;
-  styling: "main" | "sec";
   icon?: string;
   isActive?: boolean;
+  activeStyle: "main" | "sec";
 };
 
 const Button = ({
@@ -15,9 +15,9 @@ const Button = ({
   showIcon,
   onClick,
   hideTitle,
-  styling,
-  icon,
+  activeStyle,
   isActive,
+  icon,
 }: props) => {
   // if click action is specified - fires it, if not - fire action from the store by code
   const clickHandler = () => {
@@ -26,17 +26,19 @@ const Button = ({
     }
   };
 
-  const hoverStyle =
-    styling === "main"
-      ? "hover:bg-main hover:text-white"
-      : "hover:bg-sec hover:text-black";
+  const activeStyleTailwind = `bg-${activeStyle} text-${
+    activeStyle === "main" ? "white" : "black"
+  }`;
 
-  const activeStyle =
-    isActive && styling === "main" ? "bg-main text-white" : "bg-sec text-black";
+  const hoverStyle = `hover:bg-${activeStyle} text-${
+    activeStyle === "main" ? "white" : "white"
+  }`;
 
   return (
     <button
-      className={`px-1 rounded-strd h-fit w-fit font-sys ${hoverStyle} ${activeStyle} $ flex gap-1`}
+      className={`px-1 rounded-strd h-fit w-fit font-sys ${
+        isActive ? activeStyleTailwind : ""
+      } flex gap-1 ${hoverStyle}`}
       onClick={clickHandler}
     >
       {showIcon && <img src={`src\\assets\\icons\\${icon ?? "number"}.svg`} />}

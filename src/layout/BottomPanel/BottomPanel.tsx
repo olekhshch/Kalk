@@ -16,7 +16,6 @@ const BottomPanel = () => {
   } = useAppState();
 
   const toggleScaleDialog = () => {
-    console.log(show_scale_menu);
     show_scale_menu ? hideScaleMenu() : openScaleMenu();
   };
 
@@ -27,11 +26,11 @@ const BottomPanel = () => {
           title={`${scale * 100}%`}
           showIcon={false}
           onClick={toggleScaleDialog}
-          styling="sec"
+          activeStyle="main"
         />
         {show_scale_menu && <ScaleDialog />}
       </div>
-      <div className="flex items-center">
+      <div className="flex items-center gap-[2px]">
         <ButtonMode
           title="Lines"
           activeStyling="sec"

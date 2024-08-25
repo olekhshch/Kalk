@@ -1,17 +1,22 @@
 import React from "react";
-import tabs from "../../state/tabs";
-import { Tab as TabName } from "../../types/system";
+// import tabs from "../../state/tabs";
+import { Action, Tab as TabName } from "../../types/system";
 import useAppState from "../../state/useAppState";
+import tabs from "../../state/tabs";
+import actions from "../../state/actions";
+import Button from "../../components/Button";
 
 const Tabs = () => {
+  const tabs = Object.keys(actions);
+
   return (
-    <div className="px-2 flex gap-0">
+    <ul className="px-2 flex gap-0">
       <>
-        {tabs.map((name) => {
-          return <Tab key={name} name={name} />;
+        {["All", ...tabs].map((tab) => {
+          return <Tab key={tab as TabName} name={tab as TabName} />;
         })}
       </>
-    </div>
+    </ul>
   );
 };
 
@@ -24,21 +29,18 @@ const Tab = ({ name }: props) => {
 
   const isActive = active_tab === name;
 
-  const activateTab = () => {
-    if (!isActive) {
-      setActiveTab(name);
-    }
+  const activate = () => {
+    if (active_tab !== name) setActiveTab(name);
   };
 
   return (
-    <button
-      className={`px-2 rounded-t-strd text-sm ${
-        isActive && "bg-sec text-black"
-      } hover:text-black`}
-      onClick={activateTab}
+    <li
+      className={`px-1 m-0 h-100% rounded-strd bg-${isActive ? "sec" : "main"}
+      text-${isActive ? "black" : "white"}
+      hover:text-black`}
     >
-      {name}
-    </button>
+      <button onClick={activate}>{name}</button>
+    </li>
   );
 };
 
