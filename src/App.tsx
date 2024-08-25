@@ -1,5 +1,5 @@
 import "./index.css";
-import BottomPanel from "./layout/BottomPanel";
+import BottomPanel from "./layout/BottomPanel/BottomPanel";
 import Canvas from "./layout/Canvas";
 import TopPanel from "./layout/Top panel/TopPanel";
 
