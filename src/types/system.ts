@@ -6,3 +6,5 @@ export type Action = {
   title: string;
   icon: string;
 };
+
+export type Mode = "edit" | "panning";

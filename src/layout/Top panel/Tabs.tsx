@@ -20,13 +20,13 @@ type props = {
 };
 
 const Tab = ({ name }: props) => {
-  const { active_tab, set_active_tab } = useAppState();
+  const { active_tab, setActiveTab } = useAppState();
 
   const isActive = active_tab === name;
 
   const activateTab = () => {
     if (!isActive) {
-      set_active_tab(name);
+      setActiveTab(name);
     }
   };
 

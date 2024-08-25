@@ -1,0 +1,18 @@
+<svg version="1.1" width="16" height="16" xmlns="http://www.w3.org/2000/svg" stroke="#F0F4F8" stroke-width="1">
+    <g transform="translate(8,8),rotate(45)">
+        <rect width="2" height="2" fill="white" />
+    </g>
+    <g transform="translate(1,1),rotate(45)">
+        <rect width="2" height="2" fill="white" />
+    </g>
+    <g transform="translate(15,1),rotate(45)">
+        <rect width="2" height="2" fill="white" />
+    </g>
+    <g transform="translate(15,15),rotate(45)">
+        <rect width="2" height="2" fill="white" />
+    </g>
+    <g transform="translate(1,15),rotate(45)">
+        <rect width="2" height="2" fill="white" />
+    </g>
+
+</svg>
