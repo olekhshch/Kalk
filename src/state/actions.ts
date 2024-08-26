@@ -30,7 +30,9 @@ const actions: Actions = {
       icon: "",
     },
   ],
-  Organize: [{ title: "Single-line text", icon: "." }],
+  Organize: [
+    { title: "Single-line text", icon: "text-single", command: "text-single" },
+  ],
   File: [
     {
       title: "File overview",

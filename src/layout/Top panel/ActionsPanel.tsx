@@ -3,11 +3,11 @@ import actions from "../../state/actions";
 import useAppState from "../../state/useAppState";
 import { Action } from "../../types/system";
 import Button from "../../components/Button";
+import useContent from "../../state/useContent";
 
 const ActionsPanel = () => {
   const { active_tab } = useAppState();
-
-  //#TODO: Filtering all actions depending on the active tab
+  const { doAction } = useContent();
 
   const actionList = useMemo<Action[]>(() => {
     if (active_tab !== "All") {
@@ -18,13 +18,14 @@ const ActionsPanel = () => {
   }, [active_tab]);
 
   return (
-    <div className="bg-sec px-2 pt-2 h-[72px] text-sm text-black flex flex-col flex-wrap content-start">
-      {actionList.map(({ title, icon }) => (
+    <div className="bg-sec px-2 pt-2 h-[73px] text-sm text-black flex flex-col flex-wrap content-start">
+      {actionList.map(({ title, icon, command }) => (
         <Button
           key={title}
           title={title}
           icon={icon}
-          activeStyle="main"
+          hoverStyle="main"
+          onClick={() => doAction(command ?? title)}
           showIcon
         />
       ))}

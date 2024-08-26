@@ -1,0 +1,12 @@
+<svg version="1.1" width="16" height="16" xmlns="http://www.w3.org/2000/svg" stroke="white" stroke-width="1">
+    <style>
+        .font {
+            font-size: 12px;
+            fill: black;
+        }
+    </style>
+    <text class="font" transform="translate(0,8)" stroke-width="0.1" stroke="black" color="white">
+        Aa|
+    </text>
+
+</svg>

@@ -28,7 +28,10 @@ const useAppState = create<AppState & AppActions>()((set) => ({
   openScaleMenu: () => set(() => ({ show_scale_menu: true })),
   hideScaleMenu: () => set(() => ({ show_scale_menu: false })),
   setMode: (mode) => set(() => ({ mode })),
-  setGridType: (new_gt) => set(() => ({ grid_type: new_gt })),
+  setGridType: (new_gt) =>
+    set(() => {
+      return { grid_type: new_gt };
+    }),
 }));
 
 export default useAppState;

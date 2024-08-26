@@ -35,7 +35,9 @@ const Tab = ({ name }: props) => {
 
   return (
     <li
-      className={`px-1 m-0 h-100% rounded-strd bg-${isActive ? "sec" : "main"}
+      className={`px-1 m-0 h-100% rounded-${isActive ? "t" : "b"}-strd bg-${
+        isActive ? "sec" : "main"
+      }
       text-${isActive ? "black" : "white"}
       hover:text-black`}
     >

@@ -10,6 +10,8 @@ const App = () => {
   useEffect(() => {
     console.log("APP RERENDERED");
   });
+
+  // #TODO: preventDefault Handler (e.g. for Ctrl+A)
   return (
     <>
       <div id="layout">
