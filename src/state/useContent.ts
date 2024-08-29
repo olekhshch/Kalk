@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { AppNode, TextSingleNode } from "../types/nodes";
 import { ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
+import editTextValue from "./actions/editTextValue";
 
 const useContent = create<ContentStore>()((set) => ({
   nodes: [],
@@ -27,7 +28,14 @@ const useContent = create<ContentStore>()((set) => ({
   setNodes: (nds) => {
     set(() => ({ nodes: nds }));
   },
-  higlightById: (nodeIds) => set(() => ({ highlightedNodesId: nodeIds })),
+  higlightById: (nodeIds, only) =>
+    set((state) => {
+      if (only) {
+        return { highlightedNodesId: nodeIds };
+      }
+
+      return { highlightedNodesId: [...state.highlightedNodesId, ...nodeIds] };
+    }),
   activateNode: (nodeId) =>
     set((state) => {
       console.log({ ID: nodeId });
@@ -41,6 +49,11 @@ const useContent = create<ContentStore>()((set) => ({
         return node;
       });
       return { nodes: newNodes, activeNodeId: nodeId };
+    }),
+  editTextValue: (nodeId, newValue) =>
+    set((state) => {
+      const { nodes } = editTextValue(nodeId, newValue, state);
+      return { nodes };
     }),
 }));
 

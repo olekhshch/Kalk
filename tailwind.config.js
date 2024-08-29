@@ -14,6 +14,7 @@ export default {
       },
       fontFamily: {
         sys: ["Nunito"],
+        textNode: ["Sahitya"],
       },
     },
   },

@@ -15,7 +15,8 @@ import { NodeBase } from "@xyflow/system";
 import nodeTypes from "../../state/nodeTypes";
 
 const Canvas = () => {
-  const { nodes, setNodes, activeNodeId } = useContent();
+  const { nodes, setNodes, activeNodeId, activateNode, highlightedNodesId } =
+    useContent();
 
   // const [allNodes, setAllNodes] = useState(nodes);
 
@@ -37,13 +38,13 @@ const Canvas = () => {
   );
 
   const clickHandler = (e: React.MouseEvent) => {
-    // setEditedNodeId(null);
-    // e.stopPropagation();
+    console.log("click");
+    activateNode(null);
   };
 
   useEffect(() => {
     console.log("CANVAS RERENDERED" + nodes.length);
-    console.log({ activeNodeId });
+    console.log({ activeNodeId, highlightedNodesId });
   });
 
   return (
