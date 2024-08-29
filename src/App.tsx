@@ -5,6 +5,7 @@ import Canvas from "./layout/Canvas/Canvas";
 import TopPanel from "./layout/Top panel/TopPanel";
 
 import "@xyflow/react/dist/style.css";
+import { ReactFlowProvider } from "@xyflow/react";
 
 const App = () => {
   useEffect(() => {
@@ -13,13 +14,13 @@ const App = () => {
 
   // #TODO: preventDefault Handler (e.g. for Ctrl+A)
   return (
-    <>
+    <ReactFlowProvider>
       <div id="layout">
         <TopPanel />
         <Canvas />
         <BottomPanel />
       </div>
-    </>
+    </ReactFlowProvider>
   );
 };
 

@@ -1,4 +1,3 @@
-import NumberIcon from "../assets/icons/NumberIcon";
 import { Action, Tab } from "../types/system";
 
 type Actions = {
@@ -12,8 +11,9 @@ const actions: Actions = {
       icon: "number",
     },
     {
-      title: "Sum",
+      title: "Sum/Diffrence",
       icon: "sum",
+      command: "sum-dif",
     },
     {
       title: "Multiply",
@@ -33,6 +33,7 @@ const actions: Actions = {
   Organize: [
     { title: "Single-line text", icon: "text-single", command: "text-single" },
     { title: "Clear All", icon: "clear-all", command: "clear-all" },
+    { title: "Select All", icon: "select", command: "select-all" },
   ],
   File: [
     {

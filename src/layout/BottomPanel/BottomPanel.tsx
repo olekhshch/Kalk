@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useMemo } from "react";
 import useAppState from "../../state/useAppState";
 import Button from "../../components/Button";
 import ScaleDialog from "./ScaleMenu";
-import { BackgroundVariant } from "@xyflow/react";
+import { BackgroundVariant, useViewport } from "@xyflow/react";
 import ButtonMode from "../../components/ButtonMode";
 
 const BottomPanel = () => {
   const {
-    scale,
     show_scale_menu,
     openScaleMenu,
     hideScaleMenu,
     grid_type,
     setGridType,
   } = useAppState();
+
+  const { zoom } = useViewport();
+
+  // const vpScale = useMemo(() => {
+  //   return `${(z)}`
+  // },[zoom])
 
   const toggleScaleDialog = () => {
     show_scale_menu ? hideScaleMenu() : openScaleMenu();
@@ -23,7 +28,7 @@ const BottomPanel = () => {
     <div className="bg-main px-2 text-white font-sys text-sm flex gap-1 items-center">
       <div>
         <Button
-          title={`${scale * 100}%`}
+          title={`${(zoom * 100).toFixed(2)}%`}
           showIcon={false}
           onClick={toggleScaleDialog}
           hoverStyle="sec"

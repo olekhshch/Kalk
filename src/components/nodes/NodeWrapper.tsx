@@ -31,7 +31,10 @@ const NodeWrapper = ({ children, title, id }: props) => {
 
   return (
     <div
-      className={`border-2 border-solid border-sec ${borderColorTW} bg-white rounded-[4px] w-fit flex flex-col hover:border-main`}
+      className={`border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
+      // style={{
+      //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
+      // }}
       onDoubleClick={doubleClickHandler}
       onClick={clickHandler}
     >

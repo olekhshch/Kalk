@@ -8,6 +8,7 @@ import {
   ReactFlow,
   useNodesData,
   useNodesState,
+  useViewport,
 } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
@@ -17,17 +18,6 @@ import nodeTypes from "../../state/nodeTypes";
 const Canvas = () => {
   const { nodes, setNodes, activeNodeId, activateNode, highlightedNodesId } =
     useContent();
-
-  // const [allNodes, setAllNodes] = useState(nodes);
-
-  // const nodesChangeHandler = useCallback((changes: NodeChange[]) => {
-  //   const newNodes = applyNodeChanges(changes, nodes);
-  //   setAllNodes(newNodes);
-  // }, []);
-
-  // useEffect(() => {
-  //   setNodes(nodes);
-  // }, [nodes.length]);
 
   const nodesChangeHandler = useCallback(
     (changes: NodeChange[]) => {

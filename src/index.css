@@ -6,9 +6,9 @@
 @tailwind utilities;
 
 :root {
-    --white: #F0F4F8
-    --main: #0A9396
-    --sec: #94D2BD
+    --white: #F0F4F8;
+    --main: #0A9396;
+    --sec: #94D2BD;
 }
 
 #canvas {
@@ -28,4 +28,19 @@
 
 svg {
     stroke: var(--white);
+}
+
+.hover-main:hover {
+   background-color: var(--main); 
+}
+
+.hover-main-brd:hover {
+    border-color: var(--main);
+}
+
+.hover-sec:hover {
+    background-color: var(--sec);
+}
+.hover-sec:hover {
+    border-color: var(--sec);
 }

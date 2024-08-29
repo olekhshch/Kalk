@@ -1,4 +1,4 @@
-import { Node } from "@xyflow/react";
+import { applyNodeChanges, Node } from "@xyflow/react";
 import { create } from "zustand";
 import { AppNode, TextSingleNode } from "../types/nodes";
 import { ContentStore } from "../types/system";
@@ -14,13 +14,23 @@ const useContent = create<ContentStore>()((set) => ({
     set((state) => {
       const command = action.toLocaleLowerCase();
       switch (command) {
+        case "select-all":
+          const selectedNodes = state.nodes.map((node) => {
+            const [newNode] = applyNodeChanges(
+              [{ id: node.id, type: "select", selected: true }],
+              [node]
+            );
+            return newNode;
+          });
+          console.log({ selectedNodes });
+          return { nodes: selectedNodes };
         case "clear-all":
           return { nodes: [] };
         case "text-single":
-          const { nodes, activeNodeId, idCounter } = createTextSingleNode(
-            state,
-            { x: 0, y: 0 }
-          );
+          const { nodes, idCounter } = createTextSingleNode({
+            nodes: state.nodes,
+            idCounter: state.idCounter,
+          });
           return { nodes, idCounter };
         default:
           console.log(action + " action doesn't exist in doAction command");
@@ -53,9 +63,17 @@ const useContent = create<ContentStore>()((set) => ({
     }),
   editTextValue: (nodeId, newValue) =>
     set((state) => {
-      const { nodes } = editTextValue(nodeId, newValue, state);
+      const { nodes } = editTextValue(nodeId, newValue, state.nodes);
       return { nodes };
     }),
+  // selectAll: () =>
+  //   set((state) => {
+  //     const selectedNodes = state.nodes.map((node) => ({
+  //       ...node,
+  //       selected: true,
+  //     }));
+  //     return { nodes: selectedNodes };
+  //   }),
 }));
 
 export default useContent;

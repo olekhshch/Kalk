@@ -1,3 +1,4 @@
+import { Background } from "@xyflow/react";
 import React from "react";
 
 type props = {
@@ -24,12 +25,11 @@ const Button = ({
     }
   };
 
+  const hover = "hover:bg-[main]";
+
   return (
     <button
-      className={`px-1 rounded-strd h-fit w-fit font-sys flex gap-1 items-center text-${
-        hoverStyle === "main" ? "black" : "white"
-      } hover:text-white
-      } hover:bg-${hoverStyle}`}
+      className={`px-1 rounded-strd h-fit w-fit font-sys flex gap-1 items-center hover:text-white hover-${hoverStyle}`}
       onClick={clickHandler}
     >
       {showIcon && (

@@ -40,7 +40,7 @@ const TextSingleNode = ({
     if (divRef.current) {
       const { width } = divRef.current.getBoundingClientRect();
       console.log(zoom);
-      setInputWidth(Math.max(4, width / zoom));
+      setInputWidth(Math.max(4, width / zoom + 10));
     }
   }, [currentText]);
 
@@ -74,7 +74,7 @@ const TextSingleNode = ({
             visibility: isActive ? "hidden" : "unset",
             position: isActive ? "absolute" : "unset",
           }}
-          className=" min-h-[1rem] h-[1rem] pr-[8px] leading-3"
+          className=" min-h-[1rem] h-[1rem] leading-3"
           ref={divRef}
         >
           {currentText}

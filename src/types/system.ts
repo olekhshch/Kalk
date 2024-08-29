@@ -1,5 +1,6 @@
 import React from "react";
 import { AppNode } from "./nodes";
+import { XYPosition } from "@xyflow/react";
 
 export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
@@ -9,7 +10,7 @@ export type Action = {
   command?: string;
 };
 
-export type Mode = "edit" | "panning";
+// export type Mode = "edit" | "panning";
 
 export interface NodesStore {
   nodes: AppNode[];
@@ -28,12 +29,21 @@ export interface TextStore {
 
 export type ContentStore = NodesStore & TextStore;
 
-export type CreateNodeAction = (
-  state: ContentStore,
-  position: { x: number; y: number }
-) => {
+type NodeActionParams = {
+  nodes: AppNode[];
+  idCounter: number;
+  position?: XYPosition;
+  nodeIds?: string[];
+};
+
+export type NodeAction = (params: NodeActionParams) => {
+  nodes: AppNode[];
+  idCounter?: number;
+};
+
+export type CreateNodeAction = (params: NodeActionParams) => {
   newNode: AppNode;
   nodes: AppNode[];
-  activeNodeId: string | null;
+  // activeNodeId: string | null;
   idCounter: number;
 };
