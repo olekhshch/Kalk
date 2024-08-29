@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Header from "./Header";
+import Header from "./Titlebar";
 import Tabs from "./Tabs";
 import ActionsPanel from "./ActionsPanel";
 
@@ -9,7 +9,7 @@ const TopPanel = () => {
   });
 
   return (
-    <nav className="bg-main text-white font-sys">
+    <nav className="bg-main text-white font-sys select-none">
       <Header />
       <Tabs />
       <ActionsPanel />

@@ -10,7 +10,7 @@ const createTextSingleNode: CreateNodeAction = (
     id: id.toString(),
     position,
     type: "text-single",
-    data: { text: "..." },
+    data: { text: "" },
   };
 
   return {

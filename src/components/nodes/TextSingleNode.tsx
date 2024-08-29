@@ -6,7 +6,13 @@ import React, {
   useState,
 } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { applyNodeChanges, NodeProps } from "@xyflow/react";
+import {
+  applyNodeChanges,
+  NodeProps,
+  useStore,
+  useStoreApi,
+  useViewport,
+} from "@xyflow/react";
 import { AppNode, TextSingleNode as TextSingle } from "../../types/nodes";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
@@ -18,11 +24,11 @@ const TextSingleNode = ({
   const { activeNodeId, activateNode, editTextValue } = useContent();
   const [currentText, onChange] = useInputChange({ initialValue: text });
   const isActive = useMemo(() => activeNodeId === id, [activeNodeId]);
+
   // div refference to calculate width of the input
-
   const divRef = useRef<HTMLSpanElement>(null);
-
   const [inputWidth, setInputWidth] = useState(20);
+  const { zoom } = useViewport();
 
   useEffect(() => {
     if (!isActive && currentText !== text) {
@@ -33,7 +39,8 @@ const TextSingleNode = ({
   useEffect(() => {
     if (divRef.current) {
       const { width } = divRef.current.getBoundingClientRect();
-      setInputWidth(width + 2);
+      console.log(zoom);
+      setInputWidth(Math.max(4, width / zoom));
     }
   }, [currentText]);
 
@@ -44,18 +51,19 @@ const TextSingleNode = ({
 
   return (
     <NodeWrapper id={id}>
-      <div className="py-2 px-3 font-textNode flex flex-col">
+      <div className="py-2 px-3 font-textNode flex flex-col leading-3">
         {isActive && (
           <form
-            className="basis-[1rem] shrink-0"
+            className="h-[1rem]"
             onSubmit={formSubmitHandler}
             style={{ width: inputWidth }}
           >
             <input
               value={currentText}
               onChange={onChange}
-              className="nodrag text-[16px] h-min-[1rem] focus:outline-0 p-0 m-0 bg-transparent"
+              className="nodrag text-[16px] h-[1em] focus:outline-0 p-0 m-0 bg-transparent"
               style={{ width: inputWidth + "px" }}
+              spellCheck={false}
               autoFocus
             />
           </form>
@@ -66,7 +74,7 @@ const TextSingleNode = ({
             visibility: isActive ? "hidden" : "unset",
             position: isActive ? "absolute" : "unset",
           }}
-          className="basis-[1rem]"
+          className=" min-h-[1rem] h-[1rem] pr-[8px] leading-3"
           ref={divRef}
         >
           {currentText}

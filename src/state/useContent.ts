@@ -14,12 +14,14 @@ const useContent = create<ContentStore>()((set) => ({
     set((state) => {
       const command = action.toLocaleLowerCase();
       switch (command) {
+        case "clear-all":
+          return { nodes: [] };
         case "text-single":
           const { nodes, activeNodeId, idCounter } = createTextSingleNode(
             state,
             { x: 0, y: 0 }
           );
-          return { nodes, activeNodeId, idCounter };
+          return { nodes, idCounter };
         default:
           console.log(action + " action doesn't exist in doAction command");
           return {};
@@ -38,7 +40,6 @@ const useContent = create<ContentStore>()((set) => ({
     }),
   activateNode: (nodeId) =>
     set((state) => {
-      console.log({ ID: nodeId });
       const newNodes = state.nodes.map((node) => {
         if (node.id === nodeId) {
           return { ...node, data: { ...node.data, active: true } };

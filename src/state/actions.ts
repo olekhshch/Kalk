@@ -32,6 +32,7 @@ const actions: Actions = {
   ],
   Organize: [
     { title: "Single-line text", icon: "text-single", command: "text-single" },
+    { title: "Clear All", icon: "clear-all", command: "clear-all" },
   ],
   File: [
     {

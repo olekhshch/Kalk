@@ -26,7 +26,7 @@ const BottomPanel = () => {
           title={`${scale * 100}%`}
           showIcon={false}
           onClick={toggleScaleDialog}
-          activeStyle="main"
+          hoverStyle="sec"
         />
         {show_scale_menu && <ScaleDialog />}
       </div>
