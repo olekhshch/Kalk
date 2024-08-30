@@ -36,8 +36,6 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
     activateNode(null);
   };
 
-  console.log({ showResult });
-
   return (
     <>
       <div>
@@ -74,4 +72,4 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
   );
 };
 
-export default ExpressionNode;
+export default React.memo(ExpressionNode);

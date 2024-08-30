@@ -1,4 +1,4 @@
-import { applyNodeChanges, Node } from "@xyflow/react";
+import { applyNodeChanges, Edge, Node } from "@xyflow/react";
 import { create } from "zustand";
 import { AppNode, ResultNode, TextSingleNode } from "../types/nodes";
 import { ContentStore } from "../types/system";
@@ -7,10 +7,13 @@ import editTextValue from "./actions/editTextValue";
 import createExpressionNode from "./actions/createExpressionNode";
 import editMathValue from "./actions/editMathValue";
 import showHideResult from "./actions/showHideResult";
+import connectNodes from "./actions/connectNodes";
 
 const useContent = create<ContentStore>()((set) => ({
   nodes: [],
+  edges: [],
   idCounter: 0,
+  edgeCounter: 0,
   highlightedNodesId: [],
   activeNodeId: null,
   vars: {},
@@ -89,12 +92,22 @@ const useContent = create<ContentStore>()((set) => ({
     }),
   showResultFor: (nodeId) =>
     set((state) => {
-      const { nodes, idCounter } = showHideResult(
+      const { nodes, idCounter, newNode } = showHideResult(
         true,
         nodeId,
         [...state.nodes],
         state.idCounter
       );
+
+      if (newNode) {
+        const { edges, edgeCounter } = connectNodes(
+          nodeId,
+          newNode.id,
+          [...state.edges],
+          state.edgeCounter
+        );
+        return { nodes, idCounter, edges, edgeCounter };
+      }
 
       return { nodes, idCounter };
     }),
@@ -107,6 +120,17 @@ const useContent = create<ContentStore>()((set) => ({
         state.idCounter
       );
       return { nodes };
+    }),
+  connectNodes: (sourceId, targetId) =>
+    set((state) => {
+      const id = state.edgeCounter + 1;
+      const newEdge: Edge = {
+        id: id.toString(),
+        source: sourceId,
+        target: targetId,
+      };
+
+      return { edges: [...state.edges, newEdge], edgeCounter: id };
     }),
 }));
 

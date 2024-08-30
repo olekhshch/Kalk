@@ -12,7 +12,7 @@ const ResultOutput = ({ nodeId, isShown }: props) => {
   console.log({ isShown });
 
   const clickHandler = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    // e.stopPropagation();
     isShown ? hideResultFor(nodeId) : showResultFor(nodeId);
   };
 
@@ -44,4 +44,4 @@ const ResultOutput = ({ nodeId, isShown }: props) => {
   );
 };
 
-export default ResultOutput;
+export default React.memo(ResultOutput);

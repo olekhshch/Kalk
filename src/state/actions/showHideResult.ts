@@ -56,11 +56,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
     let alteredNode: ExpressionNode | null = null;
 
     const newNodes = nodes
-      .filter(
-        (node) =>
-          node.type !== "result-number" &&
-          (node as ResultNode).data.sourceNodeId !== sourceNodeId
-      )
+      .filter((node) => (node as ResultNode).data.sourceNodeId !== sourceNodeId)
       .map((node) => {
         if (node.id === sourceNodeId && node.category === "numbers") {
           const newNode: ExpressionNode = {

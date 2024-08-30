@@ -1,6 +1,6 @@
 import React from "react";
 import { AppNode } from "./nodes";
-import { XYPosition } from "@xyflow/react";
+import { Edge, XYPosition } from "@xyflow/react";
 
 export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
@@ -14,13 +14,16 @@ export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
   nodes: AppNode[];
+  edges: Edge[];
   idCounter: number;
+  edgeCounter: number;
   highlightedNodesId: string[]; // list of highlighted (not neccesaraly selected) nodes. Can be multiple
   activeNodeId: string | null; // Currently active (edited) node. Single node can be active at the same time
   doAction: (action: string) => void; // Performs creation action which adds new Node to the state
   setNodes: (nds: AppNode[]) => void;
   higlightById: (ids: string[], only?: boolean) => void; // only = yes => hightlights passed Nodes only, otherway adds passed Nodes to allready hightlighted nodes
   activateNode: (nodeId: string | null) => void;
+  connectNodes: (sourceId: string, targetId: string) => void;
 }
 
 export interface TextStore {
@@ -55,4 +58,10 @@ export type NodeActionOutput = {
   newNode: AppNode | null;
   nodes: AppNode[];
   idCounter: number;
+};
+
+export type EdgeActionOutput = {
+  newEdge: Edge | null;
+  edges: Edge[];
+  edgeCounter: number;
 };

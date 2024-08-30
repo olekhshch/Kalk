@@ -6,6 +6,7 @@ import TopPanel from "./layout/Top panel/TopPanel";
 
 import "@xyflow/react/dist/style.css";
 import { ReactFlowProvider } from "@xyflow/react";
+import useContent from "./state/useContent";
 
 const App = () => {
   useEffect(() => {
