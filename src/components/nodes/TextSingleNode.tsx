@@ -39,7 +39,6 @@ const TextSingleNode = ({
   useEffect(() => {
     if (divRef.current) {
       const { width } = divRef.current.getBoundingClientRect();
-      console.log(zoom);
       setInputWidth(Math.max(4, width / zoom + 10));
     }
   }, [currentText]);

@@ -10,7 +10,7 @@ export type Action = {
   command?: string;
 };
 
-// export type Mode = "edit" | "panning";
+export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
   nodes: AppNode[];
@@ -27,7 +27,15 @@ export interface TextStore {
   editTextValue: (nodeId: string, newValue: string) => void;
 }
 
-export type ContentStore = NodesStore & TextStore;
+export interface MathStore {
+  editExpressionValue: (nodeId: string, newValue: string) => void;
+  showResultFor: (nodeId: string) => void;
+  hideResultFor: (nodeId: string) => void;
+}
+
+export interface VariablesStore {
+  vars: { [key: string]: number | null };
+}
 
 type NodeActionParams = {
   nodes: AppNode[];
@@ -41,9 +49,10 @@ export type NodeAction = (params: NodeActionParams) => {
   idCounter?: number;
 };
 
-export type CreateNodeAction = (params: NodeActionParams) => {
-  newNode: AppNode;
+export type CreateNodeAction = (params: NodeActionParams) => NodeActionOutput;
+
+export type NodeActionOutput = {
+  newNode: AppNode | null;
   nodes: AppNode[];
-  // activeNodeId: string | null;
   idCounter: number;
 };

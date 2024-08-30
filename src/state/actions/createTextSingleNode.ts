@@ -7,6 +7,7 @@ const createTextSingleNode: CreateNodeAction = (params) => {
   const id = idCounter + 1;
   const newNode: TextSingleNode = {
     id: id.toString(),
+    category: "text",
     position: params.position ?? { x: 0, y: 0 },
     type: "text-single",
     data: { text: "" },
