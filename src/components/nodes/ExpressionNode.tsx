@@ -6,9 +6,12 @@ import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
 import { useViewport } from "@xyflow/react";
+import { invoke } from "@tauri-apps/api/core";
+import { RustCalculations } from "../../types/system";
 
 const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
-  const { activeNodeId, activateNode, editExpressionValue } = useContent();
+  const { activeNodeId, activateNode, editExpressionValue, setVariable } =
+    useContent();
   const isActive = useMemo(() => activeNodeId === id, [activeNodeId]);
 
   const [currentValue, onChange] = useInputChange({ initialValue: value });
@@ -30,6 +33,19 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
       editExpressionValue(id, currentValue);
     }
   }, [isActive]);
+
+  useEffect(() => {
+    // if value was changed in the store then it's passed to backend for evaluation
+    invoke("evaluate_expression", { expr: value }).then((res) => {
+      const calRes = res as RustCalculations;
+      if (calRes.success) {
+        setVariable(id, parseFloat(calRes.res));
+        console.log("VARIABLE " + id + " was changed to " + calRes.res);
+      } else {
+        setVariable(id, null);
+      }
+    });
+  }, [value]);
 
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();

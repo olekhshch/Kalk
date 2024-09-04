@@ -1,4 +1,3 @@
-import React from "react";
 import { AppNode } from "./nodes";
 import { Edge, XYPosition } from "@xyflow/react";
 
@@ -38,6 +37,7 @@ export interface MathStore {
 
 export interface VariablesStore {
   vars: { [key: string]: number | null };
+  setVariable: (varKey: string, newValue: number | null) => void;
 }
 
 type NodeActionParams = {
@@ -64,4 +64,10 @@ export type EdgeActionOutput = {
   newEdge: Edge | null;
   edges: Edge[];
   edgeCounter: number;
+};
+
+export type RustCalculations = {
+  success: boolean;
+  res: string;
+  msg: string;
 };

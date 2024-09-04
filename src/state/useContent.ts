@@ -1,13 +1,19 @@
 import { applyNodeChanges, Edge, Node } from "@xyflow/react";
 import { create } from "zustand";
-import { AppNode, ResultNode, TextSingleNode } from "../types/nodes";
-import { ContentStore } from "../types/system";
+import {
+  AppNode,
+  ExpressionNode,
+  ResultNode,
+  TextSingleNode,
+} from "../types/nodes";
+import { ContentStore, RustCalculations } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
 import editTextValue from "./actions/editTextValue";
 import createExpressionNode from "./actions/createExpressionNode";
 import editMathValue from "./actions/editMathValue";
 import showHideResult from "./actions/showHideResult";
 import connectNodes from "./actions/connectNodes";
+import { invoke } from "@tauri-apps/api/core";
 
 const useContent = create<ContentStore>()((set) => ({
   nodes: [],
@@ -34,11 +40,18 @@ const useContent = create<ContentStore>()((set) => ({
         case "clear-all":
           return { nodes: [] };
         case "expression": {
-          const { nodes, idCounter } = createExpressionNode({
+          const { nodes, idCounter, newNode } = createExpressionNode({
             nodes: state.nodes,
             idCounter: state.idCounter,
           });
-          return { nodes, idCounter };
+
+          const newVars = newNode
+            ? {
+                ...state.vars,
+                [newNode.id]: (newNode as ExpressionNode).data.calc.res,
+              }
+            : { ...state.vars };
+          return { nodes, idCounter, vars: newVars };
         }
         case "text-single":
           const { nodes, idCounter } = createTextSingleNode({
@@ -82,12 +95,18 @@ const useContent = create<ContentStore>()((set) => ({
     }),
   editExpressionValue: (nodeId, newValue) =>
     set((state) => {
-      const { nodes } = editMathValue(
+      const { nodes, newNode } = editMathValue(
         nodeId,
         newValue,
         [...state.nodes],
         "expression"
       );
+      // if (newNode) {
+      //   invoke("evaluate_expression", { expr: newValue }).then((res) => {
+      //     const calcRes = res as RustCalculations;
+      //     console.log(calcRes);
+      //   });
+      // }
       return { nodes };
     }),
   showResultFor: (nodeId) =>
@@ -131,6 +150,11 @@ const useContent = create<ContentStore>()((set) => ({
       };
 
       return { edges: [...state.edges, newEdge], edgeCounter: id };
+    }),
+  setVariable: (varKey, newValue) =>
+    set((state) => {
+      //#TODO: Fix floats
+      return { vars: { ...state.vars, [varKey]: newValue } };
     }),
 }));
 
