@@ -12,10 +12,7 @@ const NodeWrapper = ({ children, title, id }: props) => {
 
   const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
 
-  const borderColorTW = "border-" + (isHightlighted ? "main" : "sec");
-
   const clickHandler = (e: React.MouseEvent) => {
-    console.log("NODE wrapper Click");
     higlightById([id], true);
     if (activeNodeId !== id) {
       activateNode(id);
@@ -31,7 +28,7 @@ const NodeWrapper = ({ children, title, id }: props) => {
 
   return (
     <div
-      className={`border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
+      className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
       // style={{
       //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
       // }}

@@ -14,8 +14,8 @@ const Header = () => {
     window.maximize();
   };
 
-  const hide = () => {
-    window.hide();
+  const minimize = () => {
+    window.minimize();
   };
 
   return (
@@ -31,7 +31,7 @@ const Header = () => {
         New file
       </div>
       <div className="flex gap-1">
-        <button onClick={hide}>
+        <button onClick={minimize}>
           <img alt="hide window" src="src\assets\icons\hide-window.svg" />
         </button>
         <button onClick={maximize}>

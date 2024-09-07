@@ -3,5 +3,5 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": ["main"],
-  "permissions": ["core:window:default", "core:window:allow-start-dragging", "core:window:allow-close", "core:window:allow-maximize", "core:window:allow-hide" ]
+  "permissions": ["core:window:default", "core:window:allow-start-dragging", "core:window:allow-close", "core:window:allow-maximize", "core:window:allow-minimize" ]
 }

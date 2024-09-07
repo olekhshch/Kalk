@@ -7,8 +7,8 @@ type Actions = {
 const actions: Actions = {
   Math: [
     {
-      title: "Number",
-      icon: "number",
+      title: "Expression",
+      icon: "expression",
     },
     {
       title: "Sum/Diffrence",

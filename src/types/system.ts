@@ -1,6 +1,5 @@
-import React from "react";
 import { AppNode } from "./nodes";
-import { XYPosition } from "@xyflow/react";
+import { Edge, XYPosition } from "@xyflow/react";
 
 export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
@@ -10,24 +9,36 @@ export type Action = {
   command?: string;
 };
 
-// export type Mode = "edit" | "panning";
+export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
   nodes: AppNode[];
+  edges: Edge[];
   idCounter: number;
+  edgeCounter: number;
   highlightedNodesId: string[]; // list of highlighted (not neccesaraly selected) nodes. Can be multiple
   activeNodeId: string | null; // Currently active (edited) node. Single node can be active at the same time
   doAction: (action: string) => void; // Performs creation action which adds new Node to the state
   setNodes: (nds: AppNode[]) => void;
   higlightById: (ids: string[], only?: boolean) => void; // only = yes => hightlights passed Nodes only, otherway adds passed Nodes to allready hightlighted nodes
   activateNode: (nodeId: string | null) => void;
+  connectNodes: (sourceId: string, targetId: string) => void;
 }
 
 export interface TextStore {
   editTextValue: (nodeId: string, newValue: string) => void;
 }
 
-export type ContentStore = NodesStore & TextStore;
+export interface MathStore {
+  editExpressionValue: (nodeId: string, newValue: string) => void;
+  showResultFor: (nodeId: string) => void;
+  hideResultFor: (nodeId: string) => void;
+}
+
+export interface VariablesStore {
+  vars: { [key: string]: number | null };
+  setVariable: (varKey: string, newValue: number | null) => void;
+}
 
 type NodeActionParams = {
   nodes: AppNode[];
@@ -41,9 +52,22 @@ export type NodeAction = (params: NodeActionParams) => {
   idCounter?: number;
 };
 
-export type CreateNodeAction = (params: NodeActionParams) => {
-  newNode: AppNode;
+export type CreateNodeAction = (params: NodeActionParams) => NodeActionOutput;
+
+export type NodeActionOutput = {
+  newNode: AppNode | null;
   nodes: AppNode[];
-  // activeNodeId: string | null;
   idCounter: number;
+};
+
+export type EdgeActionOutput = {
+  newEdge: Edge | null;
+  edges: Edge[];
+  edgeCounter: number;
+};
+
+export type RustCalculations = {
+  success: boolean;
+  res: string;
+  msg: string;
 };

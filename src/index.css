@@ -44,3 +44,12 @@ svg {
 .hover-sec:hover {
     border-color: var(--sec);
 }
+
+@font-face {
+    font-family: 'Latin Modern Math';
+    src: url("../public/latinmodern-math.otf");
+}
+
+.latin-math {
+    font-family: 'Latin Modern Math';
+}

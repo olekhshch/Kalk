@@ -12,12 +12,17 @@ import {
 } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
-import { NodeBase } from "@xyflow/system";
 import nodeTypes from "../../state/nodeTypes";
 
 const Canvas = () => {
-  const { nodes, setNodes, activeNodeId, activateNode, highlightedNodesId } =
-    useContent();
+  const {
+    nodes,
+    edges,
+    setNodes,
+    activeNodeId,
+    activateNode,
+    highlightedNodesId,
+  } = useContent();
 
   const nodesChangeHandler = useCallback(
     (changes: NodeChange[]) => {
@@ -27,20 +32,20 @@ const Canvas = () => {
     [nodes]
   );
 
-  const clickHandler = (e: React.MouseEvent) => {
-    console.log("click");
+  const clickHandler = () => {
+    console.log("canvas bg click");
     activateNode(null);
   };
 
   useEffect(() => {
     console.log("CANVAS RERENDERED" + nodes.length);
-    console.log({ activeNodeId, highlightedNodesId });
   });
 
   return (
     <div id="workarea" className="overflow-hidden" onClick={clickHandler}>
       <ReactFlow
         nodes={nodes}
+        edges={edges}
         onNodesChange={nodesChangeHandler}
         nodeTypes={nodeTypes}
       >
