@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { AppNode, ExpressionNode as Expression } from "../../types/nodes";
-import { NodeProps } from "postcss";
+import { ExpressionNode as Expression } from "../../types/nodes";
 import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
@@ -63,12 +62,14 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
     }
   };
 
+  //#TODO: Fix padding change when active/non active
+
   return (
     <>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
         <NodeWrapper id={id}>
-          <div className="py-2 px-3 min-h-[1rem] flex flex-col">
+          <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (
               <form onSubmit={submitHandler} className="h-[1rem] flex">
                 <input

@@ -12,7 +12,6 @@ import {
 } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
-import { NodeBase } from "@xyflow/system";
 import nodeTypes from "../../state/nodeTypes";
 
 const Canvas = () => {

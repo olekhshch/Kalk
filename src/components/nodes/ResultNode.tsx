@@ -14,9 +14,7 @@ const ResultNode = ({ id, data: { sourceNodeId } }: ResultNodeType) => {
     <>
       <Input />
       <NodeWrapper id={id}>
-        <div>
-          {sourceNodeId}: {res ? res : "N/A"}
-        </div>
+        <div className="p-2">{res ?? ""}</div>
       </NodeWrapper>
     </>
   );
