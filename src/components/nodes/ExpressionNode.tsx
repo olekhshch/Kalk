@@ -8,13 +8,18 @@ import useInputChange from "../../hooks/useInputChange";
 import { useViewport } from "@xyflow/react";
 import { invoke } from "@tauri-apps/api/core";
 import { RustCalculations } from "../../types/system";
+import Output from "../ports/Output";
+import { expressionInputValues } from "../../utils/expressionInputValues";
 
 const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
   const { activeNodeId, activateNode, editExpressionValue, setVariable } =
     useContent();
   const isActive = useMemo(() => activeNodeId === id, [activeNodeId]);
 
-  const [currentValue, onChange] = useInputChange({ initialValue: value });
+  const [currentValue, onChange] = useInputChange({
+    initialValue: value,
+    allowOnly: expressionInputValues,
+  });
 
   // span refference to calculate width of the input
   const spanRef = useRef<HTMLSpanElement>(null);
@@ -52,6 +57,12 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
     activateNode(null);
   };
 
+  const keyDownHandler = (e: React.KeyboardEvent) => {
+    if (e.key === "=") {
+      activateNode(null);
+    }
+  };
+
   return (
     <>
       <div>
@@ -63,6 +74,7 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
                 <input
                   value={currentValue}
                   onChange={onChange}
+                  onKeyDown={keyDownHandler}
                   style={{ width: inputWidth + "px" }}
                   className="nodrag text-[16px] h-[1em] focus:outline-0 p-0 m-0 bg-transparent"
                   spellCheck={false}
@@ -83,6 +95,7 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
             </span>
           </div>
         </NodeWrapper>
+        <Output id="a" />
       </div>
     </>
   );

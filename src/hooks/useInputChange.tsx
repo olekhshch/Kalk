@@ -1,20 +1,25 @@
 import React, { useCallback, useState } from "react";
+import { expressionInputValues } from "../utils/expressionInputValues";
 
 // Hook to controll regular input and textarea changes.
 
 type props = {
   initialValue: string | number;
-  ignoreKeys?: RegExp;
+  allowOnly?: RegExp;
 };
-const useInputChange = ({ initialValue, ignoreKeys }: props) => {
+const useInputChange = ({ initialValue, allowOnly }: props) => {
   const [value, setValue] = useState(initialValue.toString());
 
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       let { value } = e.target;
-      if (ignoreKeys) {
-        //use RegExp to filter simbols
+
+      if (allowOnly) {
+        const filteredValue = value.match(expressionInputValues);
+        setValue((filteredValue ?? []).join(""));
+        return;
       }
+
       setValue(value);
     },
     []

@@ -40,7 +40,6 @@ const Canvas = () => {
 
   useEffect(() => {
     console.log("CANVAS RERENDERED" + nodes.length);
-    console.log({ activeNodeId, highlightedNodesId });
   });
 
   return (

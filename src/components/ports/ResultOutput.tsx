@@ -9,7 +9,6 @@ type props = {
 
 const ResultOutput = ({ nodeId, isShown }: props) => {
   const { showResultFor, hideResultFor } = useContent();
-  console.log({ isShown });
 
   const clickHandler = (e: React.MouseEvent) => {
     // e.stopPropagation();
