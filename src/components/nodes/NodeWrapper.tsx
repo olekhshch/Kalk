@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import useContent from "../../state/useContent";
+import FlowPort from "../ports/FlowPort";
+import { Position } from "@xyflow/react";
 
 type props = {
   children: JSX.Element;
@@ -27,21 +29,24 @@ const NodeWrapper = ({ children, title, id }: props) => {
   }, [activeNodeId]);
 
   return (
-    <div
-      className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
-      // style={{
-      //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
-      // }}
-      onDoubleClick={doubleClickHandler}
-      onClick={clickHandler}
-    >
-      {title && (
-        <article className="pl-[2px] bg-main text-white  h-5 rounded-t-[3px]">
-          {title}
-        </article>
-      )}
-      {children}
-    </div>
+    <>
+      <FlowPort position={Position.Top} id="fc-t" />
+      <div
+        className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
+        // style={{
+        //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
+        // }}
+        onDoubleClick={doubleClickHandler}
+        onClick={clickHandler}
+      >
+        {title && (
+          <article className="pl-[2px] bg-main text-white  h-5 rounded-t-[3px]">
+            {title}
+          </article>
+        )}
+        {children}
+      </div>
+    </>
   );
 };
 

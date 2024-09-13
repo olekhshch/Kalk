@@ -9,36 +9,74 @@ const actions: Actions = {
     {
       title: "Expression",
       icon: "expression",
+      command: {
+        type: "create",
+        data: "expression",
+      },
     },
     {
       title: "Sum/Diffrence",
       icon: "sum",
-      command: "sum-dif",
+      command: {
+        type: "create",
+      },
     },
     {
       title: "Multiply",
       icon: "multiply",
+      command: {
+        type: "create",
+      },
     },
     {
       title: "Divide",
       icon: "divide",
+      command: {
+        type: "create",
+      },
     },
   ],
   Matrices: [
     {
       title: "Matrix",
       icon: "",
+      command: {
+        type: "create",
+      },
     },
   ],
   Organize: [
-    { title: "Single-line text", icon: "text-single", command: "text-single" },
-    { title: "Clear All", icon: "clear-all", command: "clear-all" },
-    { title: "Select All", icon: "select", command: "select-all" },
+    {
+      title: "Single-line text",
+      icon: "text-single",
+      command: {
+        type: "create",
+        data: "text-single",
+      },
+    },
+    {
+      title: "Clear All",
+      icon: "clear-all",
+      command: {
+        type: "action",
+        data: "clear-all",
+      },
+    },
+    {
+      title: "Select All",
+      icon: "select",
+      command: {
+        type: "action",
+      },
+    },
   ],
   File: [
     {
       title: "File overview",
       icon: "",
+      command: {
+        type: "action",
+      },
     },
   ],
 };

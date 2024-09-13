@@ -6,8 +6,7 @@ import Button from "../../components/Button";
 import useContent from "../../state/useContent";
 
 const ActionsPanel = () => {
-  const { active_tab } = useAppState();
-  const { doAction } = useContent();
+  const { active_tab, setMode } = useAppState();
 
   const actionList = useMemo<Action[]>(() => {
     if (active_tab !== "All") {
@@ -25,7 +24,12 @@ const ActionsPanel = () => {
           title={title}
           icon={icon}
           hoverStyle="main"
-          onClick={() => doAction(command ?? title)}
+          onClick={() =>
+            setMode(
+              command.type === "action" ? "edit" : command.type,
+              command.data
+            )
+          }
           showIcon
         />
       ))}

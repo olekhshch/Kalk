@@ -1,12 +1,13 @@
 import { create } from "zustand";
-import { Mode, Tab } from "../types/system";
+import { ActionType, Mode, Tab } from "../types/system";
 import { BackgroundVariant } from "@xyflow/react";
+import { NodeType } from "../types/nodes";
 
 interface AppState {
   active_tab: Tab;
   scale: number;
   show_scale_menu: boolean;
-  mode: Mode;
+  mode: { current: Mode; data?: NodeType | ActionType };
   grid_type: BackgroundVariant;
 }
 
@@ -14,7 +15,7 @@ interface AppActions {
   setActiveTab: (t: Tab) => void;
   openScaleMenu: () => void;
   hideScaleMenu: () => void;
-  setMode: (m: Mode) => void;
+  setMode: (mode: Mode, data?: NodeType | ActionType) => void;
   setGridType: (g: BackgroundVariant) => void;
 }
 
@@ -22,12 +23,17 @@ const useAppState = create<AppState & AppActions>()((set) => ({
   active_tab: "Math",
   scale: 1,
   show_scale_menu: false,
-  mode: "edit",
+  mode: { current: "edit" },
   grid_type: BackgroundVariant.Cross,
   setActiveTab: (tab) => set(() => ({ active_tab: tab })),
   openScaleMenu: () => set(() => ({ show_scale_menu: true })),
   hideScaleMenu: () => set(() => ({ show_scale_menu: false })),
-  setMode: (mode) => set(() => ({ mode })),
+  setMode: (mode, data) => {
+    if (mode === "edit" || !data) {
+      return set({ mode: { current: mode, data: undefined } });
+    }
+    set({ mode: { current: mode, data } });
+  },
   setGridType: (new_gt) =>
     set(() => {
       return { grid_type: new_gt };

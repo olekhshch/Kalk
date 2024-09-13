@@ -1,4 +1,4 @@
-import { applyNodeChanges, Edge, Node } from "@xyflow/react";
+import { addEdge, applyNodeChanges, Edge, Node } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AppNode,
@@ -13,9 +13,8 @@ import createExpressionNode from "./actions/createExpressionNode";
 import editMathValue from "./actions/editMathValue";
 import showHideResult from "./actions/showHideResult";
 import connectNodes from "./actions/connectNodes";
-import { invoke } from "@tauri-apps/api/core";
 
-const useContent = create<ContentStore>()((set) => ({
+const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
   edges: [],
   idCounter: 0,
@@ -23,6 +22,24 @@ const useContent = create<ContentStore>()((set) => ({
   highlightedNodesId: [],
   activeNodeId: null,
   vars: {},
+  onNodesChange: (changes) => {
+    const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
+    set({ nodes: newNodes });
+  },
+  addNode: (nodeType, position) => {
+    switch (nodeType) {
+      case "expression": {
+        const id = get().idCounter + 1;
+        const newNode: ExpressionNode = {
+          id: id.toString(),
+          type: "expression",
+          position,
+          data: { value: "", showResult: false },
+        };
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
+      }
+    }
+  },
   doAction: (action) =>
     set((state) => {
       const command = action.toLocaleLowerCase();
@@ -35,7 +52,6 @@ const useContent = create<ContentStore>()((set) => ({
             );
             return newNode;
           });
-          console.log({ selectedNodes });
           return { nodes: selectedNodes };
         case "clear-all":
           return { nodes: [] };
@@ -65,7 +81,7 @@ const useContent = create<ContentStore>()((set) => ({
       }
     }),
   setNodes: (nds) => {
-    set(() => ({ nodes: nds }));
+    set({ nodes: nds });
   },
   higlightById: (nodeIds, only) =>
     set((state) => {
@@ -75,19 +91,21 @@ const useContent = create<ContentStore>()((set) => ({
 
       return { highlightedNodesId: [...state.highlightedNodesId, ...nodeIds] };
     }),
-  activateNode: (nodeId) =>
-    set((state) => {
-      const newNodes = state.nodes.map((node) => {
-        if (node.id === nodeId) {
-          return { ...node, data: { ...node.data, active: true } };
-        }
-        if (state.activeNodeId === node.id) {
-          return { ...node, data: { ...node.data, active: false } };
-        }
-        return node;
-      });
-      return { nodes: newNodes, activeNodeId: nodeId };
-    }),
+  activateNode: (nodeId) => {
+    set({ activeNodeId: nodeId });
+  },
+  // set((state) => {
+  //   const newNodes = state.nodes.map((node) => {
+  //     if (node.id === nodeId) {
+  //       return { ...node, data: { ...node.data, active: true } };
+  //     }
+  //     if (state.activeNodeId === node.id) {
+  //       return { ...node, data: { ...node.data, active: false } };
+  //     }
+  //     return node;
+  //   });
+  //   return { nodes: newNodes, activeNodeId: nodeId };
+  // }),
   editTextValue: (nodeId, newValue) =>
     set((state) => {
       const { nodes } = editTextValue(nodeId, newValue, state.nodes);
@@ -140,17 +158,15 @@ const useContent = create<ContentStore>()((set) => ({
       );
       return { nodes };
     }),
-  connectNodes: (sourceId, targetId) =>
-    set((state) => {
-      const id = state.edgeCounter + 1;
-      const newEdge: Edge = {
-        id: id.toString(),
-        source: sourceId,
-        target: targetId,
-      };
-
-      return { edges: [...state.edges, newEdge], edgeCounter: id };
-    }),
+  connectNodes: (connection) => {
+    const id = get().edgeCounter + 1;
+    const newEdge: Edge = {
+      id: id.toString(),
+      ...connection,
+    };
+    const newEdges = addEdge(newEdge, get().edges);
+    set({ edges: newEdges, edgeCounter: id });
+  },
   setVariable: (varKey, newValue) =>
     set((state) => {
       //#TODO: Fix floats

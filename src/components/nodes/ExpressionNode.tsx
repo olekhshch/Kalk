@@ -4,16 +4,31 @@ import { ExpressionNode as Expression } from "../../types/nodes";
 import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
-import { useViewport } from "@xyflow/react";
+import { NodeProps, useViewport } from "@xyflow/react";
 import { invoke } from "@tauri-apps/api/core";
 import { RustCalculations } from "../../types/system";
 import Output from "../ports/Output";
 import { expressionInputValues } from "../../utils/expressionInputValues";
+import { useShallow } from "zustand/react/shallow";
 
-const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
-  const { activeNodeId, activateNode, editExpressionValue, setVariable } =
-    useContent();
-  const isActive = useMemo(() => activeNodeId === id, [activeNodeId]);
+// type Selector = {
+//   isActive: boolean;
+// };
+
+const ExpressionNode = ({
+  id,
+  data: { value, showResult },
+}: NodeProps<Expression>) => {
+  const { isActive, activateNode, editExpressionValue } = useContent(
+    useShallow((store) => ({
+      isActive: store.activeNodeId === id,
+      activateNode: store.activateNode,
+      editExpressionValue: (newValue: string) =>
+        store.editExpressionValue(id, newValue),
+    }))
+  );
+
+  const { setVariable } = useContent();
 
   const [currentValue, onChange] = useInputChange({
     initialValue: value,
@@ -34,7 +49,7 @@ const ExpressionNode = ({ id, data: { value, showResult } }: Expression) => {
 
   useEffect(() => {
     if (!isActive && currentValue !== value) {
-      editExpressionValue(id, currentValue);
+      editExpressionValue(currentValue);
     }
   }, [isActive]);
 

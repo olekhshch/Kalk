@@ -12,6 +12,7 @@ const BottomPanel = () => {
     hideScaleMenu,
     grid_type,
     setGridType,
+    mode,
   } = useAppState();
 
   const { zoom } = useViewport();
@@ -24,8 +25,19 @@ const BottomPanel = () => {
     show_scale_menu ? hideScaleMenu() : openScaleMenu();
   };
 
+  const tipText = useMemo(() => {
+    switch (mode.current) {
+      case "create": {
+        return "Click on canvas to place new node";
+      }
+      default: {
+        return "";
+      }
+    }
+  }, [mode.current]);
+
   return (
-    <div className="bg-main px-2 text-white font-sys text-sm flex gap-1 items-center">
+    <div className="bg-main px-2 text-white font-sys text-sm flex gap-2 items-center">
       <div>
         <Button
           title={`${(zoom * 100).toFixed(2)}%`}
@@ -61,6 +73,10 @@ const BottomPanel = () => {
           onClick={() => setGridType(BackgroundVariant.Dots)}
           showIcon
         />
+      </div>
+      <div className="flex gap-1">
+        <span>{mode.current}</span>
+        <span>{tipText}</span>
       </div>
     </div>
   );

@@ -5,32 +5,17 @@ export type NodeType = string &
 
 export type NodeCategory = "numbers" | "text";
 
-export type AppNode = Node<{}> & {
-  type: NodeType;
-  category?: NodeCategory;
-};
+export type AppNode = TextSingleNode | ExpressionNode;
 
-export type TextSingleNode = AppNode &
-  Node<{
-    text: string;
-  }> & {
-    type: NodeType;
-  };
+export type TextSingleNode = Node<{ text: string }, "text-single">;
 
-export type ExpressionNode = AppNode &
-  Node<{
-    value: string;
-    showResult: boolean;
-    calc: CalculationsData;
-  }> & {
-    type: "expression";
-  };
+export type ExpressionNode = Node<
+  { value: string; showResult: boolean },
+  "expression"
+>;
 
 export type CalculationsData = {
   res: number | null;
 };
 
-export type ResultNode = AppNode &
-  Node<{
-    sourceNodeId: string;
-  }>;
+export type ResultNode = Node<{ sourceId: string }, "result">;
