@@ -15,10 +15,19 @@ const actions: Actions = {
       },
     },
     {
-      title: "Sum/Diffrence",
-      icon: "sum",
+      title: "Add",
+      icon: "add",
       command: {
         type: "create",
+        data: "add",
+      },
+    },
+    {
+      title: "Substract",
+      icon: "substract",
+      command: {
+        type: "create",
+        data: "substract",
       },
     },
     {

@@ -28,9 +28,10 @@ const NodeWrapper = ({ children, title, id }: props) => {
     }
   }, [activeNodeId]);
 
+  // #TODO: Flowchart handles
+
   return (
     <>
-      <FlowPort position={Position.Top} id="fc-t" />
       <div
         className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
         // style={{

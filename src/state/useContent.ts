@@ -1,9 +1,13 @@
 import { addEdge, applyNodeChanges, Edge, Node } from "@xyflow/react";
 import { create } from "zustand";
 import {
+  AdditionNode,
   AppNode,
   ExpressionNode,
+  InputLabel,
+  MathNode,
   ResultNode,
+  SubstractionNode,
   TextSingleNode,
 } from "../types/nodes";
 import { ContentStore } from "../types/system";
@@ -15,6 +19,8 @@ import showHideResult from "./actions/showHideResult";
 import connectNodes from "./actions/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculateNode";
+import getById from "../utils/getById";
+import replaceNode from "../utils/replaseNode";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -36,7 +42,12 @@ const useContent = create<ContentStore>()((set, get) => ({
           id: id.toString(),
           type: "expression",
           position,
-          data: { value: "", showResult: false },
+          data: {
+            value: "",
+            showResult: false,
+            inputs: {},
+            outputs: { N: "number" },
+          },
         };
         set({
           nodes: [...get().nodes, newNode],
@@ -56,6 +67,44 @@ const useContent = create<ContentStore>()((set, get) => ({
           idCounter: id,
         });
         break;
+      }
+      case "add": {
+        const newNode: AdditionNode = {
+          id: id.toString(),
+          position,
+          type: "add",
+          data: {
+            showResult: false,
+            inputs: {
+              a: { sourceId: null, type: "number" },
+              b: { sourceId: null, type: "number" },
+            },
+            outputs: {
+              N: "number",
+            },
+          },
+        };
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        break;
+      }
+      case "substract": {
+        const newNode: SubstractionNode = {
+          id: id.toString(),
+          type: "substract",
+          position,
+          data: {
+            showResult: false,
+            inputs: {
+              a: { sourceId: null, type: "number" },
+              b: { sourceId: null, type: "number" },
+            },
+            outputs: {
+              N: "number",
+            },
+          },
+        };
+
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
       }
     }
   },
@@ -164,14 +213,48 @@ const useContent = create<ContentStore>()((set, get) => ({
       );
       return { nodes };
     }),
-  connectNodes: (connection) => {
+  connectNodes: async (connection) => {
+    const { source, sourceHandle, target, targetHandle } = connection;
+
+    // checking if handle labels specified
+    if (!sourceHandle || !targetHandle) return;
+
+    // checking if target is not a result node
+    if (targetHandle === "R") return;
+
+    // checking if value of the source = value of the target input
+    const [sourceLabel, sourceValue] = sourceHandle.split("-");
+    const [targetLabel, targetValue] = targetHandle.split("-");
+
+    if (sourceValue !== targetValue) return;
+
+    console.log("1. Source and target values are matching");
+
+    const [nodeA, nodeB] = (await Promise.all([
+      getById(get().nodes, source)[0],
+      getById(get().nodes, target)[0],
+    ])) as [MathNode, MathNode];
+
     const id = get().edgeCounter + 1;
     const newEdge: Edge = {
       id: id.toString(),
       ...connection,
     };
     const newEdges = addEdge(newEdge, get().edges);
-    set({ edges: newEdges, edgeCounter: id });
+
+    nodeB.data.inputs[targetLabel as InputLabel].sourceId = source;
+
+    const [newValues, newNodes] = await Promise.all([
+      calculateNode(nodeB, get().values),
+      replaceNode(nodeB, get().nodes),
+    ]);
+
+    set({
+      edges: newEdges,
+      edgeCounter: id,
+      values: newValues,
+      nodes: newNodes,
+    });
   },
   setValue: (valKey, newValue) =>
     set((state) => {

@@ -12,6 +12,7 @@ import {
   Connection,
   MiniMap,
   NodeChange,
+  Panel,
   ReactFlow,
   useNodesData,
   useNodesState,
@@ -67,6 +68,7 @@ const Canvas = () => {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
       >
+        <ValuesPanel />
         <BackgroundWrapper />
         <MiniMap />
       </ReactFlow>
@@ -81,4 +83,22 @@ const BackgroundWrapper = () => {
   return <Background variant={grid_type} color="#94D2BD" bgColor="#F0F4F8" />;
 };
 
+const ValuesPanel = () => {
+  const valEntries = useContent(
+    useShallow((store) => Object.entries(store.values))
+  );
+
+  return (
+    <Panel position="top-right">
+      <h2>Values</h2>
+      <ol>
+        {valEntries.map(([id, value]) => (
+          <li key={id}>
+            {id}. {value}
+          </li>
+        ))}
+      </ol>
+    </Panel>
+  );
+};
 export default Canvas;

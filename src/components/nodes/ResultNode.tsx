@@ -18,7 +18,7 @@ const ResultNode = ({ id, data: { sourceId } }: NodeProps<ResultNodeType>) => {
 
   return (
     <>
-      <Input />
+      <Input cssPosition="50%" label="R" id="R" />
       <NodeWrapper id={id}>
         <div className="p-2">{value ?? ""}</div>
       </NodeWrapper>
