@@ -25,8 +25,6 @@ export interface NodesStore {
   edges: Edge[];
   idCounter: number;
   edgeCounter: number;
-  // mode: { current: Mode; data?: NodeType | ActionType };
-  // setMode: (mode: Mode, data?: NodeType | ActionType) => void;
   highlightedNodesId: string[]; // list of highlighted (not neccesaraly selected) nodes. Can be multiple
   activeNodeId: string | null; // Currently active (edited) node. Single node can be active at the same time
   onNodesChange: (changes: NodeChange[]) => void;

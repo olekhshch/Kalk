@@ -21,6 +21,8 @@ import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculateNode";
 import getById from "../utils/getById";
 import replaceNode from "../utils/replaseNode";
+import getChain from "../utils/getChain";
+import recalculateChain from "../utils/recalculateChain";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -178,7 +180,12 @@ const useContent = create<ContentStore>()((set, get) => ({
     );
 
     if (newNode) {
-      const newValues = await calculateNode(newNode, get().values);
+      const newVals = await calculateNode(newNode, get().values);
+
+      // getting chain of next connected nodes to recalculate their values
+      const chain = getChain(newNode, nodes, get().edges);
+      const newValues = recalculateChain(chain, nodes, newVals);
+
       set({ values: newValues });
     }
 

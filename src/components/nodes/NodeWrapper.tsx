@@ -46,6 +46,7 @@ const NodeWrapper = ({ children, title, id }: props) => {
           </article>
         )}
         {children}
+        {/* <span className="absolute">{id}</span> */}
       </div>
     </>
   );
