@@ -28,8 +28,6 @@ const ExpressionNode = ({
     }))
   );
 
-  const { setVariable } = useContent();
-
   const [currentValue, onChange] = useInputChange({
     initialValue: value,
     allowOnly: expressionInputValues,
@@ -53,18 +51,18 @@ const ExpressionNode = ({
     }
   }, [isActive]);
 
-  useEffect(() => {
-    // if value was changed in the store then it's passed to backend for evaluation
-    invoke("evaluate_expression", { expr: value }).then((res) => {
-      const calRes = res as RustCalculations;
-      if (calRes.success) {
-        setVariable(id, parseFloat(calRes.res));
-        console.log("VARIABLE " + id + " was changed to " + calRes.res);
-      } else {
-        setVariable(id, null);
-      }
-    });
-  }, [value]);
+  // useEffect(() => {
+  //   // if value was changed in the store then it's passed to backend for evaluation
+  //   invoke("evaluate_expression", { expr: value }).then((res) => {
+  //     const calRes = res as RustCalculations;
+  //     if (calRes.success) {
+  //       setVariable(id, parseFloat(calRes.res));
+  //       console.log("VARIABLE " + id + " was changed to " + calRes.res);
+  //     } else {
+  //       setVariable(id, null);
+  //     }
+  //   });
+  // }, [value]);
 
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();

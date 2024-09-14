@@ -13,7 +13,10 @@ const editMathValue: f = (nodeId, newValue, nodes, nodeType) => {
 
   const newNodes = nodes.map((node) => {
     if (nodeId === node.id && node.type === nodeType) {
-      const newNode = { ...node, data: { ...node.data, value: newValue } };
+      const newNode: ExpressionNode = {
+        ...node,
+        data: { ...node.data, value: newValue },
+      };
       alteredNode = newNode;
       return newNode;
     }

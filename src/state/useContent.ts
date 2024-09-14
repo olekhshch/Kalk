@@ -6,13 +6,15 @@ import {
   ResultNode,
   TextSingleNode,
 } from "../types/nodes";
-import { ContentStore, RustCalculations } from "../types/system";
+import { ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
 import editTextValue from "./actions/editTextValue";
 import createExpressionNode from "./actions/createExpressionNode";
 import editMathValue from "./actions/editMathValue";
 import showHideResult from "./actions/showHideResult";
 import connectNodes from "./actions/connectNodes";
+import editNodeValue from "./actions/editNodeValue";
+import calculateNode from "../utils/calculateNode";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -21,22 +23,39 @@ const useContent = create<ContentStore>()((set, get) => ({
   edgeCounter: 0,
   highlightedNodesId: [],
   activeNodeId: null,
-  vars: {},
+  values: {},
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
   },
   addNode: (nodeType, position) => {
+    const id = get().idCounter + 1;
     switch (nodeType) {
       case "expression": {
-        const id = get().idCounter + 1;
         const newNode: ExpressionNode = {
           id: id.toString(),
           type: "expression",
           position,
           data: { value: "", showResult: false },
         };
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        set({
+          nodes: [...get().nodes, newNode],
+          idCounter: id,
+        });
+        break;
+      }
+      case "text-single": {
+        const newNode: TextSingleNode = {
+          id: id.toString(),
+          type: "text-single",
+          data: { value: "" },
+          position,
+        };
+        set({
+          nodes: [...get().nodes, newNode],
+          idCounter: id,
+        });
+        break;
       }
     }
   },
@@ -55,20 +74,6 @@ const useContent = create<ContentStore>()((set, get) => ({
           return { nodes: selectedNodes };
         case "clear-all":
           return { nodes: [] };
-        case "expression": {
-          const { nodes, idCounter, newNode } = createExpressionNode({
-            nodes: state.nodes,
-            idCounter: state.idCounter,
-          });
-
-          const newVars = newNode
-            ? {
-                ...state.vars,
-                [newNode.id]: (newNode as ExpressionNode).data.calc.res,
-              }
-            : { ...state.vars };
-          return { nodes, idCounter, vars: newVars };
-        }
         case "text-single":
           const { nodes, idCounter } = createTextSingleNode({
             nodes: state.nodes,
@@ -106,48 +111,49 @@ const useContent = create<ContentStore>()((set, get) => ({
   //   });
   //   return { nodes: newNodes, activeNodeId: nodeId };
   // }),
-  editTextValue: (nodeId, newValue) =>
-    set((state) => {
-      const { nodes } = editTextValue(nodeId, newValue, state.nodes);
-      return { nodes };
-    }),
-  editExpressionValue: (nodeId, newValue) =>
-    set((state) => {
-      const { nodes, newNode } = editMathValue(
+  editTextValue: (nodeId, newValue) => {
+    const { nodes } = editNodeValue(
+      nodeId,
+      newValue,
+      get().nodes,
+      get().idCounter
+    );
+    return { nodes };
+  },
+  editExpressionValue: async (nodeId, newValue) => {
+    const { newNode, nodes } = editNodeValue(
+      nodeId,
+      newValue,
+      get().nodes,
+      get().idCounter
+    );
+
+    if (newNode) {
+      const newValues = await calculateNode(newNode, get().values);
+      set({ values: newValues });
+    }
+
+    set({ nodes });
+  },
+  showResultFor: (nodeId) => {
+    const { nodes, idCounter, newNode } = showHideResult(
+      true,
+      nodeId,
+      get().nodes,
+      get().idCounter
+    );
+
+    if (newNode) {
+      const { edges, edgeCounter } = connectNodes(
         nodeId,
-        newValue,
-        [...state.nodes],
-        "expression"
-      );
-      // if (newNode) {
-      //   invoke("evaluate_expression", { expr: newValue }).then((res) => {
-      //     const calcRes = res as RustCalculations;
-      //     console.log(calcRes);
-      //   });
-      // }
-      return { nodes };
-    }),
-  showResultFor: (nodeId) =>
-    set((state) => {
-      const { nodes, idCounter, newNode } = showHideResult(
-        true,
-        nodeId,
-        [...state.nodes],
-        state.idCounter
+        newNode.id,
+        get().edges,
+        get().edgeCounter
       );
 
-      if (newNode) {
-        const { edges, edgeCounter } = connectNodes(
-          nodeId,
-          newNode.id,
-          [...state.edges],
-          state.edgeCounter
-        );
-        return { nodes, idCounter, edges, edgeCounter };
-      }
-
-      return { nodes, idCounter };
-    }),
+      set({ nodes, idCounter, edges, edgeCounter, activeNodeId: null });
+    }
+  },
   hideResultFor: (nodeId) =>
     set((state) => {
       const { nodes } = showHideResult(
@@ -167,10 +173,10 @@ const useContent = create<ContentStore>()((set, get) => ({
     const newEdges = addEdge(newEdge, get().edges);
     set({ edges: newEdges, edgeCounter: id });
   },
-  setVariable: (varKey, newValue) =>
+  setValue: (valKey, newValue) =>
     set((state) => {
       //#TODO: Fix floats
-      return { vars: { ...state.vars, [varKey]: newValue } };
+      return { values: { ...state.values, [valKey]: newValue } };
     }),
 }));
 

@@ -23,7 +23,6 @@ const App = () => {
   // #TODO: preventDefault Handler (e.g. for Ctrl+A)
 
   const keyDownHandler = (e: KeyboardEvent) => {
-    console.log(e.key);
     switch (e.key) {
       case "Escape": {
         setMode("edit");

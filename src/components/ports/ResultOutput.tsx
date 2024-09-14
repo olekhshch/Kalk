@@ -11,7 +11,8 @@ const ResultOutput = ({ nodeId, isShown }: props) => {
   const { showResultFor, hideResultFor } = useContent();
 
   const clickHandler = (e: React.MouseEvent) => {
-    // e.stopPropagation();
+    e.stopPropagation();
+    console.log("result click");
     isShown ? hideResultFor(nodeId) : showResultFor(nodeId);
   };
 

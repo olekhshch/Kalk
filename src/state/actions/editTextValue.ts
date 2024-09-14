@@ -13,7 +13,7 @@ const editTextValue: f = (nodeId, newValue, nodes) => {
     if (node.type === "text-single" && node.id === nodeId) {
       const editedNode = {
         ...node,
-        data: { text: newValue },
+        data: { value: newValue },
       } as TextSingleNode;
       newNode = { ...editedNode };
       return editedNode;

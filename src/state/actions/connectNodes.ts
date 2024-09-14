@@ -1,4 +1,4 @@
-import { Edge } from "@xyflow/react";
+import { addEdge, Edge } from "@xyflow/react";
 import { EdgeActionOutput } from "../../types/system";
 
 type f = (
@@ -16,7 +16,7 @@ const connectNodes: f = (sourceId, targetId, edges, edgeCounter) => {
     target: targetId,
   };
 
-  return { newEdge, edges: [...edges, newEdge], edgeCounter: id };
+  return { newEdge, edges: addEdge(newEdge, edges), edgeCounter: id };
 };
 
 export default connectNodes;

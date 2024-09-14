@@ -5,9 +5,9 @@ export type NodeType = string &
 
 export type NodeCategory = "numbers" | "text";
 
-export type AppNode = TextSingleNode | ExpressionNode;
+export type AppNode = TextSingleNode | ExpressionNode | ResultNode;
 
-export type TextSingleNode = Node<{ text: string }, "text-single">;
+export type TextSingleNode = Node<{ value: string }, "text-single">;
 
 export type ExpressionNode = Node<
   { value: string; showResult: boolean },
@@ -18,4 +18,7 @@ export type CalculationsData = {
   res: number | null;
 };
 
-export type ResultNode = Node<{ sourceId: string }, "result">;
+export type ResultNode = Node<
+  { sourceId: string; value: string },
+  "result-number"
+>;

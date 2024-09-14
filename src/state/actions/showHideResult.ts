@@ -11,7 +11,7 @@ type f = (
 const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
   const sourceNode = nodes.find((node) => node.id === sourceNodeId);
 
-  if (!sourceNode || sourceNode.category !== "numbers") {
+  if (!sourceNode) {
     return { newNode: null, nodes, idCounter };
   }
 
@@ -30,7 +30,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
       id: newId.toString(),
       position: { x: position.x + 40, y: position.y - 20 },
       type: "result-number",
-      data: { sourceNodeId },
+      data: { sourceId: sourceNodeId, value: "" },
     };
 
     const newNodes = nodes.map((node) => {
@@ -55,20 +55,29 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
   if (!show) {
     let alteredNode: ExpressionNode | null = null;
 
-    const newNodes = nodes
-      .filter((node) => (node as ResultNode).data.sourceNodeId !== sourceNodeId)
-      .map((node) => {
-        if (node.id === sourceNodeId && node.category === "numbers") {
-          const newNode: ExpressionNode = {
-            ...(node as ExpressionNode),
-            data: { ...(node as ExpressionNode).data, showResult: false },
-          };
-          alteredNode = newNode;
+    const newNodes = nodes.reduce((acc, node) => {
+      if (
+        node.type === "result-number" &&
+        node.data.sourceId === sourceNodeId
+      ) {
+        return acc;
+      }
 
-          return newNode;
-        }
-        return node;
-      });
+      if (node.id === sourceNodeId) {
+        const targetNode = node as ExpressionNode;
+        const newNode: ExpressionNode = {
+          ...targetNode,
+          data: { ...targetNode.data, showResult: false },
+        };
+        alteredNode = newNode;
+        acc.push(newNode);
+        return acc;
+      }
+
+      acc.push(node);
+
+      return acc;
+    }, [] as AppNode[]);
 
     return { newNode: alteredNode, nodes: newNodes, idCounter };
   }

@@ -49,9 +49,13 @@ export interface MathStore {
 }
 
 export interface VariablesStore {
-  vars: { [key: string]: number | null };
-  setVariable: (varKey: string, newValue: number | null) => void;
+  values: CalculatedValues;
+  setValue: (varKey: string, newValue: number | null) => void;
 }
+
+export type CalculatedValues = {
+  [id: string]: number | null;
+};
 
 type NodeActionParams = {
   nodes: AppNode[];

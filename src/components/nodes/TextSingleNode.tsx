@@ -27,7 +27,7 @@ type Selector = {
 };
 
 const TextSingleNode = ({
-  data: { text },
+  data: { value },
   id,
 }: NodeProps<TextSingle & AppNode>) => {
   const { isActive, activateNode, editTextValue } = useContent(
@@ -38,7 +38,7 @@ const TextSingleNode = ({
     }))
   );
 
-  const [currentText, onChange] = useInputChange({ initialValue: text });
+  const [currentText, onChange] = useInputChange({ initialValue: value });
 
   // div refference to calculate width of the input
   const divRef = useRef<HTMLSpanElement>(null);
@@ -46,7 +46,7 @@ const TextSingleNode = ({
   const { zoom } = useViewport();
 
   useEffect(() => {
-    if (!isActive && currentText !== text) {
+    if (!isActive && currentText !== value) {
       editTextValue(currentText);
     }
   }, [isActive]);
