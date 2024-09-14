@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import useAppState from "../../state/useAppState";
 import Button from "../../components/Button";
 import ScaleDialog from "./ScaleMenu";

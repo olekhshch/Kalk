@@ -1,10 +1,4 @@
-import {
-  addEdge,
-  applyNodeChanges,
-  Edge,
-  Node,
-  reconnectEdge,
-} from "@xyflow/react";
+import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AdditionNode,
@@ -12,17 +6,13 @@ import {
   ExpressionNode,
   InputLabel,
   MathNode,
-  ResultNode,
   SubstractionNode,
   TextSingleNode,
 } from "../types/nodes";
 import { ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
-import editTextValue from "./actions/editTextValue";
-import createExpressionNode from "./actions/createExpressionNode";
-import editMathValue from "./actions/editMathValue";
-import showHideResult from "./actions/showHideResult";
-import connectNodes from "./actions/connectNodes";
+import showHideResult from "../utils/showHideResult";
+import connectNodes from "../utils/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculateNode";
 import getById from "../utils/getById";
@@ -241,7 +231,7 @@ const useContent = create<ContentStore>()((set, get) => ({
     if (target === source) return;
 
     // checking if value of the source = value of the target input
-    const [sourceLabel, sourceValue] = sourceHandle.split("-");
+    const [, sourceValue] = sourceHandle.split("-");
     const [targetLabel, targetValue] = targetHandle.split("-");
 
     if (sourceValue !== targetValue) return;

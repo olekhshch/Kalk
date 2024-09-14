@@ -16,7 +16,8 @@ export type ActionType = "select-all" | "clear-all";
 
 export type Mode =
   | "edit" // regular mode
-  | "create"; // when click on canvas specifies position of new node
+  | "create" // when click on canvas specifies position of new node
+  | "calculation"; // blocks changes while recalculating nodes values
 
 export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 

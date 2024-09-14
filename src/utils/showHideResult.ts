@@ -1,5 +1,5 @@
-import { AppNode, ExpressionNode, ResultNode } from "../../types/nodes";
-import { NodeActionOutput } from "../../types/system";
+import { AppNode, ExpressionNode, ResultNode, MathNode } from "../types/nodes";
+import { NodeActionOutput } from "../types/system";
 
 type f = (
   show: boolean,
@@ -18,17 +18,22 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
   const {
     position,
     data: { showResult },
-  } = sourceNode as ExpressionNode;
-
+    measured,
+  } = sourceNode as MathNode;
   // SHOW
 
   if (show && !showResult) {
     const newId = idCounter + 1;
+    const distanceX = !measured
+      ? 60
+      : measured.width
+      ? measured.width + 40
+      : 60;
 
     //#TODO: Add async to create result node and alter nodes array?
     const resultNode: ResultNode = {
       id: newId.toString(),
-      position: { x: position.x + 40, y: position.y - 20 },
+      position: { x: position.x + distanceX, y: position.y - 40 },
       type: "result-number",
       data: { sourceId: sourceNodeId, value: "" },
     };
@@ -38,7 +43,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
         return {
           ...node,
           data: { ...node.data, showResult: true },
-        } as ExpressionNode;
+        } as MathNode;
       }
       return node;
     });
@@ -53,7 +58,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
   // HIDE
 
   if (!show) {
-    let alteredNode: ExpressionNode | null = null;
+    let alteredNode: MathNode | null = null;
 
     const newNodes = nodes.reduce((acc, node) => {
       if (
