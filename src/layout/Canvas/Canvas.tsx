@@ -1,23 +1,10 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useRef } from "react";
 import {
-  applyNodeChanges,
   Background,
-  BackgroundVariant,
-  Connection,
   MiniMap,
-  NodeChange,
   Panel,
   ReactFlow,
-  useNodesData,
-  useNodesState,
   useReactFlow,
-  useViewport,
 } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
@@ -27,17 +14,8 @@ import { useShallow } from "zustand/react/shallow";
 import { NodeType } from "../../types/nodes";
 
 const Canvas = () => {
-  const {
-    nodes,
-    edges,
-    setNodes,
-    activeNodeId,
-    activateNode,
-    highlightedNodesId,
-    onNodesChange,
-    connectNodes,
-    addNode,
-  } = useContent(useShallow((store) => store));
+  const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
+    useContent(useShallow((store) => store));
 
   const { mode, setMode } = useAppState(
     useShallow((store) => ({ mode: store.mode, setMode: store.setMode }))

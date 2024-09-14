@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect } from "react";
 import useContent from "../../state/useContent";
-import FlowPort from "../ports/FlowPort";
-import { Position } from "@xyflow/react";
 
 type props = {
   children: JSX.Element;
@@ -46,6 +44,7 @@ const NodeWrapper = ({ children, title, id }: props) => {
           </article>
         )}
         {children}
+        {/* <span className="absolute">{id}</span> */}
       </div>
     </>
   );

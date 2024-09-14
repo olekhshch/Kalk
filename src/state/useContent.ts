@@ -1,4 +1,4 @@
-import { addEdge, applyNodeChanges, Edge, Node } from "@xyflow/react";
+import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AdditionNode,
@@ -6,21 +6,21 @@ import {
   ExpressionNode,
   InputLabel,
   MathNode,
-  ResultNode,
   SubstractionNode,
   TextSingleNode,
 } from "../types/nodes";
 import { ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
-import editTextValue from "./actions/editTextValue";
-import createExpressionNode from "./actions/createExpressionNode";
-import editMathValue from "./actions/editMathValue";
-import showHideResult from "./actions/showHideResult";
-import connectNodes from "./actions/connectNodes";
+import showHideResult from "../utils/showHideResult";
+import connectNodes from "../utils/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculateNode";
 import getById from "../utils/getById";
 import replaceNode from "../utils/replaseNode";
+import getChain from "../utils/getChainIdsFrom";
+import recalculateChain from "../utils/recalculateChain";
+import getChainIdsFrom from "../utils/getChainIdsFrom";
+import getChainIdsTo from "../utils/getChainIdsTo";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -178,7 +178,12 @@ const useContent = create<ContentStore>()((set, get) => ({
     );
 
     if (newNode) {
-      const newValues = await calculateNode(newNode, get().values);
+      const newVals = await calculateNode(newNode, get().values);
+
+      // getting chain of next connected nodes to recalculate their values
+      const chain = getChain(newNode, get().edges);
+      const newValues = recalculateChain(chain, nodes, newVals);
+
       set({ values: newValues });
     }
 
@@ -222,8 +227,11 @@ const useContent = create<ContentStore>()((set, get) => ({
     // checking if target is not a result node
     if (targetHandle === "R") return;
 
+    // checking if not connecting to the same node
+    if (target === source) return;
+
     // checking if value of the source = value of the target input
-    const [sourceLabel, sourceValue] = sourceHandle.split("-");
+    const [, sourceValue] = sourceHandle.split("-");
     const [targetLabel, targetValue] = targetHandle.split("-");
 
     if (sourceValue !== targetValue) return;
@@ -235,19 +243,40 @@ const useContent = create<ContentStore>()((set, get) => ({
       getById(get().nodes, target)[0],
     ])) as [MathNode, MathNode];
 
+    // checking if not connecting into loop
+    const chainTo = getChainIdsTo(nodeA, get().edges);
+    if (chainTo.includes(target)) {
+      //#TODO: Warning for user
+      console.log("Chain includes target LOOP");
+      console.log({ chainTo, target });
+      return;
+    }
+
     const id = get().edgeCounter + 1;
     const newEdge: Edge = {
       id: id.toString(),
       ...connection,
     };
-    const newEdges = addEdge(newEdge, get().edges);
+
+    // checking if input is connected to other node - if true then replases the edge
+    const existingEdge = get().edges.find(
+      (edge) => edge.target === target && edge.targetHandle === targetHandle
+    );
+    const newEdges = !existingEdge
+      ? addEdge(newEdge, get().edges)
+      : reconnectEdge(existingEdge, connection, get().edges);
 
     nodeB.data.inputs[targetLabel as InputLabel].sourceId = source;
+    const newNodes = replaceNode(nodeB, get().nodes);
 
-    const [newValues, newNodes] = await Promise.all([
-      calculateNode(nodeB, get().values),
-      replaceNode(nodeB, get().nodes),
-    ]);
+    // recalculates chain
+    const chain = getChainIdsFrom(nodeB, newEdges);
+    const newValues = recalculateChain(chain, newNodes, get().values);
+
+    // const [newValues, newNodes] = await Promise.all([
+    //   calculateNode(nodeB, get().values),
+    //   replaceNode(nodeB, get().nodes),
+    // ]);
 
     set({
       edges: newEdges,

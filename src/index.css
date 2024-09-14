@@ -47,7 +47,7 @@ svg {
 
 @font-face {
     font-family: 'Latin Modern Math';
-    src: url("../public/latinmodern-math.otf");
+    src: url("./assets/fonts/latinmodern-math.otf");
 }
 
 .latin-math {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./index.css";
 import BottomPanel from "./layout/BottomPanel/BottomPanel";
 import Canvas from "./layout/Canvas/Canvas";
