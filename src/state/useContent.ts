@@ -1,6 +1,7 @@
 import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
+  AbsoluteNode,
   AdditionNode,
   AppNode,
   ExpressionNode,
@@ -104,6 +105,27 @@ const useContent = create<ContentStore>()((set, get) => ({
           },
         };
 
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        break;
+      }
+      case "abs": {
+        const newNode: AbsoluteNode = {
+          id: id.toString(),
+          type: "abs",
+          position,
+          data: {
+            showResult: false,
+            inputs: {
+              a: {
+                sourceId: null,
+                type: "number",
+              },
+            },
+            outputs: {
+              N: "number",
+            },
+          },
+        };
         set({ nodes: [...get().nodes, newNode], idCounter: id });
       }
     }
@@ -220,7 +242,7 @@ const useContent = create<ContentStore>()((set, get) => ({
     }),
   connectNodes: async (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
-
+    console.log({ connection });
     // checking if handle labels specified
     if (!sourceHandle || !targetHandle) return;
 

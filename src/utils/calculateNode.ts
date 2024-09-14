@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import {
+  AbsoluteNode,
   AdditionNode,
   AppNode,
   ExpressionNode,
@@ -66,11 +67,27 @@ const calculateNode: f = async (node, values) => {
 
       return newValues;
     }
+    case "abs": {
+      const { sourceId } = (node as AbsoluteNode).data.inputs.a;
+
+      if (!sourceId) return values;
+
+      const valueA = values[sourceId];
+
+      if (isInvalidValue(valueA)) return values;
+      const res = Math.abs(valueA!);
+      newValues[node.id] = res;
+      return newValues;
+    }
     default: {
       console.log("No calculation for " + node.type);
       return values;
     }
   }
 };
+
+function isInvalidValue(value: number | null) {
+  return !value && value !== 0;
+}
 
 export default calculateNode;

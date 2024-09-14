@@ -4,6 +4,7 @@ import ResultNode from "../components/nodes/ResultNode";
 import { NodeTypes } from "@xyflow/react";
 import AddNode from "../components/nodes/AddNode";
 import SubstractNode from "../components/nodes/SubstractNode";
+import AbsNode from "../components/nodes/AbsNode";
 
 const nodeTypes: NodeTypes = {
   "text-single": TextSingleNode,
@@ -11,6 +12,7 @@ const nodeTypes: NodeTypes = {
   "result-number": ResultNode,
   add: AddNode,
   substract: SubstractNode,
+  abs: AbsNode,
 };
 
 export default nodeTypes;

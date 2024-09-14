@@ -1,11 +1,22 @@
 import { Node } from "@xyflow/react";
 
 export type NodeType = string &
-  ("text-single" | "expression" | "result-number" | "add" | "substract");
+  (
+    | "text-single"
+    | "expression"
+    | "result-number"
+    | "add"
+    | "substract"
+    | "abs"
+  );
 
 export type ValueType = "number" | "text";
 
-export type MathNode = ExpressionNode | AdditionNode | SubstractionNode;
+export type MathNode =
+  | ExpressionNode
+  | AdditionNode
+  | SubstractionNode
+  | AbsoluteNode;
 export type AppNode = TextSingleNode | ResultNode | MathNode;
 
 export type TextSingleNode = Node<{ value: string }, "text-single">;
@@ -55,6 +66,19 @@ export type SubstractionNode = Node<
     };
   },
   "substract"
+>;
+
+export type AbsoluteNode = Node<
+  {
+    showResult: boolean;
+    inputs: {
+      a: Input;
+    };
+    outputs: {
+      N: ValueType;
+    };
+  },
+  "abs"
 >;
 
 export type InputLabel = "a" | "b";

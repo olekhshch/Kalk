@@ -44,6 +44,14 @@ const actions: Actions = {
         type: "create",
       },
     },
+    {
+      title: "Absolute",
+      icon: "abs",
+      command: {
+        type: "create",
+        data: "abs",
+      },
+    },
   ],
   Matrices: [
     {
