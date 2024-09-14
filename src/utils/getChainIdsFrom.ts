@@ -1,11 +1,11 @@
-// returns array of nodes connected in the same chain
+// returns array of nodes connected in the same chain (from outputs to inputs)
 
 import { Edge } from "@xyflow/react";
 import { AppNode } from "../types/nodes";
 
-type f = (startingNode: AppNode, nodes: AppNode[], edges: Edge[]) => string[];
+type f = (startingNode: AppNode, edges: Edge[]) => string[];
 
-const getChainIds: f = (startingNode, nodes, edges) => {
+const getChainIdsFrom: f = (startingNode, edges) => {
   const nodeIds: string[] = [startingNode.id];
 
   const getTargets = (nodeId: string) => {
@@ -43,4 +43,4 @@ const getChainIds: f = (startingNode, nodes, edges) => {
   return uniqueNodeIds.reverse();
 };
 
-export default getChainIds;
+export default getChainIdsFrom;
