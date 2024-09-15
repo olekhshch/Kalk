@@ -4,6 +4,7 @@ import {
   AdditionNode,
   AppNode,
   ExpressionNode,
+  NumberFunctionParams,
   SubstractionNode,
 } from "../types/nodes";
 import { CalculatedValues, RustCalculations } from "../types/system";
@@ -76,6 +77,37 @@ const calculateNode: f = async (node, values) => {
 
       if (isInvalidValue(valueA)) return values;
       const res = Math.abs(valueA!);
+      newValues[node.id] = res;
+      return newValues;
+    }
+    case "num-fun": {
+      const inputEntries = Object.entries(node.data.inputs);
+      let allSourcesGiven = true;
+
+      const sourceIds = inputEntries.map(([key, { sourceId }]) => {
+        if (!sourceId) {
+          allSourcesGiven = false;
+        }
+        return [key, sourceId as string];
+      });
+
+      if (!allSourcesGiven) return values;
+      let allValuesGiven = true;
+
+      const params = sourceIds.reduce((acc, [key, id]) => {
+        const val = values[id];
+        if (!val && val !== 0) {
+          allSourcesGiven = false;
+          acc[key] = 0;
+          return acc;
+        }
+        acc[key] = val;
+        return acc;
+      }, {} as NumberFunctionParams);
+
+      if (!allValuesGiven) return values;
+
+      const res = node.data.action(params);
       newValues[node.id] = res;
       return newValues;
     }

@@ -1,22 +1,24 @@
 import { Node } from "@xyflow/react";
 
-export type NodeType = string &
-  (
-    | "text-single"
-    | "expression"
-    | "result-number"
-    | "add"
-    | "substract"
-    | "abs"
-  );
+export type NodeType =
+  | "text-single"
+  | "expression"
+  | "result-number"
+  | "add"
+  | "substract"
+  | "abs"
+  | "multiply";
 
 export type ValueType = "number" | "text";
 
 export type MathNode =
   | ExpressionNode
-  | AdditionNode
-  | SubstractionNode
-  | AbsoluteNode;
+  // | AdditionNode
+  // | SubstractionNode
+  // | AbsoluteNode
+  // | MultiplyNode
+  | NumberFunctionNode;
+
 export type AppNode = TextSingleNode | ResultNode | MathNode;
 
 export type TextSingleNode = Node<{ value: string }, "text-single">;
@@ -81,6 +83,39 @@ export type AbsoluteNode = Node<
   "abs"
 >;
 
+export type MultiplyNode = Node<
+  {
+    showResult: boolean;
+    inputs: {
+      a: Input;
+      b: Input;
+    };
+    outputs: {
+      N: ValueType;
+    };
+  },
+  "multiply"
+>;
+
+// general type for nodes with regular functions on numbers (e.g. adding, multiplying etc.)
+export type NumberFunctionNode = Node<
+  {
+    label: string;
+    showResult: boolean;
+    inputs: {
+      [k: string]: Input;
+    };
+    outputs: {
+      N: ValueType;
+    };
+    action: (vals: NumberFunctionParams) => number;
+  },
+  "num-fun"
+>;
+
+export type NumberFunctionParams = {
+  [k: string]: number;
+};
 export type InputLabel = "a" | "b";
 
 export type Input = {

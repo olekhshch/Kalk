@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import NodeWrapper from "./NodeWrapper";
 import { ExpressionNode as Expression } from "../../types/nodes";
 import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
 import { NodeProps, useViewport } from "@xyflow/react";
-import { invoke } from "@tauri-apps/api/core";
-import { RustCalculations } from "../../types/system";
 import Output from "../ports/Output";
 import { expressionInputValues } from "../../utils/expressionInputValues";
 import { useShallow } from "zustand/react/shallow";

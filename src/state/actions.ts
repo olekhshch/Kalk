@@ -35,6 +35,7 @@ const actions: Actions = {
       icon: "multiply",
       command: {
         type: "create",
+        data: "multiply",
       },
     },
     {

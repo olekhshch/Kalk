@@ -1,13 +1,10 @@
 import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
-  AbsoluteNode,
-  AdditionNode,
   AppNode,
   ExpressionNode,
-  InputLabel,
   MathNode,
-  SubstractionNode,
+  NumberFunctionNode,
   TextSingleNode,
 } from "../types/nodes";
 import { ContentStore } from "../types/system";
@@ -70,11 +67,12 @@ const useContent = create<ContentStore>()((set, get) => ({
         break;
       }
       case "add": {
-        const newNode: AdditionNode = {
+        const newNode: NumberFunctionNode = {
           id: id.toString(),
           position,
-          type: "add",
+          type: "num-fun",
           data: {
+            label: "a+b",
             showResult: false,
             inputs: {
               a: { sourceId: null, type: "number" },
@@ -83,17 +81,19 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: {
               N: "number",
             },
+            action: ({ a, b }) => a + b,
           },
         };
         set({ nodes: [...get().nodes, newNode], idCounter: id });
         break;
       }
       case "substract": {
-        const newNode: SubstractionNode = {
+        const newNode: NumberFunctionNode = {
           id: id.toString(),
-          type: "substract",
+          type: "num-fun",
           position,
           data: {
+            label: "a-b",
             showResult: false,
             inputs: {
               a: { sourceId: null, type: "number" },
@@ -102,6 +102,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: {
               N: "number",
             },
+            action: ({ a, b }) => a - b,
           },
         };
 
@@ -109,11 +110,12 @@ const useContent = create<ContentStore>()((set, get) => ({
         break;
       }
       case "abs": {
-        const newNode: AbsoluteNode = {
+        const newNode: NumberFunctionNode = {
           id: id.toString(),
-          type: "abs",
+          type: "num-fun",
           position,
           data: {
+            label: "|a|",
             showResult: false,
             inputs: {
               a: {
@@ -124,9 +126,37 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: {
               N: "number",
             },
+            action: ({ a }) => Math.abs(a),
           },
         };
         set({ nodes: [...get().nodes, newNode], idCounter: id });
+        break;
+      }
+      case "multiply": {
+        const newNode: NumberFunctionNode = {
+          id: id.toString(),
+          position,
+          type: "num-fun",
+          data: {
+            label: "a*b",
+            showResult: false,
+            inputs: {
+              a: {
+                sourceId: null,
+                type: "number",
+              },
+              b: {
+                sourceId: null,
+                type: "number",
+              },
+            },
+            outputs: {
+              N: "number",
+            },
+            action: ({ a, b }) => a * b,
+          },
+        };
+        return set({ nodes: [...get().nodes, newNode], idCounter: id });
       }
     }
   },
@@ -288,7 +318,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       ? addEdge(newEdge, get().edges)
       : reconnectEdge(existingEdge, connection, get().edges);
 
-    nodeB.data.inputs[targetLabel as InputLabel].sourceId = source;
+    nodeB.data.inputs[targetLabel].sourceId = source;
     const newNodes = replaceNode(nodeB, get().nodes);
 
     // recalculates chain
