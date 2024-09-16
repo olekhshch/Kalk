@@ -4,10 +4,9 @@ import {
   AppNode,
   ExpressionNode,
   MathNode,
-  NumberFunctionNode,
   TextSingleNode,
 } from "../types/nodes";
-import { ContentStore } from "../types/system";
+import { AngleFormat, ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
 import showHideResult from "../utils/showHideResult";
 import connectNodes from "../utils/connectNodes";
@@ -19,6 +18,7 @@ import getChain from "../utils/getChainIdsFrom";
 import recalculateChain from "../utils/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
+import nodeFunctionContructor from "../utils/nodeConstructor";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -28,6 +28,13 @@ const useContent = create<ContentStore>()((set, get) => ({
   highlightedNodesId: [],
   activeNodeId: null,
   values: {},
+  anglesFormat: AngleFormat.RAD,
+  setAnglesFormat: (newFormat) => {
+    if (newFormat !== get().anglesFormat) {
+      set({ anglesFormat: newFormat });
+      // #TODO Recalculations after change
+    }
+  },
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
@@ -66,97 +73,17 @@ const useContent = create<ContentStore>()((set, get) => ({
         });
         break;
       }
-      case "add": {
-        const newNode: NumberFunctionNode = {
-          id: id.toString(),
+      default: {
+        const newNode = nodeFunctionContructor(
+          nodeType,
           position,
-          type: "num-fun",
-          data: {
-            label: "a+b",
-            showResult: false,
-            inputs: {
-              a: { sourceId: null, type: "number" },
-              b: { sourceId: null, type: "number" },
-            },
-            outputs: {
-              N: "number",
-            },
-            action: ({ a, b }) => a + b,
-          },
-        };
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
-        break;
-      }
-      case "substract": {
-        const newNode: NumberFunctionNode = {
-          id: id.toString(),
-          type: "num-fun",
-          position,
-          data: {
-            label: "a-b",
-            showResult: false,
-            inputs: {
-              a: { sourceId: null, type: "number" },
-              b: { sourceId: null, type: "number" },
-            },
-            outputs: {
-              N: "number",
-            },
-            action: ({ a, b }) => a - b,
-          },
-        };
+          get().idCounter
+        );
 
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
-        break;
-      }
-      case "abs": {
-        const newNode: NumberFunctionNode = {
-          id: id.toString(),
-          type: "num-fun",
-          position,
-          data: {
-            label: "|a|",
-            showResult: false,
-            inputs: {
-              a: {
-                sourceId: null,
-                type: "number",
-              },
-            },
-            outputs: {
-              N: "number",
-            },
-            action: ({ a }) => Math.abs(a),
-          },
-        };
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
-        break;
-      }
-      case "multiply": {
-        const newNode: NumberFunctionNode = {
-          id: id.toString(),
-          position,
-          type: "num-fun",
-          data: {
-            label: "a*b",
-            showResult: false,
-            inputs: {
-              a: {
-                sourceId: null,
-                type: "number",
-              },
-              b: {
-                sourceId: null,
-                type: "number",
-              },
-            },
-            outputs: {
-              N: "number",
-            },
-            action: ({ a, b }) => a * b,
-          },
-        };
-        return set({ nodes: [...get().nodes, newNode], idCounter: id });
+        if (newNode) {
+          console.log({ newNode });
+          set({ nodes: [...get().nodes, newNode], idCounter: id });
+        }
       }
     }
   },
@@ -230,11 +157,20 @@ const useContent = create<ContentStore>()((set, get) => ({
     );
 
     if (newNode) {
-      const newVals = await calculateNode(newNode, get().values);
+      const newVals = await calculateNode(
+        newNode,
+        get().values,
+        get().anglesFormat
+      );
 
       // getting chain of next connected nodes to recalculate their values
       const chain = getChain(newNode, get().edges);
-      const newValues = recalculateChain(chain, nodes, newVals);
+      const newValues = recalculateChain(
+        chain,
+        nodes,
+        newVals,
+        get().anglesFormat
+      );
 
       set({ values: newValues });
     }
@@ -272,7 +208,6 @@ const useContent = create<ContentStore>()((set, get) => ({
     }),
   connectNodes: async (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
-    console.log({ connection });
     // checking if handle labels specified
     if (!sourceHandle || !targetHandle) return;
 
@@ -287,8 +222,6 @@ const useContent = create<ContentStore>()((set, get) => ({
     const [targetLabel, targetValue] = targetHandle.split("-");
 
     if (sourceValue !== targetValue) return;
-
-    console.log("1. Source and target values are matching");
 
     const [nodeA, nodeB] = (await Promise.all([
       getById(get().nodes, source)[0],
@@ -319,16 +252,17 @@ const useContent = create<ContentStore>()((set, get) => ({
       : reconnectEdge(existingEdge, connection, get().edges);
 
     nodeB.data.inputs[targetLabel].sourceId = source;
+
     const newNodes = replaceNode(nodeB, get().nodes);
 
     // recalculates chain
     const chain = getChainIdsFrom(nodeB, newEdges);
-    const newValues = recalculateChain(chain, newNodes, get().values);
-
-    // const [newValues, newNodes] = await Promise.all([
-    //   calculateNode(nodeB, get().values),
-    //   replaceNode(nodeB, get().nodes),
-    // ]);
+    const newValues = recalculateChain(
+      chain,
+      newNodes,
+      get().values,
+      get().anglesFormat
+    );
 
     set({
       edges: newEdges,

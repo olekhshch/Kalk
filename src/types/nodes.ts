@@ -7,7 +7,10 @@ export type NodeType =
   | "add"
   | "substract"
   | "abs"
-  | "multiply";
+  | "multiply"
+  | "divide"
+  | "sin"
+  | "cos";
 
 export type ValueType = "number" | "text";
 
@@ -109,6 +112,7 @@ export type NumberFunctionNode = Node<
       N: ValueType;
     };
     action: (vals: NumberFunctionParams) => number;
+    trigonometry?: boolean;
   },
   "num-fun"
 >;

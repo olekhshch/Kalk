@@ -42,6 +42,8 @@ export interface TextStore {
 }
 
 export interface MathStore {
+  anglesFormat: AngleFormat;
+  setAnglesFormat: (a: AngleFormat) => void;
   editExpressionValue: (nodeId: string, newValue: string) => void;
   showResultFor: (nodeId: string) => void;
   hideResultFor: (nodeId: string) => void;
@@ -87,3 +89,8 @@ export type RustCalculations = {
   res: string;
   msg: string;
 };
+
+export enum AngleFormat {
+  RAD = "RAD",
+  DEG = "DEG",
+}

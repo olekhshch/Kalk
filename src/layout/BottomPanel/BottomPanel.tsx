@@ -4,6 +4,9 @@ import Button from "../../components/Button";
 import ScaleDialog from "./ScaleMenu";
 import { BackgroundVariant, useViewport } from "@xyflow/react";
 import ButtonMode from "../../components/ButtonMode";
+import useContent from "../../state/useContent";
+import { useShallow } from "zustand/react/shallow";
+import { AngleFormat } from "../../types/system";
 
 const BottomPanel = () => {
   const {
@@ -15,11 +18,24 @@ const BottomPanel = () => {
     mode,
   } = useAppState();
 
-  const { zoom } = useViewport();
+  const { anglesFormat, toggleAngleFormat } = useContent(
+    useShallow((store) => ({
+      anglesFormat: store.anglesFormat,
+      toggleAngleFormat: (oldFormat: AngleFormat) => {
+        switch (oldFormat) {
+          case AngleFormat.DEG: {
+            store.setAnglesFormat(AngleFormat.RAD);
+            break;
+          }
+          default: {
+            store.setAnglesFormat(AngleFormat.DEG);
+          }
+        }
+      },
+    }))
+  );
 
-  // const vpScale = useMemo(() => {
-  //   return `${(z)}`
-  // },[zoom])
+  const { zoom } = useViewport();
 
   const toggleScaleDialog = () => {
     show_scale_menu ? hideScaleMenu() : openScaleMenu();
@@ -74,9 +90,17 @@ const BottomPanel = () => {
           showIcon
         />
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 grow">
         <span>{mode.current}</span>
         <span>{tipText}</span>
+      </div>
+      <div>
+        <Button
+          title={anglesFormat}
+          hoverStyle="sec"
+          showIcon={false}
+          onClick={() => toggleAngleFormat(anglesFormat)}
+        />
       </div>
     </div>
   );

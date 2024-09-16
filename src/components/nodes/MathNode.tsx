@@ -1,17 +1,17 @@
 // General number operations node
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { Input, NumberFunctionNode } from "../../types/nodes";
+import { NumberFunctionNode } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
 import generateHandleLabel from "../../utils/generateHandleLabel";
-import { useShallow } from "zustand/react/shallow";
 import InputPort from "../ports/Input";
 import Output from "../ports/Output";
+import ResultOutput from "../ports/ResultOutput";
 
 const MathNode = ({
   id,
-  data: { label, inputs, outputs },
+  data: { label, inputs, outputs, showResult },
 }: NodeProps<NumberFunctionNode>) => {
   // #TODO: Shallow check for input keys to avoid rerenders?
 
@@ -37,16 +37,18 @@ const MathNode = ({
     return entries.map(([key, outputType], idx) => {
       const handleLabel = generateHandleLabel(key, outputType);
       const cssPosition = `${step * (1 + idx)}%`;
-      return { handleLabel, cssPosition };
+      return { handleLabel, cssPosition, key };
     });
   }, []);
 
   return (
     <NodeWrapper id={id}>
       <div>
+        <ResultOutput nodeId={id} isShown={showResult} />
         {inputsArray.map(({ cssPosition, handleLabel, key }) => {
           return (
             <InputPort
+              key={key}
               id={handleLabel}
               label={key}
               cssPosition={cssPosition}
@@ -54,9 +56,11 @@ const MathNode = ({
             />
           );
         })}
-        <div className="p-2 pl-4">{label}</div>
-        {outputsArray.map(({ cssPosition, handleLabel }) => {
-          return <Output id={handleLabel} cssPosition={cssPosition} />;
+        <div className="p-2 pl-4 italic font-bold">{label}</div>
+        {outputsArray.map(({ cssPosition, handleLabel, key }) => {
+          return (
+            <Output key={key} id={handleLabel} cssPosition={cssPosition} />
+          );
         })}
       </div>
     </NodeWrapper>

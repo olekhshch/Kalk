@@ -43,6 +43,7 @@ const actions: Actions = {
       icon: "divide",
       command: {
         type: "create",
+        data: "divide",
       },
     },
     {
@@ -51,6 +52,22 @@ const actions: Actions = {
       command: {
         type: "create",
         data: "abs",
+      },
+    },
+    {
+      title: "Sinus",
+      icon: "sin",
+      command: {
+        type: "create",
+        data: "sin",
+      },
+    },
+    {
+      title: "Cosinus",
+      icon: "cos",
+      command: {
+        type: "create",
+        data: "sin",
       },
     },
   ],

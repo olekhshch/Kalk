@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import actions from "../../state/actions";
 import useAppState from "../../state/useAppState";
 import { Action } from "../../types/system";
 import Button from "../../components/Button";
-import useContent from "../../state/useContent";
 
 const ActionsPanel = () => {
   const { active_tab, setMode } = useAppState();

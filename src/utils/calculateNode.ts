@@ -7,14 +7,19 @@ import {
   NumberFunctionParams,
   SubstractionNode,
 } from "../types/nodes";
-import { CalculatedValues, RustCalculations } from "../types/system";
+import {
+  AngleFormat,
+  CalculatedValues,
+  RustCalculations,
+} from "../types/system";
 
 type f = (
   node: AppNode,
-  values: { [id: string]: number | null }
+  values: { [id: string]: number | null },
+  angleFormat: AngleFormat
 ) => Promise<CalculatedValues>;
 
-const calculateNode: f = async (node, values) => {
+const calculateNode: f = async (node, values, angleFormat) => {
   const newValues = values;
   switch (node.type) {
     case "expression": {
@@ -34,52 +39,52 @@ const calculateNode: f = async (node, values) => {
       }
       return newValues;
     }
-    case "add": {
-      const { a, b } = (node as AdditionNode).data.inputs;
-      const sourceA_Id = a.sourceId;
-      const sourceB_Id = b.sourceId;
+    // case "add": {
+    //   const { a, b } = (node as AdditionNode).data.inputs;
+    //   const sourceA_Id = a.sourceId;
+    //   const sourceB_Id = b.sourceId;
 
-      // checking if sources are deffined
-      if (!sourceA_Id || !sourceB_Id) return values;
-      const valueA = values[sourceA_Id];
-      const valueB = values[sourceB_Id];
+    //   // checking if sources are deffined
+    //   if (!sourceA_Id || !sourceB_Id) return values;
+    //   const valueA = values[sourceA_Id];
+    //   const valueB = values[sourceB_Id];
 
-      if ((!valueA && valueA !== 0) || (!valueB && valueB !== 0)) return values;
+    //   if ((!valueA && valueA !== 0) || (!valueB && valueB !== 0)) return values;
 
-      const result = valueA + valueB;
-      newValues[node.id] = result;
+    //   const result = valueA + valueB;
+    //   newValues[node.id] = result;
 
-      return newValues;
-    }
-    case "substract": {
-      const { a, b } = (node as SubstractionNode).data.inputs;
-      const sourceA_Id = a.sourceId;
-      const sourceB_Id = b.sourceId;
+    //   return newValues;
+    // }
+    // case "substract": {
+    //   const { a, b } = (node as SubstractionNode).data.inputs;
+    //   const sourceA_Id = a.sourceId;
+    //   const sourceB_Id = b.sourceId;
 
-      // checking if sources are deffined
-      if (!sourceA_Id || !sourceB_Id) return values;
-      const valueA = values[sourceA_Id];
-      const valueB = values[sourceB_Id];
+    //   // checking if sources are deffined
+    //   if (!sourceA_Id || !sourceB_Id) return values;
+    //   const valueA = values[sourceA_Id];
+    //   const valueB = values[sourceB_Id];
 
-      if ((!valueA && valueA !== 0) || (!valueB && valueB !== 0)) return values;
+    //   if ((!valueA && valueA !== 0) || (!valueB && valueB !== 0)) return values;
 
-      const result = valueA - valueB;
-      newValues[node.id] = result;
+    //   const result = valueA - valueB;
+    //   newValues[node.id] = result;
 
-      return newValues;
-    }
-    case "abs": {
-      const { sourceId } = (node as AbsoluteNode).data.inputs.a;
+    //   return newValues;
+    // }
+    // case "abs": {
+    //   const { sourceId } = (node as AbsoluteNode).data.inputs.a;
 
-      if (!sourceId) return values;
+    //   if (!sourceId) return values;
 
-      const valueA = values[sourceId];
+    //   const valueA = values[sourceId];
 
-      if (isInvalidValue(valueA)) return values;
-      const res = Math.abs(valueA!);
-      newValues[node.id] = res;
-      return newValues;
-    }
+    //   if (isInvalidValue(valueA)) return values;
+    //   const res = Math.abs(valueA!);
+    //   newValues[node.id] = res;
+    //   return newValues;
+    // }
     case "num-fun": {
       const inputEntries = Object.entries(node.data.inputs);
       let allSourcesGiven = true;
@@ -95,11 +100,17 @@ const calculateNode: f = async (node, values) => {
       let allValuesGiven = true;
 
       const params = sourceIds.reduce((acc, [key, id]) => {
-        const val = values[id];
+        let val = values[id];
         if (!val && val !== 0) {
           allSourcesGiven = false;
           acc[key] = 0;
           return acc;
+        }
+        // convertation if trigonometric function and angle format = DEG
+        if (angleFormat === AngleFormat.DEG && node.data.trigonometry) {
+          val *= Math.PI / 180;
+          console.log(val);
+          console.log(Math.PI);
         }
         acc[key] = val;
         return acc;
