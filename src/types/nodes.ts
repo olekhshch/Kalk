@@ -14,7 +14,8 @@ export type NodeType =
   | "tg"
   | "ctg"
   | "to-rad"
-  | "to-deg";
+  | "to-deg"
+  | "power";
 
 export type ValueType = "number" | "text";
 

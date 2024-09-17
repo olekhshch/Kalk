@@ -1,5 +1,4 @@
-import { Handle, Node, NodeProps, Position, useViewport } from "@xyflow/react";
-import { useState } from "react";
+import { Node } from "@xyflow/react";
 import Output from "./ports/Output";
 
 // Node placeholder to show the location of the node that is about to be created

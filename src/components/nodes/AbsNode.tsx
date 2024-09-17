@@ -26,7 +26,7 @@ const AbsNode = ({ id, data }: NodeProps<AbsoluteNode>) => {
         <ResultOutput isShown={showResult} nodeId={id} />
         <InputPort cssPosition="50%" id={inputLabel} label="a" showLabel />
         <div className="p-2 pl-4">|a|</div>
-        <Output id={outputLabel} />
+        <Output id={outputLabel} cssPosition="50%" />
       </div>
     </NodeWrapper>
   );

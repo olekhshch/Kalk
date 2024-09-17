@@ -12,8 +12,7 @@ import nodeTypes from "../../state/nodeTypes";
 import edgeTypes from "../../state/edgeTypes";
 import { useShallow } from "zustand/react/shallow";
 import { NodeType } from "../../types/nodes";
-import UILayer from "../UI/UILayer";
-import NodePreview, { PreviewNode } from "../../components/NodePreview";
+import { PreviewNode } from "../../components/NodePreview";
 
 const Canvas = () => {
   const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
@@ -26,6 +25,8 @@ const Canvas = () => {
       minimap: store.minimap,
     }))
   );
+
+  const [shift, setShift] = useState(false);
 
   const vpRef = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
@@ -51,7 +52,7 @@ const Canvas = () => {
     setShowPreview(mode.current === "create");
   };
 
-  const mouseLeaveHandler = (e: React.MouseEvent) => {
+  const mouseLeaveHandler = () => {
     // hides preview when mouse leaves canvas
     setShowPreview(false);
   };
@@ -65,11 +66,15 @@ const Canvas = () => {
   const clickHandler = (e: React.MouseEvent) => {
     console.log("canvas bg click");
     activateNode(null);
+
     if (mode.current === "create" && mode.data) {
       const { clientX, clientY } = e;
       const position = screenToFlowPosition({ x: clientX, y: clientY });
       addNode(mode.data as NodeType, position);
-      setMode("edit");
+      console.log({ shift });
+      if (!shift) {
+        setMode("edit");
+      }
     }
   };
 

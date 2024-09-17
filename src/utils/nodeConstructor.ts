@@ -66,13 +66,15 @@ function getNodeLabel(nodeType: NodeType) {
     case "substract":
       return "a-b";
     case "to-deg":
-      return "RAD -> DEG";
+      return "RAD \\implies DEG";
     case "to-rad":
-      return "DEG -> RAD";
+      return "DEG \\implies RAD";
     case "tg":
       return "tan(a)";
     case "ctg":
       return "ctan(a)";
+    case "power":
+      return "a^b";
     default: {
       console.log("No label for " + nodeType);
       return null;
@@ -101,6 +103,7 @@ const getFunctionInputs: fun = (nodeType: NodeType) => {
     case "add":
     case "multiply":
     case "substract":
+    case "power":
     case "divide": {
       return { a: { ...initialInput }, b: { ...initialInput } };
     }
@@ -149,7 +152,11 @@ const getNodeFunction: NodeActionFactory = (nodeType) => {
     case "to-rad": {
       return ({ a }) => convertToRAD(a);
     }
+    case "power": {
+      return ({ a, b }) => Math.pow(a, b);
+    }
     default: {
+      console.log("No action for " + nodeType + " specified");
       return ({}) => 1000000000000000;
     }
   }

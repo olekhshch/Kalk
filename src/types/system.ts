@@ -5,6 +5,7 @@ export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
 export type Action = {
   title: string;
+  hideToolbarTitle?: boolean;
   icon: string | null;
   large?: boolean;
   command: {

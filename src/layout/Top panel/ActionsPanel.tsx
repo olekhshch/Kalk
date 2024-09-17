@@ -17,7 +17,7 @@ const ActionsPanel = () => {
 
   return (
     <div className="bg-sec px-2 pt-2 h-[73px] text-sm text-black flex flex-col flex-wrap content-start">
-      {actionList.map(({ title, icon, command, large }) => (
+      {actionList.map(({ title, icon, command, large, hideToolbarTitle }) => (
         <Button
           key={title}
           title={title}
@@ -30,6 +30,7 @@ const ActionsPanel = () => {
               command.data
             )
           }
+          hideTitle={hideToolbarTitle}
           showIcon={icon !== null}
         />
       ))}

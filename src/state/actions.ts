@@ -18,6 +18,7 @@ const actions: Actions = {
     {
       title: "Add",
       icon: "add",
+      hideToolbarTitle: true,
       command: {
         type: "create",
         data: "add",
@@ -26,6 +27,7 @@ const actions: Actions = {
     {
       title: "Substract",
       icon: "substract",
+      hideToolbarTitle: true,
       command: {
         type: "create",
         data: "substract",
@@ -34,6 +36,7 @@ const actions: Actions = {
     {
       title: "Multiply",
       icon: "multiply",
+      hideToolbarTitle: true,
       command: {
         type: "create",
         data: "multiply",
@@ -42,9 +45,18 @@ const actions: Actions = {
     {
       title: "Divide",
       icon: "divide",
+      hideToolbarTitle: true,
       command: {
         type: "create",
         data: "divide",
+      },
+    },
+    {
+      title: "Power",
+      icon: "power",
+      command: {
+        type: "create",
+        data: "power",
       },
     },
     {
@@ -116,6 +128,7 @@ const actions: Actions = {
     {
       title: "Matrix",
       icon: "",
+      large: true,
       command: {
         type: "create",
       },

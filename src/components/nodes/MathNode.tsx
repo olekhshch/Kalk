@@ -8,6 +8,8 @@ import generateHandleLabel from "../../utils/generateHandleLabel";
 import InputPort from "../ports/Input";
 import Output from "../ports/Output";
 import ResultOutput from "../ports/ResultOutput";
+import Latex from "react-latex-next";
+import "katex/dist/katex.min.css";
 
 const MathNode = ({
   id,
@@ -56,7 +58,9 @@ const MathNode = ({
             />
           );
         })}
-        <div className="p-2 pl-4 italic font-bold">{label}</div>
+        <div className="p-2 pl-4 italic font-bold">
+          <Latex>${label}$</Latex>
+        </div>
         {outputsArray.map(({ cssPosition, handleLabel, key }) => {
           return (
             <Output key={key} id={handleLabel} cssPosition={cssPosition} />

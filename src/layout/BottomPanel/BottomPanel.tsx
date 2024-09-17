@@ -7,6 +7,7 @@ import ButtonMode from "../../components/ButtonMode";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import { AngleFormat } from "../../types/system";
+import Tips from "./Tips";
 
 const BottomPanel = () => {
   const {
@@ -47,16 +48,16 @@ const BottomPanel = () => {
     showHideMinimap(!minimap);
   };
 
-  const tipText = useMemo(() => {
-    switch (mode.current) {
-      case "create": {
-        return "Click on canvas to place new node";
-      }
-      default: {
-        return "";
-      }
-    }
-  }, [mode.current]);
+  // const tipText = useMemo(() => {
+  //   switch (mode.current) {
+  //     case "create": {
+  //       return "Click on canvas to place new node";
+  //     }
+  //     default: {
+  //       return "";
+  //     }
+  //   }
+  // }, [mode.current]);
 
   return (
     <div className="bg-main px-2 text-white font-sys text-sm flex gap-2 items-center">
@@ -97,8 +98,7 @@ const BottomPanel = () => {
         />
       </div>
       <div className="flex gap-1 grow">
-        <span>{mode.current}</span>
-        <span>{tipText}</span>
+        <Tips mode={mode} />
       </div>
       <div className="flex">
         <ButtonMode
