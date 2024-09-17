@@ -3,11 +3,11 @@ import "./index.css";
 import BottomPanel from "./layout/BottomPanel/BottomPanel";
 import Canvas from "./layout/Canvas/Canvas";
 import TopPanel from "./layout/Top panel/TopPanel";
-
 import "@xyflow/react/dist/style.css";
 import { ReactFlowProvider } from "@xyflow/react";
 import useAppState from "./state/useAppState";
 import { useShallow } from "zustand/react/shallow";
+import UILayer from "./layout/UI/UILayer";
 
 const App = () => {
   const { setMode } = useAppState(
@@ -42,6 +42,7 @@ const App = () => {
         <TopPanel />
         <Canvas />
         <BottomPanel />
+        {/* <UILayer /> */}
       </div>
     </ReactFlowProvider>
   );

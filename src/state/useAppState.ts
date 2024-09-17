@@ -9,6 +9,7 @@ interface AppState {
   show_scale_menu: boolean;
   mode: { current: Mode; data?: NodeType | ActionType };
   grid_type: BackgroundVariant;
+  minimap: boolean;
 }
 
 interface AppActions {
@@ -17,6 +18,7 @@ interface AppActions {
   hideScaleMenu: () => void;
   setMode: (mode: Mode, data?: NodeType | ActionType) => void;
   setGridType: (g: BackgroundVariant) => void;
+  showHideMinimap: (m: boolean) => void;
 }
 
 const useAppState = create<AppState & AppActions>()((set) => ({
@@ -24,6 +26,7 @@ const useAppState = create<AppState & AppActions>()((set) => ({
   scale: 1,
   show_scale_menu: false,
   mode: { current: "edit" },
+  minimap: true,
   grid_type: BackgroundVariant.Cross,
   setActiveTab: (tab) => set(() => ({ active_tab: tab })),
   openScaleMenu: () => set(() => ({ show_scale_menu: true })),
@@ -38,6 +41,7 @@ const useAppState = create<AppState & AppActions>()((set) => ({
     set(() => {
       return { grid_type: new_gt };
     }),
+  showHideMinimap: (m) => set({ minimap: m }),
 }));
 
 export default useAppState;

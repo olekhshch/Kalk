@@ -5,7 +5,8 @@ export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
 
 export type Action = {
   title: string;
-  icon: string;
+  icon: string | null;
+  large?: boolean;
   command: {
     type: "create" | "action";
     data?: NodeType | ActionType;

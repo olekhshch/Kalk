@@ -9,6 +9,7 @@ const actions: Actions = {
     {
       title: "Expression",
       icon: "expression",
+      large: true,
       command: {
         type: "create",
         data: "expression",
@@ -55,19 +56,59 @@ const actions: Actions = {
       },
     },
     {
-      title: "Sinus",
-      icon: "sin",
+      title: "sin",
+      icon: null,
       command: {
         type: "create",
         data: "sin",
       },
     },
     {
-      title: "Cosinus",
-      icon: "cos",
+      title: "cos",
+      icon: null,
       command: {
         type: "create",
-        data: "sin",
+        data: "cos",
+      },
+    },
+    {
+      title: "tan",
+      icon: null,
+      command: {
+        type: "create",
+        data: "tg",
+      },
+    },
+    {
+      title: "ctan",
+      icon: null,
+      command: {
+        type: "create",
+        data: "ctg",
+      },
+    },
+    {
+      title: "RAD",
+      icon: null,
+      command: {
+        type: "create",
+        data: "to-rad",
+      },
+    },
+    {
+      title: "DEG",
+      icon: null,
+      command: {
+        type: "create",
+        data: "to-deg",
+      },
+    },
+    {
+      title: "asin",
+      icon: null,
+      command: {
+        type: "create",
+        // data: "to-deg",
       },
     },
   ],

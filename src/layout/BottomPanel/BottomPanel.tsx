@@ -16,6 +16,8 @@ const BottomPanel = () => {
     grid_type,
     setGridType,
     mode,
+    minimap,
+    showHideMinimap,
   } = useAppState();
 
   const { anglesFormat, toggleAngleFormat } = useContent(
@@ -39,6 +41,10 @@ const BottomPanel = () => {
 
   const toggleScaleDialog = () => {
     show_scale_menu ? hideScaleMenu() : openScaleMenu();
+  };
+
+  const toggleMinimap = () => {
+    showHideMinimap(!minimap);
   };
 
   const tipText = useMemo(() => {
@@ -94,7 +100,15 @@ const BottomPanel = () => {
         <span>{mode.current}</span>
         <span>{tipText}</span>
       </div>
-      <div>
+      <div className="flex">
+        <ButtonMode
+          activeStyling="sec"
+          icon="minimap"
+          title={minimap ? "Hide minimap" : "Show minimap"}
+          onClick={toggleMinimap}
+          isActive={minimap}
+          showIcon
+        />
         <Button
           title={anglesFormat}
           hoverStyle="sec"

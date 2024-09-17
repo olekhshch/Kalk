@@ -10,7 +10,11 @@ export type NodeType =
   | "multiply"
   | "divide"
   | "sin"
-  | "cos";
+  | "cos"
+  | "tg"
+  | "ctg"
+  | "to-rad"
+  | "to-deg";
 
 export type ValueType = "number" | "text";
 

@@ -5,6 +5,10 @@ import {
   NumberFunctionNode,
   NumberFunctionParams,
 } from "../types/nodes";
+import convertToDEG from "./convertToDEG";
+import convertToRAD from "./convertToRAD";
+
+const trigonometryFns: NodeType[] = ["sin", "cos", "tg", "ctg"];
 
 type f = (
   nodeType: NodeType,
@@ -18,7 +22,7 @@ const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
   const label = getNodeLabel(nodeType);
   const inputs = getFunctionInputs(nodeType);
   const action = getNodeFunction(nodeType);
-  const trigonometry = ["sin", "cos", "tg", "ctg"].includes(nodeType);
+  const trigonometry = trigonometryFns.includes(nodeType);
 
   if (!label) return null;
 
@@ -61,6 +65,14 @@ function getNodeLabel(nodeType: NodeType) {
       return "sin(a)";
     case "substract":
       return "a-b";
+    case "to-deg":
+      return "RAD -> DEG";
+    case "to-rad":
+      return "DEG -> RAD";
+    case "tg":
+      return "tan(a)";
+    case "ctg":
+      return "ctan(a)";
     default: {
       console.log("No label for " + nodeType);
       return null;
@@ -78,8 +90,12 @@ type fun = (nt: NodeType) => { a?: Input; b?: Input };
 const getFunctionInputs: fun = (nodeType: NodeType) => {
   switch (nodeType) {
     case "abs":
+    case "to-deg":
+    case "to-rad":
     case "cos":
-    case "sin": {
+    case "sin":
+    case "tg":
+    case "ctg": {
       return { a: { ...initialInput } };
     }
     case "add":
@@ -117,6 +133,21 @@ const getNodeFunction: NodeActionFactory = (nodeType) => {
     }
     case "sin": {
       return ({ a }) => Math.sin(a);
+    }
+    case "cos": {
+      return ({ a }) => Math.cos(a);
+    }
+    case "tg": {
+      return ({ a }) => Math.tan(a);
+    }
+    case "ctg": {
+      return ({ a }) => 1 / Math.tan(a);
+    }
+    case "to-deg": {
+      return ({ a }) => convertToDEG(a);
+    }
+    case "to-rad": {
+      return ({ a }) => convertToRAD(a);
     }
     default: {
       return ({}) => 1000000000000000;

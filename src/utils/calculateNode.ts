@@ -12,6 +12,7 @@ import {
   CalculatedValues,
   RustCalculations,
 } from "../types/system";
+import convertToRAD from "./convertToRAD";
 
 type f = (
   node: AppNode,
@@ -108,7 +109,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
         }
         // convertation if trigonometric function and angle format = DEG
         if (angleFormat === AngleFormat.DEG && node.data.trigonometry) {
-          val *= Math.PI / 180;
+          val = convertToRAD(val);
           console.log(val);
           console.log(Math.PI);
         }

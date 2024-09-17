@@ -17,11 +17,12 @@ const ActionsPanel = () => {
 
   return (
     <div className="bg-sec px-2 pt-2 h-[73px] text-sm text-black flex flex-col flex-wrap content-start">
-      {actionList.map(({ title, icon, command }) => (
+      {actionList.map(({ title, icon, command, large }) => (
         <Button
           key={title}
           title={title}
-          icon={icon}
+          icon={icon ?? ""}
+          large={large}
           hoverStyle="main"
           onClick={() =>
             setMode(
@@ -29,7 +30,7 @@ const ActionsPanel = () => {
               command.data
             )
           }
-          showIcon
+          showIcon={icon !== null}
         />
       ))}
     </div>
