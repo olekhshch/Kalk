@@ -9,6 +9,7 @@ import convertToDEG from "./convertToDEG";
 import convertToRAD from "./convertToRAD";
 
 const trigonometryFns: NodeType[] = ["sin", "cos", "tg", "ctg"];
+const aTrigonometryFns: NodeType[] = ["asin", "acos"];
 
 type f = (
   nodeType: NodeType,
@@ -26,13 +27,12 @@ const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
 
   if (!label) return null;
 
-  console.log({ inputs });
-
   const newNode: NumberFunctionNode = {
     id: id.toString(),
     position,
     type: "num-fun",
     data: {
+      tag: nodeType,
       showResult: false,
       label,
       inputs,
@@ -41,6 +41,7 @@ const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
       },
       action,
       trigonometry,
+      isAngle: aTrigonometryFns.includes(nodeType),
     },
   };
 
@@ -75,6 +76,10 @@ function getNodeLabel(nodeType: NodeType) {
       return "ctan(a)";
     case "power":
       return "a^b";
+    case "asin":
+      return "asin(a)";
+    case "acos":
+      return "acos(a)";
     default: {
       console.log("No label for " + nodeType);
       return null;
@@ -97,6 +102,8 @@ const getFunctionInputs: fun = (nodeType: NodeType) => {
     case "cos":
     case "sin":
     case "tg":
+    case "asin":
+    case "acos":
     case "ctg": {
       return { a: { ...initialInput } };
     }
@@ -154,6 +161,12 @@ const getNodeFunction: NodeActionFactory = (nodeType) => {
     }
     case "power": {
       return ({ a, b }) => Math.pow(a, b);
+    }
+    case "asin": {
+      return ({ a }) => Math.asin(a);
+    }
+    case "acos": {
+      return ({ a }) => Math.acos(a);
     }
     default: {
       console.log("No action for " + nodeType + " specified");

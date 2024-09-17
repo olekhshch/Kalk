@@ -84,7 +84,7 @@ const actions: Actions = {
       },
     },
     {
-      title: "tan",
+      title: "tg",
       icon: null,
       command: {
         type: "create",
@@ -92,7 +92,7 @@ const actions: Actions = {
       },
     },
     {
-      title: "ctan",
+      title: "ctg",
       icon: null,
       command: {
         type: "create",
@@ -120,7 +120,15 @@ const actions: Actions = {
       icon: null,
       command: {
         type: "create",
-        // data: "to-deg",
+        data: "asin",
+      },
+    },
+    {
+      title: "acos",
+      icon: null,
+      command: {
+        type: "create",
+        data: "acos",
       },
     },
   ],

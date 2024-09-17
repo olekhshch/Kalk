@@ -15,7 +15,10 @@ export type NodeType =
   | "ctg"
   | "to-rad"
   | "to-deg"
-  | "power";
+  | "power"
+  | "asin"
+  | "acos"
+  | "atg";
 
 export type ValueType = "number" | "text";
 
@@ -109,6 +112,7 @@ export type MultiplyNode = Node<
 export type NumberFunctionNode = Node<
   {
     label: string;
+    tag: NodeType;
     showResult: boolean;
     inputs: {
       [k: string]: Input;
@@ -118,6 +122,7 @@ export type NumberFunctionNode = Node<
     };
     action: (vals: NumberFunctionParams) => number;
     trigonometry?: boolean;
+    isAngle?: boolean;
   },
   "num-fun"
 >;
