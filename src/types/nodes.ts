@@ -3,7 +3,7 @@ import { Node } from "@xyflow/react";
 export type NodeType =
   | "text-single"
   | "expression"
-  | "result-number"
+  | "result"
   | "add"
   | "substract"
   | "abs"
@@ -18,9 +18,15 @@ export type NodeType =
   | "power"
   | "asin"
   | "acos"
-  | "atg";
+  | "atg"
+  | "I-matrix"
+  | "vec";
 
-export type ValueType = "number" | "text";
+export type ValueType = "number" | "text" | "matrix";
+
+export type Vector = number[];
+
+export type Matrix = Vector[];
 
 export type MathNode =
   | ExpressionNode
@@ -30,7 +36,9 @@ export type MathNode =
   // | MultiplyNode
   | NumberFunctionNode;
 
-export type AppNode = TextSingleNode | ResultNode | MathNode;
+export type MtxNode = IdentityMtxNode;
+
+export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
 export type TextSingleNode = Node<{ value: string }, "text-single">;
 
@@ -48,10 +56,7 @@ export type CalculationsData = {
   res: number | null;
 };
 
-export type ResultNode = Node<
-  { sourceId: string; value: string },
-  "result-number"
->;
+export type ResultNode = Node<{ sourceId: string; value: string }, "result">;
 
 export type AdditionNode = Node<
   {
@@ -120,7 +125,7 @@ export type NumberFunctionNode = Node<
     outputs: {
       N: ValueType;
     };
-    action: (vals: NumberFunctionParams) => number;
+    action: (vals: NumberFunctionParams) => number | Matrix;
     trigonometry?: boolean;
     isAngle?: boolean;
   },
@@ -135,4 +140,15 @@ export type InputLabel = "a" | "b";
 export type Input = {
   sourceId: string | null;
   type: ValueType;
+  allowedTypes: ValueType[];
 };
+
+export type IdentityMtxNode = Node<
+  {
+    showResult: boolean;
+    inputs: {
+      n: Input;
+    };
+  },
+  "i-mtx"
+>;

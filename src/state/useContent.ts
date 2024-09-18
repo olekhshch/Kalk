@@ -3,6 +3,7 @@ import { create } from "zustand";
 import {
   AppNode,
   ExpressionNode,
+  IdentityMtxNode,
   MathNode,
   TextSingleNode,
 } from "../types/nodes";
@@ -18,7 +19,7 @@ import getChain from "../utils/getChainIdsFrom";
 import recalculateChain from "../utils/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
-import nodeFunctionContructor from "../utils/nodeConstructor";
+import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -72,6 +73,20 @@ const useContent = create<ContentStore>()((set, get) => ({
           idCounter: id,
         });
         break;
+      }
+      case "I-matrix": {
+        const newNode: IdentityMtxNode = {
+          id: id.toString(),
+          position,
+          type: "i-mtx",
+          data: {
+            showResult: false,
+            inputs: {
+              n: { sourceId: null, allowedTypes: ["number"], type: "number" },
+            },
+          },
+        };
+        return set({ nodes: [...get().nodes, newNode], idCounter: id });
       }
       default: {
         const newNode = nodeFunctionContructor(

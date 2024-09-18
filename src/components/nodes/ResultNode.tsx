@@ -1,17 +1,11 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React from "react";
 import NodeWrapper from "./NodeWrapper";
-import { ResultNode as ResultNodeType } from "../../types/nodes";
+import { Matrix, ResultNode as ResultNodeType } from "../../types/nodes";
 import Input from "../ports/Input";
-import { addEdge, NodeProps, useEdgesState } from "@xyflow/react";
+import { NodeProps } from "@xyflow/react";
 import useContent from "../../state/useContent";
-import { getValue, values } from "../../state/values";
 import { useShallow } from "zustand/react/shallow";
+import Latex from "react-latex-next";
 
 const ResultNode = ({ id, data: { sourceId } }: NodeProps<ResultNodeType>) => {
   const value = useContent(useShallow((store) => store.values[sourceId]));
@@ -20,10 +14,40 @@ const ResultNode = ({ id, data: { sourceId } }: NodeProps<ResultNodeType>) => {
     <>
       <Input cssPosition="50%" label="R" id="R" />
       <NodeWrapper id={id}>
-        <div className="p-2">{value ?? ""}</div>
+        <div className="p-2">
+          <Latex>{resultLateX(value)}</Latex>
+        </div>
       </NodeWrapper>
     </>
   );
 };
+
+function resultLateX(value: number | Matrix | null) {
+  let str = "";
+
+  if (Array.isArray(value)) {
+    // checking if Matrix or Vector
+    switch (Array.isArray(value[0])) {
+      case true: {
+        value.forEach((row) => {
+          row.forEach((num, idx) => {
+            str += num;
+            if (idx !== row.length - 1) {
+              str += " & ";
+            } else {
+              str += "\\\\";
+            }
+          });
+        });
+
+        str = `$\\begin{bmatrix} ${str} \\end{bmatrix}$`;
+      }
+    }
+  } else if (value !== null) {
+    str = `$${value}$`;
+  }
+
+  return str;
+}
 
 export default React.memo(ResultNode);

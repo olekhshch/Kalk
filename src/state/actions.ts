@@ -141,6 +141,22 @@ const actions: Actions = {
         type: "create",
       },
     },
+    {
+      title: "Identity matrix",
+      icon: "i_mtx",
+      command: {
+        type: "create",
+        data: "I-matrix",
+      },
+    },
+    {
+      title: "Vector",
+      icon: "vec",
+      command: {
+        type: "create",
+        data: "vec",
+      },
+    },
   ],
   Organize: [
     {

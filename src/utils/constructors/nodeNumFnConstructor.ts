@@ -1,12 +1,11 @@
-import nodeTypes from "../state/nodeTypes";
 import {
   Input,
   NodeType,
   NumberFunctionNode,
   NumberFunctionParams,
-} from "../types/nodes";
-import convertToDEG from "./convertToDEG";
-import convertToRAD from "./convertToRAD";
+} from "../../types/nodes";
+import convertToDEG from "../convertToDEG";
+import convertToRAD from "../convertToRAD";
 
 const trigonometryFns: NodeType[] = ["sin", "cos", "tg", "ctg"];
 const aTrigonometryFns: NodeType[] = ["asin", "acos"];
@@ -16,6 +15,8 @@ type f = (
   position: { x: number; y: number },
   idCounter: number
 ) => NumberFunctionNode | null;
+
+// constructor for numerical function nodes (...numbers) => number
 
 const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
   const id = idCounter + 1;
@@ -71,9 +72,9 @@ function getNodeLabel(nodeType: NodeType) {
     case "to-rad":
       return "DEG \\implies RAD";
     case "tg":
-      return "tan(a)";
+      return "tg(a)";
     case "ctg":
-      return "ctan(a)";
+      return "ctg(a)";
     case "power":
       return "a^b";
     case "asin":
@@ -90,6 +91,7 @@ function getNodeLabel(nodeType: NodeType) {
 const initialInput: Input = {
   sourceId: null,
   type: "number",
+  allowedTypes: ["number"],
 };
 
 type fun = (nt: NodeType) => { a?: Input; b?: Input };

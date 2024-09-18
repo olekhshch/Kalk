@@ -34,7 +34,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
     const resultNode: ResultNode = {
       id: newId.toString(),
       position: { x: position.x + distanceX, y: position.y - 40 },
-      type: "result-number",
+      type: "result",
       data: { sourceId: sourceNodeId, value: "" },
     };
 
@@ -61,10 +61,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
     let alteredNode: MathNode | null = null;
 
     const newNodes = nodes.reduce((acc, node) => {
-      if (
-        node.type === "result-number" &&
-        node.data.sourceId === sourceNodeId
-      ) {
+      if (node.type === "result" && node.data.sourceId === sourceNodeId) {
         return acc;
       }
 

@@ -1,4 +1,4 @@
-import { AppNode, NodeType } from "./nodes";
+import { AppNode, Matrix, NodeType } from "./nodes";
 import { Connection, Edge, NodeChange, XYPosition } from "@xyflow/react";
 
 export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
@@ -57,7 +57,7 @@ export interface VariablesStore {
 }
 
 export type CalculatedValues = {
-  [id: string]: number | null;
+  [id: string]: number | Matrix | null;
 };
 
 type NodeActionParams = {

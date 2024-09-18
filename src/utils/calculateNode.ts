@@ -1,5 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
-import { AppNode, ExpressionNode, NumberFunctionParams } from "../types/nodes";
+import {
+  AppNode,
+  ExpressionNode,
+  IdentityMtxNode,
+  Matrix,
+  NumberFunctionParams,
+} from "../types/nodes";
 import {
   AngleFormat,
   CalculatedValues,
@@ -7,10 +13,11 @@ import {
 } from "../types/system";
 import convertToRAD from "./convertToRAD";
 import convertToDEG from "./convertToDEG";
+import makeIdentityMatrix from "./matrix/makeIdentityMatrix";
 
 type f = (
   node: AppNode,
-  values: { [id: string]: number | null },
+  values: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<CalculatedValues>;
 
@@ -56,12 +63,14 @@ const calculateNode: f = async (node, values, angleFormat) => {
           return acc;
         }
         // convertation if trigonometric function and angle format = DEG
-        if (angleFormat === AngleFormat.DEG && node.data.trigonometry) {
-          val = convertToRAD(val);
-          console.log(val);
-          console.log(Math.PI);
+        if (
+          angleFormat === AngleFormat.DEG &&
+          node.data.trigonometry &&
+          isNumber(val)
+        ) {
+          val = convertToRAD(val as number);
         }
-        acc[key] = val;
+        acc[key] = val as number;
         return acc;
       }, {} as NumberFunctionParams);
 
@@ -69,10 +78,24 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       let res = node.data.action(params);
       if (angleFormat === AngleFormat.DEG && node.data.isAngle) {
-        res = convertToDEG(res);
+        res = convertToDEG(res as number);
       }
       newValues[node.id] = res;
       return newValues;
+    }
+    case "i-mtx": {
+      const { sourceId } = (node as IdentityMtxNode).data.inputs.n;
+      if (!sourceId) return values;
+
+      const value = values[sourceId];
+
+      if (!value && value !== 0) return values;
+
+      if (!isNumber(value)) return values;
+
+      const mtx = makeIdentityMatrix(value as number);
+
+      newValues[node.id] = mtx;
     }
     default: {
       console.log("No calculation for " + node.type);
@@ -80,5 +103,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
     }
   }
 };
+
+const isNumber = (value: number | Matrix) => !Array.isArray(value);
 
 export default calculateNode;
