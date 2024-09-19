@@ -6,7 +6,7 @@ import NodeWrapper from "./NodeWrapper";
 import React, { useEffect, useMemo } from "react";
 import Latex from "react-latex-next";
 import Output from "../ports/Output";
-import generateHandleLabel from "../../utils/generateHandleLabel";
+import generateHandleLabel from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
@@ -34,7 +34,7 @@ const VectorNode = ({
     return entries.map(([key]) => key).join("\\\\");
   }, [numberOfEntries]);
 
-  const outputLabel = generateHandleLabel("V", outputs.V);
+  const outputLabel = generateHandleLabel("V", [outputs.V]);
 
   useEffect(() => {
     console.log("LABELS");
@@ -44,7 +44,7 @@ const VectorNode = ({
     const step = 100 / (entries.length + 1);
 
     return entries.map(([key, input], idx) => ({
-      idLabel: generateHandleLabel(key, input.type),
+      idLabel: generateHandleLabel(key, input.allowedTypes),
       key,
       css: `${step * (idx + 1)}%`,
     }));

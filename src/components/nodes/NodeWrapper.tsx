@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import useContent from "../../state/useContent";
 
 type props = {
@@ -7,10 +7,9 @@ type props = {
   id: string;
 };
 const NodeWrapper = ({ children, title, id }: props) => {
-  const { activeNodeId, activateNode, higlightById, highlightedNodesId } =
-    useContent();
+  const { activeNodeId, activateNode, higlightById } = useContent();
 
-  const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
+  // const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
 
   const clickHandler = (e: React.MouseEvent) => {
     higlightById([id], true);

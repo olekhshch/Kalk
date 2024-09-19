@@ -36,7 +36,8 @@ function resultLateX(value: number | Matrix | Vector | null) {
         // value is Matrix
         (value as Matrix).forEach((row) => {
           row.forEach((num, idx) => {
-            str += num;
+            const fixedNum = num.toFixed(3);
+            str += fixedNum;
             if (idx !== row.length - 1) {
               str += " & ";
             } else {
@@ -50,12 +51,13 @@ function resultLateX(value: number | Matrix | Vector | null) {
       }
       default: {
         // value is Vector
-        str = value.join(" \\\\ ");
+        const valueFixed = (value as Vector).map((num) => num.toFixed(3));
+        str = valueFixed.join(" \\\\ ");
         str = `$\\begin{pmatrix} ${str} \\end{pmatrix}$`;
       }
     }
   } else if (value !== null) {
-    str = `$${value}$`;
+    str = `$${value.toFixed(3)}$`;
   }
 
   return str;

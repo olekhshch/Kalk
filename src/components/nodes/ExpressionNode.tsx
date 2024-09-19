@@ -9,6 +9,7 @@ import Output from "../ports/Output";
 import { expressionInputValues } from "../../utils/expressionInputValues";
 import { useShallow } from "zustand/react/shallow";
 import Latex from "react-latex-next";
+import generateHandleId from "../../utils/generateHandleId";
 
 const ExpressionNode = ({
   id,
@@ -57,6 +58,8 @@ const ExpressionNode = ({
     }
   };
 
+  const outputHandleId = generateHandleId("N", [outputs.N]);
+
   //#TODO: Fix padding change when active/non active
 
   return (
@@ -95,7 +98,7 @@ const ExpressionNode = ({
             </span>
           </div>
         </NodeWrapper>
-        <Output id={`N-${outputs.N}`} cssPosition="50%" />
+        <Output id={outputHandleId} cssPosition="50%" />
       </div>
     </>
   );

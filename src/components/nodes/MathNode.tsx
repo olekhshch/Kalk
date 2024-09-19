@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
 import { NumberFunctionNode } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
-import generateHandleLabel from "../../utils/generateHandleLabel";
+import generateHandleLabel from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
 import Output from "../ports/Output";
 import ResultOutput from "../ports/ResultOutput";
@@ -23,9 +23,9 @@ const MathNode = ({
     const step = 100 / (numOfInputs + 1);
 
     const array = entries.map(([key, input], idx) => {
-      const handleLabel = generateHandleLabel(key, input.type);
+      const handleId = generateHandleLabel(key, input.allowedTypes);
       const cssPosition = `${step * (1 + idx)}%`;
-      return { handleLabel, cssPosition, key };
+      return { handleId, cssPosition, key };
     });
 
     return array;
@@ -37,9 +37,9 @@ const MathNode = ({
     const step = 100 / (numOfOutputs + 1);
 
     return entries.map(([key, outputType], idx) => {
-      const handleLabel = generateHandleLabel(key, outputType);
+      const handleId = generateHandleLabel(key, [outputType]);
       const cssPosition = `${step * (1 + idx)}%`;
-      return { handleLabel, cssPosition, key };
+      return { handleId, cssPosition, key };
     });
   }, []);
 
@@ -47,11 +47,11 @@ const MathNode = ({
     <NodeWrapper id={id}>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
-        {inputsArray.map(({ cssPosition, handleLabel, key }) => {
+        {inputsArray.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort
               key={key}
-              id={handleLabel}
+              id={handleId}
               label={key}
               cssPosition={cssPosition}
               showLabel
@@ -61,10 +61,8 @@ const MathNode = ({
         <div className="p-2 pl-4 italic font-bold">
           <Latex>${label}$</Latex>
         </div>
-        {outputsArray.map(({ cssPosition, handleLabel, key }) => {
-          return (
-            <Output key={key} id={handleLabel} cssPosition={cssPosition} />
-          );
+        {outputsArray.map(({ cssPosition, handleId, key }) => {
+          return <Output key={key} id={handleId} cssPosition={cssPosition} />;
         })}
       </div>
     </NodeWrapper>

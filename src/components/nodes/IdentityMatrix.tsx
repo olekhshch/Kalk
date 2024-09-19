@@ -3,7 +3,7 @@ import { IdentityMtxNode } from "../../types/nodes";
 import NodeWrapper from "./NodeWrapper";
 import Latex from "react-latex-next";
 import InputPort from "../ports/Input";
-import generateHandleLabel from "../../utils/generateHandleLabel";
+import generateHandleLabel from "../../utils/generateHandleId";
 import ResultOutput from "../ports/ResultOutput";
 import Output from "../ports/Output";
 
@@ -11,8 +11,8 @@ const IdentityMatrix = ({
   id,
   data: { inputs, showResult, outputs },
 }: NodeProps<IdentityMtxNode>) => {
-  const inputId = generateHandleLabel("n", inputs.n.type);
-  const outputId = generateHandleLabel("M", outputs.M);
+  const inputId = generateHandleLabel("n", inputs.n.allowedTypes);
+  const outputId = generateHandleLabel("M", [outputs.M]);
   return (
     <NodeWrapper id={id}>
       <div className="p-2 pl-4">

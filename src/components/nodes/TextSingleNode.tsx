@@ -1,19 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import NodeWrapper from "./NodeWrapper";
-import {
-  applyNodeChanges,
-  NodeProps,
-  Position,
-  useStore,
-  useStoreApi,
-  useViewport,
-} from "@xyflow/react";
+import { NodeProps, useViewport } from "@xyflow/react";
 import { AppNode, TextSingleNode as TextSingle } from "../../types/nodes";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";

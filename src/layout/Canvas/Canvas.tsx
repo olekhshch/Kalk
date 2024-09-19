@@ -126,7 +126,7 @@ const ValuesPanel = () => {
       <ol>
         {valEntries.map(([id, value]) => (
           <li key={id}>
-            {id}. {value}
+            {id}. {!Array.isArray(value) && value ? value.toFixed(3) : value}
           </li>
         ))}
       </ol>

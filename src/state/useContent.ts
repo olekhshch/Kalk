@@ -23,7 +23,9 @@ import recalculateChain from "../utils/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
 import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
-import generateHandleLabel from "../utils/generateHandleLabel";
+import generateHandleLabel, {
+  deconstructHandleId,
+} from "../utils/generateHandleId";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -263,11 +265,14 @@ const useContent = create<ContentStore>()((set, get) => ({
     // checking if not connecting to the same node
     if (target === source) return;
 
-    // checking if value of the source = value of the target input
-    const [, sourceValue] = sourceHandle.split("-");
-    const [targetLabel, targetValue] = targetHandle.split("-");
+    // checking if value of the source = allowed value of the target input
+    const sourceHandleObj = deconstructHandleId(sourceHandle);
+    const targetHandleObj = deconstructHandleId(targetHandle);
 
-    if (sourceValue !== targetValue) return;
+    if (!sourceHandleObj || !targetHandleObj) return;
+
+    if (!targetHandleObj.allowedTypes.includes(sourceHandleObj.allowedTypes[0]))
+      return;
 
     const [nodeA, nodeB] = (await Promise.all([
       getById(get().nodes, source)[0],
@@ -297,7 +302,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       ? addEdge(newEdge, get().edges)
       : reconnectEdge(existingEdge, connection, get().edges);
 
-    nodeB.data.inputs[targetLabel].sourceId = source;
+    nodeB.data.inputs[targetHandleObj.label].sourceId = source;
 
     const newNodes = replaceNode(nodeB, get().nodes);
 
@@ -331,11 +336,11 @@ const useContent = create<ContentStore>()((set, get) => ({
     const { numberOfEntries, inputTemplate } = targetNode.data;
     // checking if new number is not the same
     if (newNum === numberOfEntries) return;
+
     const { inputs } = targetNode.data;
 
     if (newNum > numberOfEntries) {
       // adding new entries
-      console.log("add");
       for (let i = numberOfEntries + 1; i <= newNum; i++) {
         const key = inputTemplate(i);
         console.log({ key });
@@ -349,8 +354,8 @@ const useContent = create<ContentStore>()((set, get) => ({
         const key = inputTemplate(i);
         const sourceId = targetNode.data.inputs[key].sourceId;
         if (sourceId) {
-          const type = targetNode.data.inputs[key].type;
-          const handleId = generateHandleLabel(key, type);
+          const types = targetNode.data.inputs[key].allowedTypes;
+          const handleId = generateHandleLabel(key, types);
 
           const edges = newEdges.filter(({ target, targetHandle }) => {
             return !(targetHandle === handleId && target === targetNode.id);
