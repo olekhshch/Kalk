@@ -32,20 +32,19 @@ const Canvas = () => {
   const { screenToFlowPosition } = useReactFlow();
 
   const [prevPosition, setPrevPosition] = useState({ x: 0, y: 0 });
+  const [showPreview, setShowPreview] = useState(true);
 
   const nodePreview = useMemo(() => {
     const node: PreviewNode = {
       id: "preview",
       type: "preview",
 
-      data: {},
+      data: { visible: showPreview },
       position: prevPosition,
     };
 
     return node;
-  }, [prevPosition]);
-
-  const [showPreview, setShowPreview] = useState(true);
+  }, [prevPosition, showPreview]);
 
   const mouseEnterHandler = () => {
     // checks if preview should be visible
@@ -87,13 +86,11 @@ const Canvas = () => {
     setPrevPosition(position);
   };
 
-  const allNodes = showPreview ? [...nodes, nodePreview] : nodes;
-
   return (
     <div id="workarea" className="overflow-hidden" onClick={clickHandler}>
       <ReactFlow
         ref={vpRef}
-        nodes={allNodes}
+        nodes={[...nodes, nodePreview]}
         edges={edges}
         onNodesChange={onNodesChange}
         onConnect={connectNodes}

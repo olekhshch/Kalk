@@ -4,7 +4,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const Header = () => {
-  const { nodes } = useContent();
+  const { nodes, edges } = useContent();
   const window = getCurrentWindow();
 
   const close = () => {
@@ -21,8 +21,9 @@ const Header = () => {
 
   return (
     <div className="px-2 flex justify-between">
-      <div>
+      <div className="flex gap-3">
         <button onClick={() => console.log({ nodes })}>NS</button>
+        <button onClick={() => console.log({ edges })}>ES</button>
       </div>
       <div
         className="text-base grow text-center"

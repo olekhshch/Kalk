@@ -1,6 +1,10 @@
 import React from "react";
 import NodeWrapper from "./NodeWrapper";
-import { Matrix, ResultNode as ResultNodeType } from "../../types/nodes";
+import {
+  Matrix,
+  ResultNode as ResultNodeType,
+  Vector,
+} from "../../types/nodes";
 import Input from "../ports/Input";
 import { NodeProps } from "@xyflow/react";
 import useContent from "../../state/useContent";
@@ -22,14 +26,15 @@ const ResultNode = ({ id, data: { sourceId } }: NodeProps<ResultNodeType>) => {
   );
 };
 
-function resultLateX(value: number | Matrix | null) {
+function resultLateX(value: number | Matrix | Vector | null) {
   let str = "";
 
   if (Array.isArray(value)) {
     // checking if Matrix or Vector
     switch (Array.isArray(value[0])) {
       case true: {
-        value.forEach((row) => {
+        // value is Matrix
+        (value as Matrix).forEach((row) => {
           row.forEach((num, idx) => {
             str += num;
             if (idx !== row.length - 1) {
@@ -41,6 +46,12 @@ function resultLateX(value: number | Matrix | null) {
         });
 
         str = `$\\begin{bmatrix} ${str} \\end{bmatrix}$`;
+        break;
+      }
+      default: {
+        // value is Vector
+        str = value.join(" \\\\ ");
+        str = `$\\begin{pmatrix} ${str} \\end{pmatrix}$`;
       }
     }
   } else if (value !== null) {

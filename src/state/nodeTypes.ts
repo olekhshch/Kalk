@@ -8,6 +8,7 @@ import AbsNode from "../components/nodes/AbsNode";
 import MathNode from "../components/nodes/MathNode";
 import NodePreview from "../components/NodePreview";
 import IdentityMatrix from "../components/nodes/IdentityMatrix";
+import VectorNode from "../components/nodes/VectorNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
@@ -20,6 +21,7 @@ const nodeTypes: NodeTypes = {
   "num-fun": MathNode,
   preview: NodePreview,
   "i-mtx": IdentityMatrix,
+  vec: VectorNode,
 };
 
 export default nodeTypes;

@@ -22,7 +22,7 @@ export type NodeType =
   | "I-matrix"
   | "vec";
 
-export type ValueType = "number" | "text" | "matrix";
+export type ValueType = "number" | "text" | "matrix" | "vector";
 
 export type Vector = number[];
 
@@ -36,7 +36,10 @@ export type MathNode =
   // | MultiplyNode
   | NumberFunctionNode;
 
-export type MtxNode = IdentityMtxNode;
+// Nodes with dinamic number of inputs
+export type ConstructorNode = VectorNode;
+
+export type MtxNode = IdentityMtxNode | VectorNode;
 
 export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
@@ -149,6 +152,23 @@ export type IdentityMtxNode = Node<
     inputs: {
       n: Input;
     };
+    outputs: {
+      M: ValueType;
+    };
   },
   "i-mtx"
+>;
+// vector = array of numbers (row of Matrix)
+export type VectorNode = Node<
+  {
+    showResult: boolean;
+    isConstructor: true;
+    inputTemplate: (n: number) => string;
+    numberOfEntries: number;
+    inputs: { [k: string]: Input };
+    outputs: {
+      V: ValueType;
+    };
+  },
+  "vec"
 >;

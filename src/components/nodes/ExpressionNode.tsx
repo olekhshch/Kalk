@@ -8,10 +8,7 @@ import { NodeProps, useViewport } from "@xyflow/react";
 import Output from "../ports/Output";
 import { expressionInputValues } from "../../utils/expressionInputValues";
 import { useShallow } from "zustand/react/shallow";
-
-// type Selector = {
-//   isActive: boolean;
-// };
+import Latex from "react-latex-next";
 
 const ExpressionNode = ({
   id,
@@ -90,11 +87,15 @@ const ExpressionNode = ({
                 position: isActive ? "absolute" : "unset",
               }}
             >
-              {currentValue}
+              <Latex>
+                {currentValue.trim() === ""
+                  ? currentValue
+                  : `$${currentValue}$`}
+              </Latex>
             </span>
           </div>
         </NodeWrapper>
-        <Output id={`N-${outputs.N}`} />
+        <Output id={`N-${outputs.N}`} cssPosition="50%" />
       </div>
     </>
   );

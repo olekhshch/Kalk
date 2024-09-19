@@ -2,10 +2,13 @@ import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AppNode,
+  ConstructorNode,
   ExpressionNode,
   IdentityMtxNode,
+  Input,
   MathNode,
   TextSingleNode,
+  VectorNode,
 } from "../types/nodes";
 import { AngleFormat, ContentStore } from "../types/system";
 import createTextSingleNode from "./actions/createTextSingleNode";
@@ -20,6 +23,7 @@ import recalculateChain from "../utils/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
 import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
+import generateHandleLabel from "../utils/generateHandleLabel";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -84,9 +88,36 @@ const useContent = create<ContentStore>()((set, get) => ({
             inputs: {
               n: { sourceId: null, allowedTypes: ["number"], type: "number" },
             },
+            outputs: {
+              M: "matrix",
+            },
           },
         };
-        return set({ nodes: [...get().nodes, newNode], idCounter: id });
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        break;
+      }
+      case "vec": {
+        const newNode: VectorNode = {
+          id: id.toString(),
+          position,
+          type: "vec",
+          data: {
+            isConstructor: true,
+            inputTemplate: (n) => `v${n}`,
+            showResult: false,
+            numberOfEntries: 3,
+            inputs: {
+              v1: { ...initialInput },
+              v2: { ...initialInput },
+              v3: { ...initialInput },
+            },
+            outputs: {
+              V: "vector",
+            },
+          },
+        };
+        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        break;
       }
       default: {
         const newNode = nodeFunctionContructor(
@@ -291,6 +322,56 @@ const useContent = create<ContentStore>()((set, get) => ({
       //#TODO: Fix floats
       return { values: { ...state.values, [valKey]: newValue } };
     }),
+  setNumOfEntriesFor: (nodeId, newNum) => {
+    const targetNode = getById(get().nodes, nodeId)[0] as ConstructorNode;
+
+    // checking if exists and is constructor
+    if (!targetNode || !targetNode.data.isConstructor) return;
+
+    const { numberOfEntries, inputTemplate } = targetNode.data;
+    // checking if new number is not the same
+    if (newNum === numberOfEntries) return;
+    const { inputs } = targetNode.data;
+
+    if (newNum > numberOfEntries) {
+      // adding new entries
+      console.log("add");
+      for (let i = numberOfEntries + 1; i <= newNum; i++) {
+        const key = inputTemplate(i);
+        console.log({ key });
+        targetNode.data.inputs[key] = { ...initialInput };
+      }
+    } else {
+      // removing last entries and connected to them edges
+      let newEdges = get().edges;
+
+      for (let i = numberOfEntries; i > newNum; i--) {
+        const key = inputTemplate(i);
+        const sourceId = targetNode.data.inputs[key].sourceId;
+        if (sourceId) {
+          const type = targetNode.data.inputs[key].type;
+          const handleId = generateHandleLabel(key, type);
+
+          const edges = newEdges.filter(({ target, targetHandle }) => {
+            return !(targetHandle === handleId && target === targetNode.id);
+          });
+          newEdges = edges;
+        }
+        delete inputs[key];
+      }
+
+      set({ edges: newEdges });
+    }
+    targetNode.data.numberOfEntries = newNum;
+    const newNodes = replaceNode(targetNode, get().nodes);
+    set({ nodes: newNodes });
+  },
 }));
+
+const initialInput: Input = {
+  allowedTypes: ["number"],
+  sourceId: null,
+  type: "number",
+};
 
 export default useContent;
