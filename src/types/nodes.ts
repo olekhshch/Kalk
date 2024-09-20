@@ -22,6 +22,7 @@ export type NodeType =
   | "I-matrix"
   | "vec"
   | "norm"
+  | "add-mtx"
   | "cross-prod";
 
 export type ValueType = "number" | "text" | "matrix" | "vector";

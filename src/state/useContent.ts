@@ -122,7 +122,8 @@ const useContent = create<ContentStore>()((set, get) => ({
         set({ nodes: [...get().nodes, newNode], idCounter: id });
         break;
       }
-      case "norm": {
+      case "norm":
+      case "add-mtx": {
         const newNode = nodeMatrixFnConstructor(
           nodeType,
           position,

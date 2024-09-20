@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
 import { NodeProps } from "@xyflow/react";
 import { MtxVecFnNode } from "../../types/nodes";

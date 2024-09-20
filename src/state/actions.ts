@@ -167,6 +167,14 @@ const actions: Actions = {
         data: "norm",
       },
     },
+    {
+      title: "Add vectors/matrices",
+      icon: "add-mtx",
+      command: {
+        type: "create",
+        data: "add-mtx",
+      },
+    },
   ],
   Organize: [
     {
