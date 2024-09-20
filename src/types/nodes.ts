@@ -20,7 +20,9 @@ export type NodeType =
   | "acos"
   | "atg"
   | "I-matrix"
-  | "vec";
+  | "vec"
+  | "norm"
+  | "cross-prod";
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 
@@ -39,7 +41,7 @@ export type MathNode =
 // Nodes with dinamic number of inputs
 export type ConstructorNode = VectorNode;
 
-export type MtxNode = IdentityMtxNode | VectorNode;
+export type MtxNode = IdentityMtxNode | VectorNode | MtxVecFnNode;
 
 export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
@@ -138,7 +140,7 @@ export type NumberFunctionNode = Node<
 export type NumberFunctionParams = {
   [k: string]: number;
 };
-export type InputLabel = "a" | "b";
+// export type InputLabel = "a" | "b";
 
 export type Input = {
   sourceId: string | null;
@@ -158,6 +160,7 @@ export type IdentityMtxNode = Node<
   },
   "i-mtx"
 >;
+
 // vector = array of numbers (row of Matrix)
 export type VectorNode = Node<
   {
@@ -172,3 +175,27 @@ export type VectorNode = Node<
   },
   "vec"
 >;
+
+export type MtxVecFnNode = Node<
+  {
+    label: string;
+    tag: NodeType;
+    showResult: boolean;
+    inputs: {
+      [k: string]: Input;
+    };
+    outputs: {
+      [m: string]: ValueType;
+    };
+    action: MtxVecFnAction;
+  },
+  "mtx-fn"
+>;
+
+export type MtxVecFunctionParams = {
+  [k: string]: number | Matrix | Vector;
+};
+
+export type MtxVecFnAction = (
+  vals: MtxVecFunctionParams
+) => number | Matrix | Vector | null;

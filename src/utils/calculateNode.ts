@@ -4,6 +4,7 @@ import {
   ExpressionNode,
   IdentityMtxNode,
   Matrix,
+  MtxVecFunctionParams,
   NumberFunctionParams,
   Vector,
 } from "../types/nodes";
@@ -16,6 +17,8 @@ import convertToRAD from "./convertToRAD";
 import convertToDEG from "./convertToDEG";
 import makeIdentityMatrix from "./matrix/makeIdentityMatrix";
 import makeVector from "./matrix/makeVector";
+import validate from "./validate";
+import { ac } from "vitest/dist/chunks/reporters.C_zwCd4j.js";
 
 type f = (
   node: AppNode,
@@ -106,12 +109,14 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       let allSourcesGiven = true;
 
-      const sourceIds = inputEntries.map(([key, { sourceId }]) => {
-        if (!sourceId) {
-          allSourcesGiven = false;
+      const sourceIds = inputEntries.map(
+        ([key, { sourceId, allowedTypes }]) => {
+          if (!sourceId) {
+            allSourcesGiven = false;
+          }
+          return [key, sourceId as string];
         }
-        return [key, sourceId as string];
-      });
+      );
 
       if (!allSourcesGiven) return values;
 
@@ -129,12 +134,53 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return acc;
       }, [] as number[]);
 
-      console.log({ params });
-
       if (!allValuesValid) return values;
-      console.log("VEC CALC");
 
       const res: Vector = makeVector(params);
+
+      newValues[node.id] = res;
+      return newValues;
+    }
+    case "mtx-fn": {
+      const inputEntries = Object.entries(node.data.inputs);
+
+      let allSourcesGiven = true;
+
+      const sourceIds = inputEntries.map(([key, { sourceId }]) => {
+        if (!sourceId) {
+          allSourcesGiven = false;
+        }
+        return [key, sourceId as string];
+      });
+
+      if (!allSourcesGiven) {
+        newValues[node.id] = null;
+        return newValues;
+      }
+
+      let allValuesGiven = true;
+
+      const params = sourceIds.reduce((acc, [key, id]) => {
+        let val = values[id];
+        // #TODO: Fix type recognition
+        const { valid, value } = validate(val, "defined");
+
+        if (!valid) {
+          allValuesGiven = false;
+          acc[key] = 0;
+          return acc;
+        }
+
+        acc[key] = value!;
+        return acc;
+      }, {} as MtxVecFunctionParams);
+
+      if (!allValuesGiven) {
+        newValues[node.id] = null;
+        return newValues;
+      }
+
+      const res = node.data.action(params);
 
       newValues[node.id] = res;
       return newValues;

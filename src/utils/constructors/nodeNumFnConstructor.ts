@@ -46,8 +46,6 @@ const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
     },
   };
 
-  console.log({ newNode });
-
   return newNode;
 };
 

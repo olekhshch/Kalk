@@ -26,6 +26,7 @@ import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
 import generateHandleLabel, {
   deconstructHandleId,
 } from "../utils/generateHandleId";
+import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstructor";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -121,6 +122,18 @@ const useContent = create<ContentStore>()((set, get) => ({
         set({ nodes: [...get().nodes, newNode], idCounter: id });
         break;
       }
+      case "norm": {
+        const newNode = nodeMatrixFnConstructor(
+          nodeType,
+          position,
+          get().idCounter
+        );
+
+        if (newNode) {
+          set({ nodes: [...get().nodes, newNode], idCounter: id });
+        }
+        break;
+      }
       default: {
         const newNode = nodeFunctionContructor(
           nodeType,
@@ -129,7 +142,6 @@ const useContent = create<ContentStore>()((set, get) => ({
         );
 
         if (newNode) {
-          console.log({ newNode });
           set({ nodes: [...get().nodes, newNode], idCounter: id });
         }
       }

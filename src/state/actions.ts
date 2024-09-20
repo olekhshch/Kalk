@@ -1,5 +1,7 @@
 import { Action, Tab } from "../types/system";
 
+// List of all actions availabe on the Toolbar
+
 type Actions = {
   [key in keyof Tab as Tab]?: Action[];
 };
@@ -155,6 +157,14 @@ const actions: Actions = {
       command: {
         type: "create",
         data: "vec",
+      },
+    },
+    {
+      title: "Norm",
+      icon: "norm",
+      command: {
+        type: "create",
+        data: "norm",
       },
     },
   ],

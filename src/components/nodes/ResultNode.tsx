@@ -57,7 +57,8 @@ function resultLateX(value: number | Matrix | Vector | null) {
       }
     }
   } else if (value !== null) {
-    str = `$${value.toFixed(3)}$`;
+    // #TODO: Fix when passed undefined
+    str = `$${value ? value.toFixed(3) : value}$`;
   }
 
   return str;
