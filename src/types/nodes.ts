@@ -1,9 +1,8 @@
 import { Node } from "@xyflow/react";
 
-export type NodeType =
-  | "text-single"
+// functions on numbers (...nums) => num
+export type NumNodeType =
   | "expression"
-  | "result"
   | "add"
   | "substract"
   | "abs"
@@ -18,12 +17,18 @@ export type NodeType =
   | "power"
   | "asin"
   | "acos"
-  | "atg"
+  | "atg";
+
+// mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
+export type MtxVecNodeType =
   | "I-matrix"
   | "vec"
   | "norm"
   | "add-mtx"
+  | "scalar-mult"
   | "cross-prod";
+
+export type NodeType = "text-single" | "result" | NumNodeType | MtxVecNodeType;
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 

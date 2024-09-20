@@ -18,7 +18,7 @@ const Canvas = () => {
   const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
     useContent(useShallow((store) => store));
 
-  const { mode, setMode, minimap } = useAppState(
+  const { mode, minimap, setMode } = useAppState(
     useShallow((store) => ({
       mode: store.mode,
       setMode: store.setMode,
@@ -26,7 +26,7 @@ const Canvas = () => {
     }))
   );
 
-  const [shift, setShift] = useState(false);
+  // const [shift, setShift] = useState(false);
 
   const vpRef = useRef<HTMLDivElement>(null);
   const { screenToFlowPosition } = useReactFlow();
@@ -67,14 +67,9 @@ const Canvas = () => {
     activateNode(null);
 
     if (mode.current === "create" && mode.data) {
-      const { clientX, clientY } = e;
-      const position = screenToFlowPosition({ x: clientX, y: clientY });
-      addNode(mode.data as NodeType, position);
-      console.log({ shift });
-      if (!shift) {
-        setMode("edit");
-      }
+      addNode(mode.data as NodeType, prevPosition);
     }
+    setMode("edit");
   };
 
   const mouseMoveHandler = (e: React.MouseEvent) => {
@@ -82,7 +77,6 @@ const Canvas = () => {
 
     const { clientX, clientY } = e;
     const position = screenToFlowPosition({ x: clientX, y: clientY });
-
     setPrevPosition(position);
   };
 
@@ -90,7 +84,7 @@ const Canvas = () => {
     <div id="workarea" className="overflow-hidden" onClick={clickHandler}>
       <ReactFlow
         ref={vpRef}
-        nodes={[...nodes, nodePreview]}
+        nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onConnect={connectNodes}

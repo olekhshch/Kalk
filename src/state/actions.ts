@@ -175,6 +175,14 @@ const actions: Actions = {
         data: "add-mtx",
       },
     },
+    {
+      title: "Scalar multiplication",
+      icon: "scalar",
+      command: {
+        type: "create",
+        data: "scalar-mult",
+      },
+    },
   ],
   Organize: [
     {

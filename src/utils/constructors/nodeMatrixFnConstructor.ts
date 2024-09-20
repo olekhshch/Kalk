@@ -2,18 +2,20 @@ import {
   Input,
   MtxVecFnAction,
   MtxVecFnNode,
+  MtxVecNodeType,
   NodeType,
   ValueType,
   Vector,
 } from "../../types/nodes";
 import addVectors from "../matrix/addVectors";
+import scalarMultiplication from "../matrix/scalarMultiplication";
 import sumOfSquares from "../matrix/sumOfSquares";
 import validate from "../validate";
 
 // matrix/vector function nodes
 
 type f = (
-  nodeType: NodeType,
+  nodeType: MtxVecNodeType,
   position: { x: number; y: number },
   idCounter: number
 ) => MtxVecFnNode | null;
@@ -49,7 +51,7 @@ const nodeMatrixFnConstructor: f = (nodeType, position, idCounter) => {
   return newNode;
 };
 
-type g = (nodeType: NodeType) => string | null;
+type g = (nodeType: MtxVecNodeType) => string | null;
 
 const getNodeLabel: g = (nodeType) => {
   switch (nodeType) {
@@ -57,13 +59,17 @@ const getNodeLabel: g = (nodeType) => {
       return "||\\vec{v}||";
     case "add-mtx":
       return "A_{n\\times m}+B_{n\\times m}";
+    case "scalar-mult":
+      return "a \\vec{v}";
     default: {
       return null;
     }
   }
 };
 
-type k = (nt: NodeType) => { v?: Input; A?: Input; B?: Input } | null;
+type k = (
+  nt: MtxVecNodeType
+) => { v?: Input; A?: Input; B?: Input; a?: Input } | null;
 
 const getInputsFor: k = (nodeType) => {
   switch (nodeType) {
@@ -91,6 +97,20 @@ const getInputsFor: k = (nodeType) => {
         },
       };
     }
+    case "scalar-mult": {
+      return {
+        a: {
+          sourceId: null,
+          allowedTypes: ["number"],
+          type: "number",
+        },
+        v: {
+          sourceId: null,
+          allowedTypes: ["vector"],
+          type: "vector",
+        },
+      };
+    }
     default: {
       return null;
     }
@@ -98,7 +118,7 @@ const getInputsFor: k = (nodeType) => {
 };
 
 type o = (
-  nt: NodeType
+  nt: MtxVecNodeType
 ) => { N?: ValueType; V?: ValueType; M?: ValueType } | null;
 
 const getOutputs: o = (nodeType: NodeType) => {
@@ -106,6 +126,8 @@ const getOutputs: o = (nodeType: NodeType) => {
     case "norm":
       return { N: "number" };
     case "add-mtx":
+      return { M: "vector" };
+    case "scalar-mult":
       return { M: "vector" };
     default:
       return null;
@@ -134,6 +156,16 @@ const getActionFor: a = (nodeType) => {
         if (!valValue1.valid || !valValue2.valid) return null;
 
         return addVectors(A as Vector, B as Vector);
+      };
+    }
+    case "scalar-mult": {
+      return ({ a, v }) => {
+        const valValue1 = validate(a, "number");
+        const valValue2 = validate(v, "vector");
+
+        if (!valValue1.valid || !valValue2.valid) return null;
+
+        return scalarMultiplication(a as number, v as Vector);
       };
     }
     default:
