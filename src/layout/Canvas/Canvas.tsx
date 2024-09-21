@@ -13,6 +13,7 @@ import edgeTypes from "../../state/edgeTypes";
 import { useShallow } from "zustand/react/shallow";
 import { NodeType } from "../../types/nodes";
 import { PreviewNode } from "../../components/NodePreview";
+import useUI from "../../hooks/useUI";
 
 const Canvas = () => {
   const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
@@ -25,6 +26,8 @@ const Canvas = () => {
       minimap: store.minimap,
     }))
   );
+
+  const closeScaleMenu = useUI(useShallow((store) => store.closeScale));
 
   // const [shift, setShift] = useState(false);
 
@@ -65,6 +68,7 @@ const Canvas = () => {
   const clickHandler = (e: React.MouseEvent) => {
     console.log("canvas bg click");
     activateNode(null);
+    closeScaleMenu();
 
     if (mode.current === "create" && mode.data) {
       addNode(mode.data as NodeType, prevPosition);

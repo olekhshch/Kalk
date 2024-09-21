@@ -3,7 +3,6 @@ import {
   MtxVecFnAction,
   MtxVecFnNode,
   MtxVecNodeType,
-  NodeType,
   ValueType,
   Vector,
 } from "../../types/nodes";

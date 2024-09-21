@@ -5,7 +5,7 @@ type props = {
   title: string;
   showIcon: boolean;
   hideTitle?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler;
   icon?: string;
   large?: boolean;
   hoverStyle: "main" | "sec";
@@ -21,16 +21,16 @@ const Button = ({
   large,
 }: props) => {
   // if click action is specified - fires it, if not - fire action from the store by code
-  const clickHandler = () => {
+  const clickHandler = (e: React.MouseEvent) => {
     if (onClick) {
-      onClick();
+      onClick(e);
     }
   };
 
   return (
     <button
       className={`px-1 rounded-strd h-fit w-fit font-sys flex gap-1 items-center hover:text-white hover-${hoverStyle}`}
-      onClick={clickHandler}
+      onClick={(e) => clickHandler(e)}
       style={{ flexDirection: large ? "column" : "row" }}
     >
       {showIcon && (

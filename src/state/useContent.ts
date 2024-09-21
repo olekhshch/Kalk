@@ -248,12 +248,7 @@ const useContent = create<ContentStore>()((set, get) => ({
   showResultFor: (nodeId) => {
     const id = get().idCounter + 1;
     set({ idCounter: id });
-    const { nodes, idCounter, newNode } = showHideResult(
-      true,
-      nodeId,
-      get().nodes,
-      id
-    );
+    const { nodes, newNode } = showHideResult(true, nodeId, get().nodes, id);
 
     if (newNode) {
       const { edges, edgeCounter } = connectNodes(

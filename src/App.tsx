@@ -42,7 +42,7 @@ const App = () => {
         <TopPanel />
         <Canvas />
         <BottomPanel />
-        {/* <UILayer /> */}
+        <UILayer />
       </div>
     </ReactFlowProvider>
   );

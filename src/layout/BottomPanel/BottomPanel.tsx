@@ -1,25 +1,26 @@
 import { useMemo } from "react";
 import useAppState from "../../state/useAppState";
 import Button from "../../components/Button";
-import ScaleDialog from "./ScaleMenu";
+import ScaleDialog from "../UI/ScaleMenu";
 import { BackgroundVariant, useViewport } from "@xyflow/react";
 import ButtonMode from "../../components/ButtonMode";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import { AngleFormat } from "../../types/system";
 import Tips from "./Tips";
+import useUI from "../../hooks/useUI";
 
 const BottomPanel = () => {
-  const {
-    show_scale_menu,
-    openScaleMenu,
-    hideScaleMenu,
-    grid_type,
-    setGridType,
-    mode,
-    minimap,
-    showHideMinimap,
-  } = useAppState();
+  const { grid_type, setGridType, mode, minimap, showHideMinimap } =
+    useAppState();
+  const { toggleScaleMenu } = useUI(
+    useShallow((store) => ({
+      toggleScaleMenu: (e: React.MouseEvent) => {
+        e.stopPropagation();
+        store.scale ? store.closeScale() : store.openScale();
+      },
+    }))
+  );
 
   const { anglesFormat, toggleAngleFormat } = useContent(
     useShallow((store) => ({
@@ -39,10 +40,6 @@ const BottomPanel = () => {
   );
 
   const { zoom } = useViewport();
-
-  const toggleScaleDialog = () => {
-    show_scale_menu ? hideScaleMenu() : openScaleMenu();
-  };
 
   const toggleMinimap = () => {
     showHideMinimap(!minimap);
@@ -65,10 +62,9 @@ const BottomPanel = () => {
         <Button
           title={`${(zoom * 100).toFixed(2)}%`}
           showIcon={false}
-          onClick={toggleScaleDialog}
+          onClick={(e) => toggleScaleMenu(e)}
           hoverStyle="sec"
         />
-        {show_scale_menu && <ScaleDialog />}
       </div>
       <div className="flex items-center gap-[2px]">
         <ButtonMode
