@@ -1,6 +1,6 @@
-import { Action, Tab } from "../types/system";
+import { Action, Tab } from "../../types/system";
 
-// List of all actions availabe on the Toolbar
+// List of all actions availabe in the app
 
 type Actions = {
   [key in keyof Tab as Tab]?: Action[];
@@ -181,6 +181,22 @@ const actions: Actions = {
       command: {
         type: "create",
         data: "scalar-mult",
+      },
+    },
+    {
+      title: "Dot product",
+      icon: "dot",
+      command: {
+        type: "create",
+        data: "dot-prod",
+      },
+    },
+    {
+      title: "Cross product",
+      icon: "cross",
+      command: {
+        type: "create",
+        data: "cross-prod",
       },
     },
   ],

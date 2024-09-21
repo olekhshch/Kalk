@@ -5,14 +5,14 @@ type f = (
   show: boolean,
   sourceNodeId: string,
   nodes: AppNode[],
-  idCounter: number
+  id: number
 ) => NodeActionOutput;
 
-const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
+const showHideResult: f = (show, sourceNodeId, nodes, id) => {
   const sourceNode = nodes.find((node) => node.id === sourceNodeId);
 
   if (!sourceNode) {
-    return { newNode: null, nodes, idCounter };
+    return { newNode: null, nodes, idCounter: id };
   }
 
   const {
@@ -23,7 +23,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
   // SHOW
 
   if (show && !showResult) {
-    const newId = idCounter + 1;
+    const nodeId = id.toString();
     const distanceX = !measured
       ? 60
       : measured.width
@@ -32,7 +32,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
 
     //#TODO: Add async to create result node and alter nodes array?
     const resultNode: ResultNode = {
-      id: newId.toString(),
+      id: nodeId,
       position: { x: position.x + distanceX, y: position.y - 40 },
       type: "result",
       data: { sourceId: sourceNodeId, value: "" },
@@ -51,7 +51,7 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
     return {
       newNode: resultNode,
       nodes: [...newNodes, resultNode],
-      idCounter: newId,
+      idCounter: id,
     };
   }
 
@@ -81,10 +81,10 @@ const showHideResult: f = (show, sourceNodeId, nodes, idCounter) => {
       return acc;
     }, [] as AppNode[]);
 
-    return { newNode: alteredNode, nodes: newNodes, idCounter };
+    return { newNode: alteredNode, nodes: newNodes, idCounter: id };
   }
 
-  return { newNode: null, nodes, idCounter };
+  return { newNode: null, nodes, idCounter: id };
 };
 
 export default showHideResult;

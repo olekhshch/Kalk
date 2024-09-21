@@ -56,10 +56,13 @@ const useContent = create<ContentStore>()((set, get) => ({
   },
   addNode: (nodeType, position) => {
     const id = get().idCounter + 1;
+    set({ idCounter: id });
+    const nodeId = id.toString();
+
     switch (nodeType) {
       case "expression": {
         const newNode: ExpressionNode = {
-          id: id.toString(),
+          id: nodeId,
           type: "expression",
           position,
           data: {
@@ -71,26 +74,24 @@ const useContent = create<ContentStore>()((set, get) => ({
         };
         set({
           nodes: [...get().nodes, newNode],
-          idCounter: id,
         });
         break;
       }
       case "text-single": {
         const newNode: TextSingleNode = {
-          id: id.toString(),
+          id: nodeId,
           type: "text-single",
           data: { value: "" },
           position,
         };
         set({
           nodes: [...get().nodes, newNode],
-          idCounter: id,
         });
         break;
       }
       case "I-matrix": {
         const newNode: IdentityMtxNode = {
-          id: id.toString(),
+          id: nodeId,
           position,
           type: "i-mtx",
           data: {
@@ -103,12 +104,12 @@ const useContent = create<ContentStore>()((set, get) => ({
             },
           },
         };
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        set({ nodes: [...get().nodes, newNode] });
         break;
       }
       case "vec": {
         const newNode: VectorNode = {
-          id: id.toString(),
+          id: nodeId,
           position,
           type: "vec",
           data: {
@@ -126,35 +127,33 @@ const useContent = create<ContentStore>()((set, get) => ({
             },
           },
         };
-        set({ nodes: [...get().nodes, newNode], idCounter: id });
+        set({ nodes: [...get().nodes, newNode] });
         break;
       }
+      case "cross-prod":
       case "norm":
+      case "dot-prod":
       case "add-mtx":
       case "scalar-mult": {
-        const newNode = nodeMatrixFnConstructor(
-          nodeType,
-          position,
-          get().idCounter
-        );
+        const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
 
         if (newNode) {
-          set({ nodes: [...get().nodes, newNode], idCounter: id });
+          set({ nodes: [...get().nodes, newNode] });
         }
         break;
       }
       default: {
-        const newNode = nodeFunctionContructor(
-          nodeType,
-          position,
-          get().idCounter
-        );
+        const newNode = nodeFunctionContructor(nodeType, position, nodeId);
 
         if (newNode) {
-          set({ nodes: [...get().nodes, newNode], idCounter: id });
+          set({
+            nodes: [...get().nodes, newNode],
+          });
         }
       }
     }
+    // sets null values for any created node
+    set({ values: { ...get().values, [nodeId]: null } });
   },
   doAction: (action) =>
     set((state) => {
@@ -247,11 +246,13 @@ const useContent = create<ContentStore>()((set, get) => ({
     set({ nodes });
   },
   showResultFor: (nodeId) => {
+    const id = get().idCounter + 1;
+    set({ idCounter: id });
     const { nodes, idCounter, newNode } = showHideResult(
       true,
       nodeId,
       get().nodes,
-      get().idCounter
+      id
     );
 
     if (newNode) {
@@ -262,7 +263,7 @@ const useContent = create<ContentStore>()((set, get) => ({
         get().edgeCounter
       );
 
-      set({ nodes, idCounter, edges, edgeCounter, activeNodeId: null });
+      set({ nodes, edges, edgeCounter, activeNodeId: null });
     }
   },
   hideResultFor: (nodeId) =>
@@ -364,7 +365,6 @@ const useContent = create<ContentStore>()((set, get) => ({
       // adding new entries
       for (let i = numberOfEntries + 1; i <= newNum; i++) {
         const key = inputTemplate(i);
-        console.log({ key });
         targetNode.data.inputs[key] = { ...initialInput };
       }
     } else {
@@ -388,8 +388,17 @@ const useContent = create<ContentStore>()((set, get) => ({
 
       set({ edges: newEdges });
     }
+
     targetNode.data.numberOfEntries = newNum;
     const newNodes = replaceNode(targetNode, get().nodes);
+    // recalculate node and chanFrom it
+    const chainFrom = getChainIdsFrom(targetNode, get().edges);
+    recalculateChain(
+      chainFrom,
+      newNodes,
+      get().values,
+      get().anglesFormat
+    ).then((newVals) => set({ values: newVals }));
     set({ nodes: newNodes });
   },
 }));

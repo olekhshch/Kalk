@@ -13,14 +13,12 @@ const aTrigonometryFns: NodeType[] = ["asin", "acos"];
 type f = (
   nodeType: NodeType,
   position: { x: number; y: number },
-  idCounter: number
+  nodeId: string
 ) => NumberFunctionNode | null;
 
 // constructor for numerical function nodes (...numbers) => number
 
-const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
-  const id = idCounter + 1;
-
+const nodeFunctionContructor: f = (nodeType, position, nodeId) => {
   const label = getNodeLabel(nodeType);
   const inputs = getFunctionInputs(nodeType);
   const action = getNodeFunction(nodeType);
@@ -29,7 +27,7 @@ const nodeFunctionContructor: f = (nodeType, position, idCounter) => {
   if (!label) return null;
 
   const newNode: NumberFunctionNode = {
-    id: id.toString(),
+    id: nodeId,
     position,
     type: "num-fun",
     data: {

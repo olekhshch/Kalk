@@ -8,7 +8,7 @@ import {
 } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
-import nodeTypes from "../../state/nodeTypes";
+import nodeTypes from "../../state/config/nodeTypes";
 import edgeTypes from "../../state/edgeTypes";
 import { useShallow } from "zustand/react/shallow";
 import { NodeType } from "../../types/nodes";

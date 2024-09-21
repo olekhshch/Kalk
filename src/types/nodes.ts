@@ -26,6 +26,7 @@ export type MtxVecNodeType =
   | "norm"
   | "add-mtx"
   | "scalar-mult"
+  | "dot-prod"
   | "cross-prod";
 
 export type OrganizationalNodeType = "text-single" | "result";
@@ -38,13 +39,7 @@ export type Vector = number[];
 
 export type Matrix = Vector[];
 
-export type MathNode =
-  | ExpressionNode
-  // | AdditionNode
-  // | SubstractionNode
-  // | AbsoluteNode
-  // | MultiplyNode
-  | NumberFunctionNode;
+export type MathNode = ExpressionNode | NumberFunctionNode;
 
 // Nodes with dinamic number of inputs
 export type ConstructorNode = VectorNode;

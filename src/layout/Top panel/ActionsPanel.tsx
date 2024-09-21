@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import actions from "../../state/actions";
+import actions from "../../state/config/actions";
 import useAppState from "../../state/useAppState";
 import { Action } from "../../types/system";
 import Button from "../../components/Button";

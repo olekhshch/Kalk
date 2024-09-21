@@ -19,34 +19,12 @@ const recalculateChain: f = async (
 ) => {
   const values = { ...initialValues };
 
-  // const cb = async (nodeId: string) => {
-  //   const targetNode = nodes.find((node) => node.id === nodeId);
-  //   if (targetNode) {
-  //     const newValues = await calculateNode(targetNode, values, angleFormat);
-  //     values[nodeId] = newValues[nodeId];
-  //   }
-  // };
-
-  // for (let i = 0; i < chain.length; i++) {
-  //   console.log({ i });
-  //   const nodeId = chain[i];
-  //   const targetNode = nodes.find((node) => node.id === nodeId);
-  //   if (targetNode) {
-  //     calculateNode(targetNode, values, angleFormat).then((newValues) => {
-  //       values[nodeId] = newValues[nodeId];
-  //       i++;
-  //     });
-  //   }
-  // }
-
   for (const nodeId of chain) {
-    console.log("START FOR " + nodeId);
     const targetNode = nodes.find((node) => node.id === nodeId);
     if (targetNode) {
       const newValues = await calculateNode(targetNode, values, angleFormat);
       values[nodeId] = newValues[nodeId];
     }
-    console.log("FINISH FOR " + nodeId);
   }
 
   return values;

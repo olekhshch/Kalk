@@ -3,7 +3,7 @@ import React from "react";
 import { Action, Tab as TabName } from "../../types/system";
 import useAppState from "../../state/useAppState";
 import tabs from "../../state/tabs";
-import actions from "../../state/actions";
+import actions from "../../state/config/actions";
 import Button from "../../components/Button";
 
 const Tabs = () => {
