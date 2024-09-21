@@ -28,7 +28,9 @@ export type MtxVecNodeType =
   | "scalar-mult"
   | "cross-prod";
 
-export type NodeType = "text-single" | "result" | NumNodeType | MtxVecNodeType;
+export type OrganizationalNodeType = "text-single" | "result";
+
+export type NodeType = OrganizationalNodeType | NumNodeType | MtxVecNodeType;
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 

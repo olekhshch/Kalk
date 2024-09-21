@@ -27,6 +27,7 @@ import generateHandleLabel, {
   deconstructHandleId,
 } from "../utils/generateHandleId";
 import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstructor";
+import recalculateAll from "../utils/recalculateAll";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -37,10 +38,16 @@ const useContent = create<ContentStore>()((set, get) => ({
   activeNodeId: null,
   values: {},
   anglesFormat: AngleFormat.RAD,
-  setAnglesFormat: (newFormat) => {
+  setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
       set({ anglesFormat: newFormat });
-      // #TODO Recalculations after change
+      const newValues = await recalculateAll(
+        get().nodes,
+        get().edges,
+        newFormat
+      );
+      console.log({ newValues });
+      set({ values: newValues });
     }
   },
   onNodesChange: (changes) => {
@@ -227,7 +234,7 @@ const useContent = create<ContentStore>()((set, get) => ({
 
       // getting chain of next connected nodes to recalculate their values
       const chain = getChain(newNode, get().edges);
-      const newValues = recalculateChain(
+      const newValues = await recalculateChain(
         chain,
         nodes,
         newVals,
@@ -322,7 +329,7 @@ const useContent = create<ContentStore>()((set, get) => ({
 
     // recalculates chain
     const chain = getChainIdsFrom(nodeB, newEdges);
-    const newValues = recalculateChain(
+    const newValues = await recalculateChain(
       chain,
       newNodes,
       get().values,

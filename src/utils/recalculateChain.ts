@@ -9,22 +9,45 @@ type f = (
   nodes: AppNode[],
   initialValues: CalculatedValues,
   angleFormat: AngleFormat
-) => CalculatedValues;
+) => Promise<CalculatedValues>;
 
-const recalculateChain: f = (chain, nodes, initialValues, angleFormat) => {
-  let values = { ...initialValues };
+const recalculateChain: f = async (
+  chain,
+  nodes,
+  initialValues,
+  angleFormat
+) => {
+  const values = { ...initialValues };
 
-  chain.forEach((nodeId) => {
+  // const cb = async (nodeId: string) => {
+  //   const targetNode = nodes.find((node) => node.id === nodeId);
+  //   if (targetNode) {
+  //     const newValues = await calculateNode(targetNode, values, angleFormat);
+  //     values[nodeId] = newValues[nodeId];
+  //   }
+  // };
+
+  // for (let i = 0; i < chain.length; i++) {
+  //   console.log({ i });
+  //   const nodeId = chain[i];
+  //   const targetNode = nodes.find((node) => node.id === nodeId);
+  //   if (targetNode) {
+  //     calculateNode(targetNode, values, angleFormat).then((newValues) => {
+  //       values[nodeId] = newValues[nodeId];
+  //       i++;
+  //     });
+  //   }
+  // }
+
+  for (const nodeId of chain) {
+    console.log("START FOR " + nodeId);
     const targetNode = nodes.find((node) => node.id === nodeId);
-
     if (targetNode) {
-      calculateNode(targetNode, values, angleFormat).then((newValues) => {
-        values[nodeId] = newValues[nodeId];
-      });
+      const newValues = await calculateNode(targetNode, values, angleFormat);
+      values[nodeId] = newValues[nodeId];
     }
-  });
-
-  console.log({ values });
+    console.log("FINISH FOR " + nodeId);
+  }
 
   return values;
 };

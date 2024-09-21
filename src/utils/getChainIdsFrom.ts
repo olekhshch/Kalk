@@ -13,14 +13,12 @@ const getChainIdsFrom: f = (startingNode, edges) => {
 
     edges.forEach((edge) => {
       if (edge.source === nodeId) {
-        console.log({ edge, nodeId });
         if (!acc.includes(edge.target)) {
           acc.push(edge.target);
         }
       }
     });
     nodeIds.push(...acc);
-    console.log({ nodeIds, acc });
 
     if (acc.length > 0) {
       acc.forEach((id) => getTargets(id));

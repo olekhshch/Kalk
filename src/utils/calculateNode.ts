@@ -18,7 +18,6 @@ import convertToDEG from "./convertToDEG";
 import makeIdentityMatrix from "./matrix/makeIdentityMatrix";
 import makeVector from "./matrix/makeVector";
 import validate from "./validate";
-import { ac } from "vitest/dist/chunks/reporters.C_zwCd4j.js";
 
 type f = (
   node: AppNode,
@@ -28,7 +27,7 @@ type f = (
 
 // #TODO: return null if no calculations were made?
 const calculateNode: f = async (node, values, angleFormat) => {
-  const newValues = values;
+  const newValues = { ...values };
   switch (node.type) {
     case "expression": {
       const { value } = (node as ExpressionNode).data;
