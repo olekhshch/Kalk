@@ -64,24 +64,15 @@ const calculateNode: f = async (node, values, angleFormat) => {
           acc[key] = 0;
           return acc;
         }
-        // convertation if trigonometric function and angle format = DEG
-        if (
-          angleFormat === AngleFormat.DEG &&
-          node.data.trigonometry &&
-          isNumber(val)
-        ) {
-          val = convertToRAD(val as number);
-        }
         acc[key] = val as number;
         return acc;
       }, {} as NumberFunctionParams);
 
       if (!allValuesGiven) return values;
+      const { action } = node.data;
 
-      let res = node.data.action(params);
-      if (angleFormat === AngleFormat.DEG && node.data.isAngle) {
-        res = convertToDEG(res as number);
-      }
+      // passing angleFormat for trigonometric functions
+      const res = await action(params, angleFormat);
       newValues[node.id] = res;
       return newValues;
     }

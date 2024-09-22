@@ -1,10 +1,11 @@
 import { Node } from "@xyflow/react";
+import { AngleFormat } from "./app";
 
 // functions on numbers (...nums) => num
 export type NumNodeType =
   | "expression"
   | "add"
-  | "substract"
+  | "subtract"
   | "abs"
   | "multiply"
   | "divide"
@@ -66,66 +67,13 @@ export type ExpressionNode = Node<
   "expression"
 >;
 
+export type OutputValue = number | Vector | Matrix | null;
+
 export type CalculationsData = {
   res: number | null;
 };
 
 export type ResultNode = Node<{ sourceId: string; value: string }, "result">;
-
-export type AdditionNode = Node<
-  {
-    showResult: boolean;
-    inputs: {
-      a: Input;
-      b: Input;
-    };
-    outputs: {
-      N: ValueType;
-    };
-  },
-  "add"
->;
-
-export type SubstractionNode = Node<
-  {
-    showResult: boolean;
-    inputs: {
-      a: Input;
-      b: Input;
-    };
-    outputs: {
-      N: ValueType;
-    };
-  },
-  "substract"
->;
-
-export type AbsoluteNode = Node<
-  {
-    showResult: boolean;
-    inputs: {
-      a: Input;
-    };
-    outputs: {
-      N: ValueType;
-    };
-  },
-  "abs"
->;
-
-export type MultiplyNode = Node<
-  {
-    showResult: boolean;
-    inputs: {
-      a: Input;
-      b: Input;
-    };
-    outputs: {
-      N: ValueType;
-    };
-  },
-  "multiply"
->;
 
 // general type for nodes with regular functions on numbers (e.g. adding, multiplying etc.)
 export type NumberFunctionNode = Node<
@@ -137,17 +85,22 @@ export type NumberFunctionNode = Node<
       [k: string]: Input;
     };
     outputs: {
-      N: ValueType;
+      N: { allowedTypes: ValueType[]; type: ValueType | null };
     };
-    action: (vals: NumberFunctionParams) => number | Matrix;
-    trigonometry?: boolean;
-    isAngle?: boolean;
+    action: (
+      vals: NumberFunctionParams,
+      angleFormat?: AngleFormat
+    ) => OutputValue | Promise<OutputValue>;
+    // trigonometry?: boolean;
+    // isAngle?: boolean;
   },
   "num-fun"
 >;
 
+export type InputValue = number | Vector | Matrix | null | undefined;
+
 export type NumberFunctionParams = {
-  [k: string]: number;
+  [k: string]: InputValue;
 };
 // export type InputLabel = "a" | "b";
 
@@ -177,6 +130,7 @@ export type VectorNode = Node<
     isConstructor: true;
     inputTemplate: (n: number) => string;
     numberOfEntries: number;
+    allowedInputTypes: ValueType[];
     inputs: { [k: string]: Input };
     outputs: {
       V: ValueType;
@@ -191,6 +145,7 @@ export type MtxFromRowsNode = Node<
     isConstructor: true;
     inputTemplate: (n: number) => string;
     numberOfEntries: number;
+    allowedInputTypes: ValueType[];
     inputs: { [r: string]: Input };
     outputs: {
       M: ValueType;

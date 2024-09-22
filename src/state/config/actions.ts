@@ -32,7 +32,7 @@ const actions: Actions = {
       hideToolbarTitle: true,
       command: {
         type: "create",
-        data: "substract",
+        data: "subtract",
       },
     },
     {

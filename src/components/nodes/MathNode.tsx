@@ -36,15 +36,15 @@ const MathNode = ({
     const numOfOutputs = entries.length;
     const step = 100 / (numOfOutputs + 1);
 
-    return entries.map(([key, outputType], idx) => {
-      const handleId = generateHandleLabel(key, [outputType]);
+    return entries.map(([key, output], idx) => {
+      const handleId = generateHandleLabel(key, output.allowedTypes);
       const cssPosition = `${step * (1 + idx)}%`;
       return { handleId, cssPosition, key };
     });
   }, []);
 
   return (
-    <NodeWrapper id={id}>
+    <NodeWrapper id={id} outputValueType={"number"}>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {

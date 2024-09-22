@@ -1,12 +1,14 @@
 import React, { useCallback } from "react";
 import useContent from "../../state/useContent";
+import { ValueType } from "../../types/nodes";
 
 type props = {
   children: JSX.Element;
   title?: string;
   id: string;
+  outputValueType?: ValueType;
 };
-const NodeWrapper = ({ children, title, id }: props) => {
+const NodeWrapper = ({ children, title, id, outputValueType }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
   // const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
@@ -45,6 +47,7 @@ const NodeWrapper = ({ children, title, id }: props) => {
         {children}
         <span className="absolute">{id}</span>
       </div>
+      {outputValueType && <span className="absolute">{outputValueType}</span>}
     </>
   );
 };

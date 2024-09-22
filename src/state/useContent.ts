@@ -8,6 +8,7 @@ import {
   Input,
   MathNode,
   MtxFromRowsNode,
+  NumNodeType,
   TextSingleNode,
   VectorNode,
 } from "../types/nodes";
@@ -29,6 +30,7 @@ import generateHandleLabel, {
 } from "../utils/generateHandleId";
 import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstructor";
 import recalculateAll from "../utils/recalculateAll";
+import isConnectable from "../utils/edges/isConnectable";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -118,6 +120,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             inputTemplate: (n) => `v${n}`,
             showResult: false,
             numberOfEntries: 3,
+            allowedInputTypes: ["number"],
             inputs: {
               v1: { ...initialInput },
               v2: { ...initialInput },
@@ -140,6 +143,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             showResult: false,
             isConstructor: true,
             numberOfEntries: 3,
+            allowedInputTypes: ["vector"],
             outputs: {
               M: "matrix",
             },
@@ -179,7 +183,11 @@ const useContent = create<ContentStore>()((set, get) => ({
         break;
       }
       default: {
-        const newNode = nodeFunctionContructor(nodeType, position, nodeId);
+        const newNode = nodeFunctionContructor(
+          nodeType as NumNodeType,
+          position,
+          nodeId
+        );
 
         if (newNode) {
           set({
@@ -319,13 +327,15 @@ const useContent = create<ContentStore>()((set, get) => ({
     // checking if not connecting to the same node
     if (target === source) return;
 
-    // checking if value of the source = allowed value of the target input
+    // checking if possible value of the source = allowed value of the target input
     const sourceHandleObj = deconstructHandleId(sourceHandle);
     const targetHandleObj = deconstructHandleId(targetHandle);
 
-    if (!sourceHandleObj || !targetHandleObj) return;
+    if (!sourceHandleObj || !targetHandleObj) return false;
 
-    if (!targetHandleObj.allowedTypes.includes(sourceHandleObj.allowedTypes[0]))
+    if (
+      !isConnectable(sourceHandleObj.allowedTypes, targetHandleObj.allowedTypes)
+    )
       return;
 
     const [nodeA, nodeB] = (await Promise.all([
@@ -387,7 +397,8 @@ const useContent = create<ContentStore>()((set, get) => ({
     // checking if exists and is constructor
     if (!targetNode || !targetNode.data.isConstructor) return;
 
-    const { numberOfEntries, inputTemplate } = targetNode.data;
+    const { numberOfEntries, inputTemplate, allowedInputTypes } =
+      targetNode.data;
     // checking if new number is not the same
     if (newNum === numberOfEntries) return;
 
@@ -397,7 +408,10 @@ const useContent = create<ContentStore>()((set, get) => ({
       // adding new entries
       for (let i = numberOfEntries + 1; i <= newNum; i++) {
         const key = inputTemplate(i);
-        targetNode.data.inputs[key] = { ...initialInput };
+        targetNode.data.inputs[key] = {
+          ...initialInput,
+          allowedTypes: [...allowedInputTypes],
+        };
       }
     } else {
       // removing last entries and connected to them edges

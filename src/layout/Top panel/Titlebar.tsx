@@ -3,7 +3,7 @@ import useContent from "../../state/useContent";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const Header = () => {
-  const { nodes, edges } = useContent();
+  const { nodes, edges, values } = useContent();
   const window = getCurrentWindow();
 
   const close = () => {
@@ -23,6 +23,7 @@ const Header = () => {
       <div className="flex gap-3">
         <button onClick={() => console.log({ nodes })}>NS</button>
         <button onClick={() => console.log({ edges })}>ES</button>
+        <button onClick={() => console.log({ values })}>VAL</button>
       </div>
       <div
         className="text-base grow text-center"

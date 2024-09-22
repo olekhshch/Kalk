@@ -1,17 +1,24 @@
+import { AngleFormat } from "../../types/app";
 import {
   Input,
   NodeType,
   NumberFunctionNode,
   NumberFunctionParams,
+  NumNodeType,
+  OutputValue,
+  ValueType,
 } from "../../types/nodes";
 import convertToDEG from "../convertToDEG";
 import convertToRAD from "../convertToRAD";
+import arithmetic from "../number/arithmetic";
+import numOperations from "../number/numOperations";
+import trigonometry from "../number/trigonometry";
 
-const trigonometryFns: NodeType[] = ["sin", "cos", "tg", "ctg"];
-const aTrigonometryFns: NodeType[] = ["asin", "acos"];
+// const trigonometryFns: NodeType[] = ["sin", "cos", "tg", "ctg"];
+// const aTrigonometryFns: NodeType[] = ["asin", "acos"];
 
 type f = (
-  nodeType: NodeType,
+  nodeType: NumNodeType,
   position: { x: number; y: number },
   nodeId: string
 ) => NumberFunctionNode | null;
@@ -19,10 +26,11 @@ type f = (
 // constructor for numerical function nodes (...numbers) => number
 
 const nodeFunctionContructor: f = (nodeType, position, nodeId) => {
+  // #TODO: async
   const label = getNodeLabel(nodeType);
   const inputs = getFunctionInputs(nodeType);
   const action = getNodeFunction(nodeType);
-  const trigonometry = trigonometryFns.includes(nodeType);
+  const allowedTypes = getAllowedOutputTypes(nodeType);
 
   if (!label) return null;
 
@@ -36,18 +44,19 @@ const nodeFunctionContructor: f = (nodeType, position, nodeId) => {
       label,
       inputs,
       outputs: {
-        N: "number",
+        N: {
+          allowedTypes,
+          type: null,
+        },
       },
       action,
-      trigonometry,
-      isAngle: aTrigonometryFns.includes(nodeType),
     },
   };
 
   return newNode;
 };
 
-function getNodeLabel(nodeType: NodeType) {
+function getNodeLabel(nodeType: NumNodeType) {
   switch (nodeType) {
     case "abs":
       return "|a|";
@@ -61,7 +70,7 @@ function getNodeLabel(nodeType: NodeType) {
       return "a \\cdot b";
     case "sin":
       return "\\sin(a)";
-    case "substract":
+    case "subtract":
       return "a-b";
     case "to-deg":
       return "RAD \\implies DEG";
@@ -90,25 +99,61 @@ const initialInput: Input = {
   allowedTypes: ["number"],
 };
 
-type fun = (nt: NodeType) => { a?: Input; b?: Input };
+type of = (nt: NumNodeType) => ValueType[];
 
-const getFunctionInputs: fun = (nodeType: NodeType) => {
-  switch (nodeType) {
-    case "abs":
-    case "to-deg":
-    case "to-rad":
+const getAllowedOutputTypes: of = (nt: NumNodeType) => {
+  switch (nt) {
     case "cos":
     case "sin":
     case "tg":
+    case "ctg":
+    case "to-deg":
+    case "to-rad":
     case "asin":
     case "acos":
-    case "ctg": {
-      return { a: { ...initialInput } };
+    case "abs":
+    case "power":
+      return ["number", "matrix", "vector"];
+    default: {
+      return ["number"];
+    }
+  }
+};
+
+type fun = (nt: NumNodeType) => { a?: Input; b?: Input };
+
+const getFunctionInputs: fun = (nodeType: NodeType) => {
+  switch (nodeType) {
+    case "cos":
+    case "sin":
+    case "tg":
+    case "ctg":
+    case "to-deg":
+    case "to-rad":
+    case "asin":
+    case "acos":
+    case "abs": {
+      return {
+        a: {
+          sourceId: null,
+          allowedTypes: ["number", "vector", "matrix"],
+          type: "number",
+        },
+      };
+    }
+    case "power": {
+      return {
+        a: {
+          sourceId: null,
+          allowedTypes: ["number", "vector", "matrix"],
+          type: "number",
+        },
+        b: { ...initialInput },
+      };
     }
     case "add":
     case "multiply":
-    case "substract":
-    case "power":
+    case "subtract":
     case "divide": {
       return { a: { ...initialInput }, b: { ...initialInput } };
     }
@@ -119,37 +164,40 @@ const getFunctionInputs: fun = (nodeType: NodeType) => {
 };
 
 type NodeActionFactory = (
-  nodeType: NodeType
-) => (params: NumberFunctionParams) => number;
+  nodeType: NumNodeType
+) => (
+  params: NumberFunctionParams,
+  angleFormat?: AngleFormat
+) => Promise<OutputValue> | OutputValue;
 
 const getNodeFunction: NodeActionFactory = (nodeType) => {
   switch (nodeType) {
     case "abs": {
-      return ({ a }) => Math.abs(a);
+      return ({ a }) => numOperations.abs(a);
     }
     case "add": {
-      return ({ a, b }) => a + b;
+      return ({ a, b }) => arithmetic.addTwoNumbers(a, b);
     }
     case "divide": {
-      return ({ a, b }) => a / b;
+      return ({ a, b }) => arithmetic.divideTwoNumbers(a, b);
     }
     case "multiply": {
-      return ({ a, b }) => a * b;
+      return ({ a, b }) => arithmetic.multiplyTwoNumbers(a, b);
     }
-    case "substract": {
-      return ({ a, b }) => a - b;
+    case "subtract": {
+      return ({ a, b }) => arithmetic.subtractTwoNumbers(a, b);
     }
     case "sin": {
-      return ({ a }) => Math.sin(a);
+      return ({ a }, angleFormat) => trigonometry.sin(a, angleFormat!);
     }
     case "cos": {
-      return ({ a }) => Math.cos(a);
+      return ({ a }, angleFormat) => trigonometry.cos(a, angleFormat!);
     }
     case "tg": {
-      return ({ a }) => Math.tan(a);
+      return ({ a }, angleFormat) => trigonometry.tg(a, angleFormat!);
     }
     case "ctg": {
-      return ({ a }) => 1 / Math.tan(a);
+      return ({ a }, angleFormat) => trigonometry.ctg(a, angleFormat!);
     }
     case "to-deg": {
       return ({ a }) => convertToDEG(a);
@@ -158,13 +206,13 @@ const getNodeFunction: NodeActionFactory = (nodeType) => {
       return ({ a }) => convertToRAD(a);
     }
     case "power": {
-      return ({ a, b }) => Math.pow(a, b);
+      return ({ a, b }) => numOperations.power(a, b);
     }
     case "asin": {
-      return ({ a }) => Math.asin(a);
+      return ({ a }, angleFormat) => trigonometry.asin(a, angleFormat!);
     }
     case "acos": {
-      return ({ a }) => Math.acos(a);
+      return ({ a }, angleFormat) => trigonometry.acos(a, angleFormat!);
     }
     default: {
       console.log("No action for " + nodeType + " specified");

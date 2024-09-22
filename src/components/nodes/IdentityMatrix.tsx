@@ -14,7 +14,7 @@ const IdentityMatrix = ({
   const inputId = generateHandleLabel("n", inputs.n.allowedTypes);
   const outputId = generateHandleLabel("M", [outputs.M]);
   return (
-    <NodeWrapper id={id}>
+    <NodeWrapper id={id} outputValueType={"matrix"}>
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} isShown={showResult} />
         <InputPort id={inputId} cssPosition="50%" label="n" showLabel />

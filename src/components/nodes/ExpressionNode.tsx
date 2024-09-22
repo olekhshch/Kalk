@@ -31,13 +31,13 @@ const ExpressionNode = ({
 
   // span refference to calculate width of the input
   const spanRef = useRef<HTMLSpanElement>(null);
-  const [inputWidth, setInputWidth] = useState(20);
+  const [inputWidth, setInputWidth] = useState(40);
   const { zoom } = useViewport();
 
   useEffect(() => {
     if (spanRef.current) {
       const { width } = spanRef.current.getBoundingClientRect();
-      setInputWidth(Math.max(4, width / zoom + 10));
+      setInputWidth(Math.max(40, width / zoom + 10));
     }
   }, [currentValue]);
 
@@ -66,7 +66,7 @@ const ExpressionNode = ({
     <>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
-        <NodeWrapper id={id}>
+        <NodeWrapper id={id} outputValueType={"number"}>
           <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (
               <form onSubmit={submitHandler} className="h-[1rem] flex">
@@ -75,7 +75,7 @@ const ExpressionNode = ({
                   onChange={onChange}
                   onKeyDown={keyDownHandler}
                   style={{ width: inputWidth + "px" }}
-                  className="nodrag text-[16px] h-[1em] focus:outline-0 p-0 m-0 bg-transparent"
+                  className="nodrag text-[18px] h-[1em] focus:outline-0 p-0 m-0 bg-transparent"
                   spellCheck={false}
                   autoFocus
                 />
@@ -83,7 +83,7 @@ const ExpressionNode = ({
             )}
             <span
               ref={spanRef}
-              className="min-h-[1rem] h-[1rem] min-w-1 leading-3"
+              className="min-h-[1rem] h-[1rem] min-w-[40px] leading-3"
               style={{
                 width: "max-content",
                 visibility: isActive ? "hidden" : "unset",

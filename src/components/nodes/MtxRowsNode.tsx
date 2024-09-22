@@ -55,7 +55,7 @@ const MtxRowsNode = ({
   useEffect(() => console.log("MTX ROWS rerender"));
 
   return (
-    <NodeWrapper id={id}>
+    <NodeWrapper id={id} outputValueType={"matrix"}>
       <div className="p-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputLabels.map(({ cssPosition, handleId, key }) => {

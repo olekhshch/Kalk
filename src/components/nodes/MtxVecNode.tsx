@@ -37,7 +37,7 @@ const MtxVecNode = ({
   }, []);
 
   return (
-    <NodeWrapper id={id}>
+    <NodeWrapper id={id} outputValueType={"vector"}>
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {

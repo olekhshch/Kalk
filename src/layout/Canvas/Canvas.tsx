@@ -98,7 +98,7 @@ const Canvas = () => {
         onMouseEnter={mouseEnterHandler}
         onMouseLeave={mouseLeaveHandler}
       >
-        <ValuesPanel />
+        {/* <ValuesPanel /> */}
         <BackgroundWrapper />
         {minimap && <MiniMap />}
       </ReactFlow>
