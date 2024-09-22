@@ -1,7 +1,7 @@
 // util to change string value of text/expression nodes
 
 import { AppNode, NodeType } from "../../types/nodes";
-import { NodeActionOutput } from "../../types/system";
+import { NodeActionOutput } from "../../types/app";
 
 const eligibleTypes: NodeType[] = ["expression", "text-single"];
 

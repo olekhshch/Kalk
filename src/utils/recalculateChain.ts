@@ -1,7 +1,7 @@
 // recalculates results for passed chain and return new values object
 
 import { AppNode } from "../types/nodes";
-import { AngleFormat, CalculatedValues } from "../types/system";
+import { AngleFormat, CalculatedValues } from "../types/app";
 import calculateNode from "./calculateNode";
 
 type f = (

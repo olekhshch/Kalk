@@ -1,12 +1,10 @@
-import { useMemo } from "react";
 import useAppState from "../../state/useAppState";
 import Button from "../../components/Button";
-import ScaleDialog from "../UI/ScaleMenu";
 import { BackgroundVariant, useViewport } from "@xyflow/react";
 import ButtonMode from "../../components/ButtonMode";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
-import { AngleFormat } from "../../types/system";
+import { AngleFormat } from "../../types/app";
 import Tips from "./Tips";
 import useUI from "../../hooks/useUI";
 

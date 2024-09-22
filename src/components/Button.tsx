@@ -1,4 +1,3 @@
-import { Background } from "@xyflow/react";
 import React from "react";
 
 type props = {

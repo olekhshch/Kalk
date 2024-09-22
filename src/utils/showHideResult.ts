@@ -1,5 +1,5 @@
 import { AppNode, ExpressionNode, ResultNode, MathNode } from "../types/nodes";
-import { NodeActionOutput } from "../types/system";
+import { NodeActionOutput } from "../types/app";
 
 type f = (
   show: boolean,

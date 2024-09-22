@@ -8,16 +8,13 @@ import {
   NumberFunctionParams,
   Vector,
 } from "../types/nodes";
-import {
-  AngleFormat,
-  CalculatedValues,
-  RustCalculations,
-} from "../types/system";
+import { AngleFormat, CalculatedValues, RustCalculations } from "../types/app";
 import convertToRAD from "./convertToRAD";
 import convertToDEG from "./convertToDEG";
 import makeIdentityMatrix from "./matrix/makeIdentityMatrix";
 import makeVector from "./matrix/makeVector";
 import validate from "./validate";
+import makeMtxFromRows from "./matrix/makeMtxFromRows";
 
 type f = (
   node: AppNode,
@@ -117,7 +114,10 @@ const calculateNode: f = async (node, values, angleFormat) => {
         }
       );
 
-      if (!allSourcesGiven) return values;
+      if (!allSourcesGiven) {
+        newValues[node.id] = null;
+        return newValues;
+      }
 
       let allValuesValid = true;
 
@@ -182,6 +182,41 @@ const calculateNode: f = async (node, values, angleFormat) => {
       const res = node.data.action(params);
 
       newValues[node.id] = res;
+      return newValues;
+    }
+    case "mtx-rows": {
+      const inputEntries = Object.entries(node.data.inputs);
+
+      let allSourcesGiven = true;
+
+      const sourceIds = inputEntries.map(
+        ([key, { sourceId, allowedTypes }]) => {
+          if (!sourceId) {
+            allSourcesGiven = false;
+          }
+          return [key, sourceId as string];
+        }
+      );
+
+      if (!allSourcesGiven) {
+        newValues[node.id] = null;
+        return newValues;
+      }
+
+      let params: Vector[] = [];
+
+      sourceIds.forEach(([, sourceId]) => {
+        const val = values[sourceId];
+        // val should be a Vector
+        if (!Array.isArray(val) || Array.isArray(val[0])) {
+          newValues[node.id] = null;
+          return newValues;
+        }
+        params.push(val as Vector);
+      });
+
+      const matrix = makeMtxFromRows(params);
+      newValues[node.id] = matrix;
       return newValues;
     }
     default: {

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ActionType, Mode, Tab } from "../types/system";
+import { ActionType, Mode, Tab } from "../types/app";
 import { BackgroundVariant } from "@xyflow/react";
 import { NodeType } from "../types/nodes";
 

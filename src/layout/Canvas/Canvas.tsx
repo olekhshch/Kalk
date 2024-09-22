@@ -17,7 +17,7 @@ import useUI from "../../hooks/useUI";
 
 const Canvas = () => {
   const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
-    useContent(useShallow((store) => store));
+    useContent();
 
   const { mode, minimap, setMode } = useAppState(
     useShallow((store) => ({

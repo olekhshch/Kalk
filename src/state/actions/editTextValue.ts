@@ -1,5 +1,5 @@
 import { AppNode, TextSingleNode } from "../../types/nodes";
-import { ContentStore } from "../../types/system";
+import { ContentStore } from "../../types/app";
 
 type f = (
   nodeId: string,

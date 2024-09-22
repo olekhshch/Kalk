@@ -1,4 +1,4 @@
-import { Tab } from "../types/system";
+import { Tab } from "../types/app";
 
 const tabs: Tab[] = ["All", "Math", "Matrices", "Organize"];
 

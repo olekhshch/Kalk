@@ -17,10 +17,8 @@ const VectorNode = ({
   id,
   data: { inputs, numberOfEntries, outputs, showResult },
 }: NodeProps<VectorNodeType>) => {
-  const { setNumOfEntries } = useContent(
-    useShallow((store) => ({
-      setNumOfEntries: (n: number) => store.setNumOfEntriesFor(id, n),
-    }))
+  const [setNumOfEntriesFor] = useContent(
+    useShallow((store) => [store.setNumOfEntriesFor])
   );
 
   const [entriesNum, changeHandler] = useInputChange({
@@ -28,17 +26,13 @@ const VectorNode = ({
     allowOnly: /[0-9]/,
   });
 
-  const entries = useMemo(() => Object.entries(inputs), [numberOfEntries]);
+  const entries = Object.entries(inputs);
 
   const entriesLabels = useMemo(() => {
     return entries.map(([key]) => key).join("\\\\");
   }, [numberOfEntries]);
 
   const outputLabel = generateHandleLabel("V", [outputs.V]);
-
-  useEffect(() => {
-    console.log("LABELS");
-  }, [outputLabel]);
 
   const inputLabels = useMemo(() => {
     const step = 100 / (entries.length + 1);
@@ -54,11 +48,11 @@ const VectorNode = ({
     e.preventDefault();
     const newNum = parseInt(entriesNum);
     if (Number.isInteger(newNum)) {
-      setNumOfEntries(newNum);
+      setNumOfEntriesFor(id, newNum);
     }
   };
 
-  useEffect(() => console.log("VECTOR NODE rerender"));
+  useEffect(() => console.log("VECTOR rerender"));
 
   return (
     <NodeWrapper id={id}>

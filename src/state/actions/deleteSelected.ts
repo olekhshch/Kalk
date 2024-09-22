@@ -1,4 +1,4 @@
-import { NodeAction } from "../../types/system";
+import { NodeAction } from "../../types/app";
 
 const deleteSelected: NodeAction = ({ nodes }) => {
   return { nodes: nodes.filter((node) => !node.selected) };

@@ -1,4 +1,4 @@
-import { NodeAction } from "../../types/system";
+import { NodeAction } from "../../types/app";
 
 const deleteNodeById: NodeAction = ({ nodes, nodeIds }) => {
   if (!nodeIds || nodeIds.length === 0) return { nodes };

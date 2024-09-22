@@ -1,7 +1,5 @@
 // context/dialog menu button
 
-import React from "react";
-
 type props = {
   title: string;
   onClick: () => void;

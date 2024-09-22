@@ -5,7 +5,7 @@ import { AppNode, TextSingleNode as TextSingle } from "../../types/nodes";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
 import { useShallow } from "zustand/react/shallow";
-import { ContentStore } from "../../types/system";
+import { ContentStore } from "../../types/app";
 
 type Selector = {
   isActive: boolean;

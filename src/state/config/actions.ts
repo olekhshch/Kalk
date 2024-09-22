@@ -1,4 +1,4 @@
-import { Action, Tab } from "../../types/system";
+import { Action, Tab } from "../../types/app";
 
 // List of all actions availabe in the app
 
@@ -136,11 +136,12 @@ const actions: Actions = {
   ],
   Matrices: [
     {
-      title: "Matrix",
+      title: "Matrix (from rows)",
       icon: "",
       large: true,
       command: {
         type: "create",
+        data: "mtx-rows",
       },
     },
     {

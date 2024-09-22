@@ -1,5 +1,5 @@
 import React from "react";
-import { CreateNodeAction } from "../../types/system";
+import { CreateNodeAction } from "../../types/app";
 import { ExpressionNode, ResultNode } from "../../types/nodes";
 
 const createExpressionNode: CreateNodeAction = ({

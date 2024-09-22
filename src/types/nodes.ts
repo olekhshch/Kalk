@@ -22,12 +22,14 @@ export type NumNodeType =
 // mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
 export type MtxVecNodeType =
   | "I-matrix"
+  | "mtx-rows"
   | "vec"
   | "norm"
   | "add-mtx"
   | "scalar-mult"
   | "dot-prod"
-  | "cross-prod";
+  | "cross-prod"
+  | "sum-all";
 
 export type OrganizationalNodeType = "text-single" | "result";
 
@@ -42,9 +44,13 @@ export type Matrix = Vector[];
 export type MathNode = ExpressionNode | NumberFunctionNode;
 
 // Nodes with dinamic number of inputs
-export type ConstructorNode = VectorNode;
+export type ConstructorNode = VectorNode | MtxFromRowsNode;
 
-export type MtxNode = IdentityMtxNode | VectorNode | MtxVecFnNode;
+export type MtxNode =
+  | IdentityMtxNode
+  | VectorNode
+  | MtxVecFnNode
+  | MtxFromRowsNode;
 
 export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
@@ -177,6 +183,20 @@ export type VectorNode = Node<
     };
   },
   "vec"
+>;
+
+export type MtxFromRowsNode = Node<
+  {
+    showResult: boolean;
+    isConstructor: true;
+    inputTemplate: (n: number) => string;
+    numberOfEntries: number;
+    inputs: { [r: string]: Input };
+    outputs: {
+      M: ValueType;
+    };
+  },
+  "mtx-rows"
 >;
 
 export type MtxVecFnNode = Node<

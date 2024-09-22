@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import actions from "../../state/config/actions";
 import useAppState from "../../state/useAppState";
-import { Action } from "../../types/system";
+import { Action } from "../../types/app";
 import Button from "../../components/Button";
 
 const ActionsPanel = () => {

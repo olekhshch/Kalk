@@ -7,10 +7,11 @@ import {
   IdentityMtxNode,
   Input,
   MathNode,
+  MtxFromRowsNode,
   TextSingleNode,
   VectorNode,
 } from "../types/nodes";
-import { AngleFormat, ContentStore } from "../types/system";
+import { AngleFormat, ContentStore } from "../types/app";
 import createTextSingleNode from "./actions/createTextSingleNode";
 import showHideResult from "../utils/showHideResult";
 import connectNodes from "../utils/connectNodes";
@@ -125,6 +126,41 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: {
               V: "vector",
             },
+          },
+        };
+        set({ nodes: [...get().nodes, newNode] });
+        break;
+      }
+      case "mtx-rows": {
+        const newNode: MtxFromRowsNode = {
+          id: nodeId,
+          position,
+          type: "mtx-rows",
+          data: {
+            showResult: false,
+            isConstructor: true,
+            numberOfEntries: 3,
+            outputs: {
+              M: "matrix",
+            },
+            inputs: {
+              v1: {
+                sourceId: null,
+                allowedTypes: ["vector"],
+                type: "vector",
+              },
+              v2: {
+                sourceId: null,
+                allowedTypes: ["vector"],
+                type: "vector",
+              },
+              v3: {
+                sourceId: null,
+                allowedTypes: ["vector"],
+                type: "vector",
+              },
+            },
+            inputTemplate: (n) => `v${n}`,
           },
         };
         set({ nodes: [...get().nodes, newNode] });
@@ -255,7 +291,8 @@ const useContent = create<ContentStore>()((set, get) => ({
         nodeId,
         newNode.id,
         get().edges,
-        get().edgeCounter
+        get().edgeCounter,
+        "R"
       );
 
       set({ nodes, edges, edgeCounter, activeNodeId: null });
@@ -386,7 +423,7 @@ const useContent = create<ContentStore>()((set, get) => ({
 
     targetNode.data.numberOfEntries = newNum;
     const newNodes = replaceNode(targetNode, get().nodes);
-    // recalculate node and chanFrom it
+    // recalculate node and chainFrom it
     const chainFrom = getChainIdsFrom(targetNode, get().edges);
     recalculateChain(
       chainFrom,
@@ -394,7 +431,13 @@ const useContent = create<ContentStore>()((set, get) => ({
       get().values,
       get().anglesFormat
     ).then((newVals) => set({ values: newVals }));
-    set({ nodes: newNodes });
+
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeId) return { ...targetNode };
+        return node;
+      }),
+    });
   },
 }));
 

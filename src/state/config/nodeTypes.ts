@@ -7,6 +7,7 @@ import NodePreview from "../../components/NodePreview";
 import IdentityMatrix from "../../components/nodes/IdentityMatrix";
 import VectorNode from "../../components/nodes/VectorNode";
 import MtxVecNode from "../../components/nodes/MtxVecNode";
+import MtxRowsNode from "../../components/nodes/MtxRowsNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
@@ -18,6 +19,7 @@ const nodeTypes: NodeTypes = {
   "i-mtx": IdentityMatrix,
   vec: VectorNode,
   "mtx-fn": MtxVecNode,
+  "mtx-rows": MtxRowsNode,
 };
 
 export default nodeTypes;

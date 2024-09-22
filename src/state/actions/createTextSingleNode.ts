@@ -1,5 +1,5 @@
 import { AppNode, TextSingleNode } from "../../types/nodes";
-import { ContentStore, CreateNodeAction } from "../../types/system";
+import { ContentStore, CreateNodeAction } from "../../types/app";
 
 const createTextSingleNode: CreateNodeAction = (params) => {
   const { nodes, idCounter } = params;

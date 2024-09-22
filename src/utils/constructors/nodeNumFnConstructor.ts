@@ -54,13 +54,13 @@ function getNodeLabel(nodeType: NodeType) {
     case "add":
       return "a+b";
     case "cos":
-      return "cos(a)";
+      return "\\cos(a)";
     case "divide":
       return "a/b";
     case "multiply":
-      return "a*b";
+      return "a \\cdot b";
     case "sin":
-      return "sin(a)";
+      return "\\sin(a)";
     case "substract":
       return "a-b";
     case "to-deg":
@@ -68,15 +68,15 @@ function getNodeLabel(nodeType: NodeType) {
     case "to-rad":
       return "DEG \\implies RAD";
     case "tg":
-      return "tg(a)";
+      return "\\tan(a)";
     case "ctg":
-      return "ctg(a)";
+      return "\\cot(a)";
     case "power":
       return "a^b";
     case "asin":
-      return "asin(a)";
+      return "\\arcsin(a)";
     case "acos":
-      return "acos(a)";
+      return "\\arccos(a)";
     default: {
       console.log("No label for " + nodeType);
       return null;

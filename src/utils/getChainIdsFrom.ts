@@ -3,18 +3,29 @@
 import { Edge } from "@xyflow/react";
 import { AppNode } from "../types/nodes";
 
-type f = (startingNode: AppNode, edges: Edge[]) => string[];
+type f = (
+  startingNode: AppNode,
+  edges: Edge[],
+  includeResultNodes?: boolean
+) => string[];
 
-const getChainIdsFrom: f = (startingNode, edges) => {
+const getChainIdsFrom: f = (startingNode, edges, includeResultNodes) => {
   const nodeIds: string[] = [startingNode.id];
 
   const getTargets = (nodeId: string) => {
     const acc: string[] = [];
 
+    // #TODO: Rewrite to avoid if-else hell
     edges.forEach((edge) => {
       if (edge.source === nodeId) {
         if (!acc.includes(edge.target)) {
-          acc.push(edge.target);
+          if (!includeResultNodes) {
+            if (edge.targetHandle !== "R") {
+              acc.push(edge.target);
+            }
+          } else {
+            acc.push(edge.target);
+          }
         }
       }
     });
