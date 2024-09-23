@@ -1,12 +1,12 @@
 import { AngleFormat } from "../../types/app";
 import {
   Input,
+  NodeOutput,
   NodeType,
   NumberFunctionNode,
   NumberFunctionParams,
   NumNodeType,
   OutputValue,
-  ValueType,
 } from "../../types/nodes";
 import convertToDEG from "../convertToDEG";
 import convertToRAD from "../convertToRAD";
@@ -30,7 +30,8 @@ const nodeFunctionContructor: f = (nodeType, position, nodeId) => {
   const label = getNodeLabel(nodeType);
   const inputs = getFunctionInputs(nodeType);
   const action = getNodeFunction(nodeType);
-  const allowedTypes = getAllowedOutputTypes(nodeType);
+  // const allowedTypes = getAllowedOutputTypes(nodeType);
+  const outputs = getOutputsFor(nodeType);
 
   if (!label) return null;
 
@@ -43,12 +44,7 @@ const nodeFunctionContructor: f = (nodeType, position, nodeId) => {
       showResult: false,
       label,
       inputs,
-      outputs: {
-        N: {
-          allowedTypes,
-          type: null,
-        },
-      },
+      outputs,
       action,
     },
   };
@@ -86,6 +82,11 @@ function getNodeLabel(nodeType: NumNodeType) {
       return "\\arcsin(a)";
     case "acos":
       return "\\arccos(a)";
+    case "floor":
+      return "\\text{floor}(a)";
+
+    case "ceil":
+      return "\\text{ceil}(a)";
     default: {
       console.log("No label for " + nodeType);
       return null;
@@ -99,23 +100,52 @@ const initialInput: Input = {
   allowedTypes: ["number"],
 };
 
-type of = (nt: NumNodeType) => ValueType[];
+// type of = (nt: NumNodeType) => ValueType[];
 
-const getAllowedOutputTypes: of = (nt: NumNodeType) => {
-  switch (nt) {
+// const getAllowedOutputTypes: of = (nt: NumNodeType) => {
+//   switch (nt) {
+//     case "cos":
+//     case "sin":
+//     case "tg":
+//     case "ctg":
+//     case "to-deg":
+//     case "to-rad":
+//     case "asin":
+//     case "acos":
+//     case "abs":
+//     case "power":
+//     case "floor":
+//     case "ceil":
+//       return ["number", "matrix", "vector"];
+//     default: {
+//       return ["number"];
+//     }
+//   }
+// };
+
+type OutputsFabric = (nt: NumNodeType) => NodeOutput;
+
+const getOutputsFor: OutputsFabric = (nodeType: NumNodeType) => {
+  switch (nodeType) {
+    case "abs":
+    case "acos":
+    case "asin":
+    case "atg":
+    case "ceil":
     case "cos":
+    case "ctg":
+    case "floor":
+    case "power":
     case "sin":
     case "tg":
-    case "ctg":
     case "to-deg":
-    case "to-rad":
-    case "asin":
-    case "acos":
-    case "abs":
-    case "power":
-      return ["number", "matrix", "vector"];
+    case "to-rad": {
+      return {
+        N: { allowedTypes: ["number", "matrix", "vector"], type: null },
+      };
+    }
     default: {
-      return ["number"];
+      return { N: { allowedTypes: ["number"], type: null } };
     }
   }
 };
@@ -132,6 +162,8 @@ const getFunctionInputs: fun = (nodeType: NodeType) => {
     case "to-rad":
     case "asin":
     case "acos":
+    case "floor":
+    case "ceil":
     case "abs": {
       return {
         a: {
@@ -213,6 +245,12 @@ const getNodeFunction: NodeActionFactory = (nodeType) => {
     }
     case "acos": {
       return ({ a }, angleFormat) => trigonometry.acos(a, angleFormat!);
+    }
+    case "floor": {
+      return ({ a }) => numOperations.floor(a);
+    }
+    case "ceil": {
+      return ({ a }) => numOperations.ceil(a);
     }
     default: {
       console.log("No action for " + nodeType + " specified");

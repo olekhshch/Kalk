@@ -18,7 +18,9 @@ export type NumNodeType =
   | "power"
   | "asin"
   | "acos"
-  | "atg";
+  | "atg"
+  | "floor"
+  | "ceil";
 
 // mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
 export type MtxVecNodeType =
@@ -84,9 +86,7 @@ export type NumberFunctionNode = Node<
     inputs: {
       [k: string]: Input;
     };
-    outputs: {
-      N: { allowedTypes: ValueType[]; type: ValueType | null };
-    };
+    outputs: NodeOutput;
     action: (
       vals: NumberFunctionParams,
       angleFormat?: AngleFormat
@@ -97,6 +97,11 @@ export type NumberFunctionNode = Node<
   "num-fun"
 >;
 
+export type NodeOutput = {
+  N?: { allowedTypes: ValueType[]; type: ValueType | null };
+};
+
+// value that can be get from the Values Store
 export type InputValue = number | Vector | Matrix | null | undefined;
 
 export type NumberFunctionParams = {
@@ -171,9 +176,9 @@ export type MtxVecFnNode = Node<
 >;
 
 export type MtxVecFunctionParams = {
-  [k: string]: number | Matrix | Vector;
+  [k: string]: InputValue;
 };
 
 export type MtxVecFnAction = (
   vals: MtxVecFunctionParams
-) => number | Matrix | Vector | null;
+) => OutputValue | Promise<OutputValue>;

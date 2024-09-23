@@ -133,6 +133,30 @@ const actions: Actions = {
         data: "acos",
       },
     },
+    {
+      title: "arctg",
+      icon: null,
+      command: {
+        type: "create",
+        data: "atg",
+      },
+    },
+    {
+      title: "floor",
+      icon: null,
+      command: {
+        type: "create",
+        data: "floor",
+      },
+    },
+    {
+      title: "ceil",
+      icon: null,
+      command: {
+        type: "create",
+        data: "ceil",
+      },
+    },
   ],
   Matrices: [
     {

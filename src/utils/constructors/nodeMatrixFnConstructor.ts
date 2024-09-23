@@ -1,15 +1,17 @@
 import {
   Input,
+  Matrix,
   MtxVecFnAction,
   MtxVecFnNode,
   MtxVecNodeType,
   ValueType,
   Vector,
 } from "../../types/nodes";
-import addVectors from "../matrix/addVectors";
 import dotProduct from "../matrix/dotProduct";
+import mtxOperations from "../matrix/mtxOperations";
 import scalarMultiplication from "../matrix/scalarMultiplication";
 import sumOfSquares from "../matrix/sumOfSquares";
+import vectorsOperarions from "../matrix/vectorsOperarions";
 import validate from "../validate";
 
 // matrix/vector function nodes
@@ -85,16 +87,15 @@ const getInputsFor: k = (nodeType) => {
       };
     }
     case "add-mtx": {
-      // #TODO: add matrix addition
       return {
         A: {
           sourceId: null,
-          allowedTypes: ["vector"],
+          allowedTypes: ["vector", "matrix"],
           type: "vector",
         },
         B: {
           sourceId: null,
-          allowedTypes: ["vector"],
+          allowedTypes: ["vector", "matrix"],
           type: "vector",
         },
       };
@@ -179,13 +180,25 @@ const getActionFor: a = (nodeType) => {
     }
     case "add-mtx": {
       return ({ A, B }) => {
-        // checking if Vectors
-        const valValue1 = validate(A, "vector");
-        const valValue2 = validate(B, "vector");
+        // checking if Vectors/Matrices
+        if (!A || !B) return null;
 
-        if (!valValue1.valid || !valValue2.valid) return null;
+        // Any value is a number
+        if (!Array.isArray(A) || !Array.isArray(B)) return null;
 
-        return addVectors(A as Vector, B as Vector);
+        //  Matrix + Vector, Vector + Matrix
+        if (
+          (Array.isArray(A[0]) && !Array.isArray(B[0])) ||
+          (!Array.isArray(A[0]) && Array.isArray(B[0]))
+        )
+          return null;
+
+        // Vector + Vector
+        if (!Array.isArray(A[0]))
+          return vectorsOperarions.addTwoVectors(A as Vector, B as Vector);
+
+        // Matrix + Matrix
+        return mtxOperations.addTwoMatrices(A as Matrix, B as Matrix);
       };
     }
     case "scalar-mult": {

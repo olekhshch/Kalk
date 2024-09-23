@@ -170,7 +170,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return newValues;
       }
 
-      const res = node.data.action(params);
+      const res = await node.data.action(params);
 
       newValues[node.id] = res;
       return newValues;
