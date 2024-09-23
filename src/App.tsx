@@ -8,6 +8,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 import useAppState from "./state/useAppState";
 import { useShallow } from "zustand/react/shallow";
 import UILayer from "./layout/UI/UILayer";
+import useUI from "./hooks/useUI";
 
 const App = () => {
   const { setMode } = useAppState(

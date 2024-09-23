@@ -27,7 +27,13 @@ const Canvas = () => {
     }))
   );
 
-  const closeScaleMenu = useUI(useShallow((store) => store.closeScale));
+  const [closeScaleMenu, closeContext, openContext] = useUI(
+    useShallow((store) => [
+      store.closeScale,
+      store.closeContext,
+      store.openContext,
+    ])
+  );
 
   // const [shift, setShift] = useState(false);
 
@@ -36,6 +42,19 @@ const Canvas = () => {
 
   const [prevPosition, setPrevPosition] = useState({ x: 0, y: 0 });
   const [showPreview, setShowPreview] = useState(true);
+
+  useEffect(() => {
+    if (vpRef.current) {
+      vpRef.current.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        const { clientX, clientY } = e;
+        const { width, height } = document.body.getBoundingClientRect();
+
+        const x = clientX > width - 220 ? clientX - 220 : clientX;
+        openContext("canvas", null, { x, y: clientY });
+      });
+    }
+  }, [vpRef.current]);
 
   const nodePreview = useMemo(() => {
     const node: PreviewNode = {
@@ -66,9 +85,19 @@ const Canvas = () => {
   }, [mode.current]);
 
   const clickHandler = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     console.log("canvas bg click");
     activateNode(null);
     closeScaleMenu();
+    console.log(e.button);
+    if (e.button === 2) {
+      console.log("RB Click");
+      const { clientX, clientY } = e;
+      openContext("canvas", null, { x: clientX, y: clientY });
+    } else {
+      closeContext();
+    }
 
     if (mode.current === "create" && mode.data) {
       addNode(mode.data as NodeType, prevPosition);

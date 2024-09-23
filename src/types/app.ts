@@ -97,3 +97,10 @@ export enum AngleFormat {
   RAD = "RAD",
   DEG = "DEG",
 }
+
+export type ContextMenuTarget = "canvas" | "node";
+export type ContextMenuSection =
+  | "creator"
+  | "node-dupl"
+  | "node-delete"
+  | "node-help";
