@@ -20,9 +20,14 @@ const CreateComponent = () => {
   return (
     <div className="p-2 flex flex-col rounded-[8px]">
       <form className="flex justify-center m-1">
-        <input value={searchValue} onChange={onInputChange} autoFocus />
+        <input
+          className="px-1"
+          value={searchValue}
+          onChange={onInputChange}
+          autoFocus
+        />
       </form>
-      <ul className="max-h-[120px] overflow-y-scroll">
+      <ul className="max-h-[120px] overflow-y-scroll border-b-2 border-sec">
         {actionsEntries.map(([key, actions]) => {
           let actionsToShow = actions;
           if (debouncedSearch.trim() !== "") {
@@ -61,7 +66,7 @@ const ActionItem = (params: {
   };
 
   return (
-    <li>
+    <li className="text-sm">
       <MenuButton
         title={label + " | " + tab}
         onClick={onClick}

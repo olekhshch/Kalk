@@ -45,7 +45,7 @@ const NodeWrapper = ({ children, title, id, outputValueType }: props) => {
           </article>
         )}
         {children}
-        <span className="absolute">{id}</span>
+        {/* <span className="absolute">{id}</span> */}
       </div>
       {outputValueType && <span className="absolute">{outputValueType}</span>}
     </>

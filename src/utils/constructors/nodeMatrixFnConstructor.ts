@@ -109,7 +109,7 @@ const getInputsFor: k = (nodeType) => {
         },
         v: {
           sourceId: null,
-          allowedTypes: ["vector"],
+          allowedTypes: ["vector", "matrix"],
           type: "vector",
         },
       };
@@ -202,14 +202,7 @@ const getActionFor: a = (nodeType) => {
       };
     }
     case "scalar-mult": {
-      return ({ a, v }) => {
-        const valValue1 = validate(a, "number");
-        const valValue2 = validate(v, "vector");
-
-        if (!valValue1.valid || !valValue2.valid) return null;
-
-        return scalarMultiplication(a as number, v as Vector);
-      };
+      return ({ a, v }) => scalarMultiplication(a, v);
     }
     case "dot-prod": {
       return ({ v, w }) => {

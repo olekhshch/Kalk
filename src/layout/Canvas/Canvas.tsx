@@ -90,13 +90,11 @@ const Canvas = () => {
     console.log("canvas bg click");
     activateNode(null);
     closeScaleMenu();
-    console.log(e.button);
+    closeContext();
+
     if (e.button === 2) {
-      console.log("RB Click");
       const { clientX, clientY } = e;
       openContext("canvas", null, { x: clientX, y: clientY });
-    } else {
-      closeContext();
     }
 
     if (mode.current === "create" && mode.data) {
