@@ -8,6 +8,7 @@ import {
   Vector,
 } from "../../types/nodes";
 import dotProduct from "../matrix/dotProduct";
+import Matrices from "../matrix/main/Matrices";
 import mtxOperations from "../matrix/mtxOperations";
 import scalarMultiplication from "../matrix/scalarMultiplication";
 import sumOfSquares from "../matrix/sumOfSquares";
@@ -65,6 +66,8 @@ const getNodeLabel: g = (nodeType) => {
       return "\\vec{v} \\times \\vec{w}";
     case "dot-prod":
       return "\\vec{v} \\cdot \\vec{w}";
+    case "sum-all":
+      return "\\sum{a_i}";
     default: {
       return null;
     }
@@ -123,6 +126,15 @@ const getInputsFor: k = (nodeType) => {
         },
       };
     }
+    case "sum-all": {
+      return {
+        A: {
+          sourceId: null,
+          allowedTypes: ["vector", "matrix"],
+          type: "vector",
+        },
+      };
+    }
     case "dot-prod": {
       return {
         v: {
@@ -158,6 +170,8 @@ const getOutputs: o = (nodeType) => {
     }
     case "cross-prod":
       return { N: { possibleValues: ["vector"] } };
+    case "sum-all":
+      return { N: { possibleValues: ["number"] } };
     default:
       return null;
   }
@@ -177,27 +191,7 @@ const getActionFor: a = (nodeType) => {
       };
     }
     case "add-mtx": {
-      return ({ A, B }) => {
-        // checking if Vectors/Matrices
-        if (!A || !B) return null;
-
-        // Any value is a number
-        if (!Array.isArray(A) || !Array.isArray(B)) return null;
-
-        //  Matrix + Vector, Vector + Matrix
-        if (
-          (Array.isArray(A[0]) && !Array.isArray(B[0])) ||
-          (!Array.isArray(A[0]) && Array.isArray(B[0]))
-        )
-          return null;
-
-        // Vector + Vector
-        if (!Array.isArray(A[0]))
-          return vectorsOperarions.addTwoVectors(A as Vector, B as Vector);
-
-        // Matrix + Matrix
-        return mtxOperations.addTwoMatrices(A as Matrix, B as Matrix);
-      };
+      return ({ A, B }) => Matrices.addVecOrMtx(A, B);
     }
     case "scalar-mult": {
       return ({ a, v }) => scalarMultiplication(a, v);
@@ -211,6 +205,9 @@ const getActionFor: a = (nodeType) => {
 
         return dotProduct(v as Vector, w as Vector);
       };
+    }
+    case "sum-all": {
+      return ({ A }) => Matrices.sumAllEntries(A);
     }
     default:
       return null;

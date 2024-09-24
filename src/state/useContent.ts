@@ -174,6 +174,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       case "norm":
       case "dot-prod":
       case "add-mtx":
+      case "sum-all":
       case "scalar-mult": {
         const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
 

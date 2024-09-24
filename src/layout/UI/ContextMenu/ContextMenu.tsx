@@ -14,8 +14,12 @@ const ContextMenu = () => {
 
   return (
     <div
-      className="fixed bg-white shadow-lg w-[220px]"
-      style={{ left: `${position.x}px`, top: `${position.y}px` }}
+      className="fixed bg-white shadow-lg"
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: "180px",
+      }}
     >
       {components.map((component) => {
         switch (component) {

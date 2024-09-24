@@ -224,6 +224,14 @@ const actions: Actions = {
         data: "cross-prod",
       },
     },
+    {
+      title: "Sum all",
+      icon: "sum",
+      command: {
+        type: "create",
+        data: "sum-all",
+      },
+    },
   ],
   Organize: [
     {

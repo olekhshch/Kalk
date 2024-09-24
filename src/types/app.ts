@@ -1,4 +1,4 @@
-import { AppNode, Matrix, NodeType, Vector } from "./nodes";
+import { AppNode, Matrix, NodeType, ValueType, Vector } from "./nodes";
 import { Connection, Edge, NodeChange, XYPosition } from "@xyflow/react";
 
 export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
@@ -8,6 +8,8 @@ export type Action = {
   hideToolbarTitle?: boolean;
   icon: string | null;
   large?: boolean;
+  values?: ValueType[];
+  category?: "math" | "matrices";
   command: {
     type: "create" | "action";
     data?: NodeType | ActionType;
