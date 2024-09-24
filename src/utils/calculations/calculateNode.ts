@@ -7,22 +7,32 @@ import {
   MtxVecFunctionParams,
   NumberFunctionParams,
   Vector,
-} from "../types/nodes";
-import { AngleFormat, CalculatedValues, RustCalculations } from "../types/app";
-import makeIdentityMatrix from "./matrix/makeIdentityMatrix";
-import makeVector from "./matrix/makeVector";
-import validate from "./validate";
-import makeMtxFromRows from "./matrix/makeMtxFromRows";
+} from "../../types/nodes";
+import {
+  AngleFormat,
+  CalculatedValues,
+  RustCalculations,
+} from "../../types/app";
+import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
+import makeVector from "../matrix/makeVector";
+import validate from "../validate";
+import makeMtxFromRows from "../matrix/makeMtxFromRows";
 
+type Calculations = { values: CalculatedValues };
 type f = (
   node: AppNode,
   values: CalculatedValues,
   angleFormat: AngleFormat
-) => Promise<CalculatedValues>;
+) => Promise<Calculations>;
 
 // #TODO: return null if no calculations were made?
 const calculateNode: f = async (node, values, angleFormat) => {
-  const newValues = { ...values };
+  const newValues: CalculatedValues = { ...values };
+
+  const calculations: Calculations = {
+    values: newValues,
+  };
+
   switch (node.type) {
     case "expression": {
       const { value } = (node as ExpressionNode).data;
@@ -34,12 +44,12 @@ const calculateNode: f = async (node, values, angleFormat) => {
       )) as RustCalculations;
 
       if (!resCalc.success) {
-        console.log(resCalc.msg);
         newValues[node.id] = null;
       } else {
+        // #TODO: Avoid parsing (Rust side)
         newValues[node.id] = parseFloat(resCalc.res);
       }
-      return newValues;
+      return calculations;
     }
     case "num-fun": {
       const inputEntries = Object.entries(node.data.inputs);
@@ -52,7 +62,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return [key, sourceId as string];
       });
 
-      if (!allSourcesGiven) return values;
+      if (!allSourcesGiven) return calculations;
       let allValuesGiven = true;
 
       const params = sourceIds.reduce((acc, [key, id]) => {
@@ -66,28 +76,29 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return acc;
       }, {} as NumberFunctionParams);
 
-      if (!allValuesGiven) return values;
+      if (!allValuesGiven) return calculations;
+
       const { action } = node.data;
 
       // passing angleFormat for trigonometric functions
       const res = await action(params, angleFormat);
       newValues[node.id] = res;
-      return newValues;
+      return calculations;
     }
     case "i-mtx": {
       const { sourceId } = (node as IdentityMtxNode).data.inputs.n;
-      if (!sourceId) return values;
+      if (!sourceId) return calculations;
 
       const value = values[sourceId];
 
-      if (!value && value !== 0) return values;
+      if (!value && value !== 0) return calculations;
 
-      if (!isNumber(value)) return values;
+      if (!isNumber(value)) return calculations;
 
       const mtx = makeIdentityMatrix(value as number);
 
       newValues[node.id] = mtx;
-      return newValues;
+      return calculations;
     }
     case "vec": {
       const inputEntries = Object.entries(node.data.inputs);
@@ -103,7 +114,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       if (!allSourcesGiven) {
         newValues[node.id] = null;
-        return newValues;
+        return calculations;
       }
 
       let allValuesValid = true;
@@ -120,12 +131,12 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return acc;
       }, [] as number[]);
 
-      if (!allValuesValid) return values;
+      if (!allValuesValid) return calculations;
 
       const res: Vector = makeVector(params);
 
       newValues[node.id] = res;
-      return newValues;
+      return calculations;
     }
     case "mtx-fn": {
       const inputEntries = Object.entries(node.data.inputs);
@@ -141,7 +152,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       if (!allSourcesGiven) {
         newValues[node.id] = null;
-        return newValues;
+        return calculations;
       }
 
       let allValuesGiven = true;
@@ -163,13 +174,13 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       if (!allValuesGiven) {
         newValues[node.id] = null;
-        return newValues;
+        return calculations;
       }
 
       const res = await node.data.action(params);
 
       newValues[node.id] = res;
-      return newValues;
+      return calculations;
     }
     case "mtx-rows": {
       const inputEntries = Object.entries(node.data.inputs);
@@ -185,7 +196,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
       if (!allSourcesGiven) {
         newValues[node.id] = null;
-        return newValues;
+        return calculations;
       }
 
       let params: Vector[] = [];
@@ -195,18 +206,18 @@ const calculateNode: f = async (node, values, angleFormat) => {
         // val should be a Vector
         if (!Array.isArray(val) || Array.isArray(val[0])) {
           newValues[node.id] = null;
-          return newValues;
+          return calculations;
         }
         params.push(val as Vector);
       });
 
       const matrix = makeMtxFromRows(params);
       newValues[node.id] = matrix;
-      return newValues;
+      return calculations;
     }
     default: {
       console.log("No calculation for " + node.type);
-      return values;
+      return calculations;
     }
   }
 };

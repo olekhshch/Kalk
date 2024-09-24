@@ -15,7 +15,7 @@ import InputPort from "../ports/Input";
 
 const MtxRowsNode = ({
   id,
-  data: { inputs, numberOfEntries, showResult, outputs },
+  data: { inputs, numberOfEntries, showResult },
 }: NodeProps<MtxFromRowsNode>) => {
   const [setNumOfEntriesFor] = useContent(
     useShallow((store) => [store.setNumOfEntriesFor])
@@ -23,7 +23,7 @@ const MtxRowsNode = ({
 
   useEffect(() => console.log({ numberOfEntries }), [numberOfEntries]);
 
-  const outputHandleId = generateHandleId("M", [outputs.M]);
+  const outputHandleId = generateHandleId("M", ["matrix"]);
 
   const entries = Object.entries(inputs);
   const step = 100 / (entries.length + 1);
@@ -55,7 +55,7 @@ const MtxRowsNode = ({
   useEffect(() => console.log("MTX ROWS rerender"));
 
   return (
-    <NodeWrapper id={id} outputValueType={"matrix"}>
+    <NodeWrapper id={id} outputValueTypes={["matrix"]}>
       <div className="p-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputLabels.map(({ cssPosition, handleId, key }) => {

@@ -10,11 +10,18 @@ import Output from "../ports/Output";
 import ResultOutput from "../ports/ResultOutput";
 import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
+import useContent from "../../state/useContent";
+import { useShallow } from "zustand/react/shallow";
+import getValueType from "../../utils/getValueType";
 
 const MathNode = ({
   id,
   data: { label, inputs, outputs, showResult },
 }: NodeProps<NumberFunctionNode>) => {
+  // calculated value of an output
+  const calculatedValue = useContent(useShallow((store) => store.values[id]));
+  const outputType = getValueType(calculatedValue);
+
   // #TODO: Shallow check for input keys to avoid rerenders?
 
   const inputsArray = useMemo(() => {
@@ -31,20 +38,26 @@ const MathNode = ({
     return array;
   }, [inputs]);
 
+  const outputsEntries = Object.entries(outputs);
+
   const outputsArray = useMemo(() => {
-    const entries = Object.entries(outputs);
-    const numOfOutputs = entries.length;
+    const numOfOutputs = outputsEntries.length;
     const step = 100 / (numOfOutputs + 1);
 
-    return entries.map(([key, output], idx) => {
-      const handleId = generateHandleLabel(key, output.allowedTypes);
+    return outputsEntries.map(([key, output], idx) => {
+      const handleId = generateHandleLabel(key, output.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
       return { handleId, cssPosition, key };
     });
   }, []);
 
   return (
-    <NodeWrapper id={id} outputValueType={"number"}>
+    <NodeWrapper
+      id={id}
+      outputValueTypes={
+        outputType ? [outputType] : outputsEntries[0][1].possibleValues
+      }
+    >
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {

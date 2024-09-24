@@ -4,7 +4,7 @@ import {
   MtxVecFnAction,
   MtxVecFnNode,
   MtxVecNodeType,
-  ValueType,
+  NodeOutputs,
   Vector,
 } from "../../types/nodes";
 import dotProduct from "../matrix/dotProduct";
@@ -143,23 +143,21 @@ const getInputsFor: k = (nodeType) => {
   }
 };
 
-type o = (
-  nt: MtxVecNodeType
-) => { N?: ValueType; V?: ValueType; M?: ValueType } | null;
+type o = (nt: MtxVecNodeType) => NodeOutputs | null;
 
 const getOutputs: o = (nodeType) => {
   switch (nodeType) {
     case "norm":
-      return { N: "number" };
+      return { V: { possibleValues: ["vector"] } };
     case "add-mtx":
-      return { M: "vector" };
+      return { M: { possibleValues: ["matrix", "vector"] } };
     case "scalar-mult":
-      return { M: "vector" };
+      return { M: { possibleValues: ["matrix", "vector"] } };
     case "dot-prod": {
-      return { N: "number" };
+      return { N: { possibleValues: ["vector"] } };
     }
     case "cross-prod":
-      return { N: "number" };
+      return { N: { possibleValues: ["vector"] } };
     default:
       return null;
   }

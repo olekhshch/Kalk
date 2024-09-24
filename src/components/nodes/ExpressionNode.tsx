@@ -66,7 +66,7 @@ const ExpressionNode = ({
     <>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
-        <NodeWrapper id={id} outputValueType={"number"}>
+        <NodeWrapper id={id} outputValueTypes={["number"]}>
           <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (
               <form onSubmit={submitHandler} className="h-[1rem] flex">

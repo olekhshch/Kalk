@@ -103,7 +103,7 @@ const useContent = create<ContentStore>()((set, get) => ({
               n: { sourceId: null, allowedTypes: ["number"], type: "number" },
             },
             outputs: {
-              M: "matrix",
+              M: { possibleValues: ["matrix"] },
             },
           },
         };
@@ -127,7 +127,7 @@ const useContent = create<ContentStore>()((set, get) => ({
               v3: { ...initialInput },
             },
             outputs: {
-              V: "vector",
+              V: { possibleValues: ["vector"] },
             },
           },
         };
@@ -145,7 +145,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             numberOfEntries: 3,
             allowedInputTypes: ["vector"],
             outputs: {
-              M: "matrix",
+              M: { possibleValues: ["matrix"] },
             },
             inputs: {
               v1: {

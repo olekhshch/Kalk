@@ -1,5 +1,5 @@
 import { Node } from "@xyflow/react";
-import { AngleFormat } from "./app";
+import { AngleFormat, CalculatedValues } from "./app";
 
 // functions on numbers (...nums) => num
 export type NumNodeType =
@@ -71,9 +71,10 @@ export type ExpressionNode = Node<
 
 export type OutputValue = number | Vector | Matrix | null;
 
-export type CalculationsData = {
-  res: number | null;
-};
+// export type Calculations = {
+//   values: CalculatedValues,
+
+// };
 
 export type ResultNode = Node<{ sourceId: string; value: string }, "result">;
 
@@ -86,7 +87,11 @@ export type NumberFunctionNode = Node<
     inputs: {
       [k: string]: Input;
     };
-    outputs: NodeOutput;
+    outputs: {
+      N?: NodeOutput;
+      V?: NodeOutput;
+      M?: NodeOutput;
+    };
     action: (
       vals: NumberFunctionParams,
       angleFormat?: AngleFormat
@@ -97,8 +102,11 @@ export type NumberFunctionNode = Node<
   "num-fun"
 >;
 
-export type NodeOutput = {
-  N?: { allowedTypes: ValueType[]; type: ValueType | null };
+export type NodeOutput = { possibleValues: ValueType[] };
+export type NodeOutputs = {
+  N?: NodeOutput;
+  V?: NodeOutput;
+  M?: NodeOutput;
 };
 
 // value that can be get from the Values Store
@@ -122,7 +130,7 @@ export type IdentityMtxNode = Node<
       n: Input;
     };
     outputs: {
-      M: ValueType;
+      M?: NodeOutput;
     };
   },
   "i-mtx"
@@ -137,9 +145,7 @@ export type VectorNode = Node<
     numberOfEntries: number;
     allowedInputTypes: ValueType[];
     inputs: { [k: string]: Input };
-    outputs: {
-      V: ValueType;
-    };
+    outputs: NodeOutputs;
   },
   "vec"
 >;
@@ -152,9 +158,7 @@ export type MtxFromRowsNode = Node<
     numberOfEntries: number;
     allowedInputTypes: ValueType[];
     inputs: { [r: string]: Input };
-    outputs: {
-      M: ValueType;
-    };
+    outputs: NodeOutputs;
   },
   "mtx-rows"
 >;
@@ -167,9 +171,7 @@ export type MtxVecFnNode = Node<
     inputs: {
       [k: string]: Input;
     };
-    outputs: {
-      [m: string]: ValueType;
-    };
+    outputs: NodeOutputs;
     action: MtxVecFnAction;
   },
   "mtx-fn"

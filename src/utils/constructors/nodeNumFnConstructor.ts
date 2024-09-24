@@ -1,7 +1,7 @@
 import { AngleFormat } from "../../types/app";
 import {
   Input,
-  NodeOutput,
+  NodeOutputs,
   NodeType,
   NumberFunctionNode,
   NumberFunctionParams,
@@ -123,7 +123,7 @@ const initialInput: Input = {
 //   }
 // };
 
-type OutputsFabric = (nt: NumNodeType) => NodeOutput;
+type OutputsFabric = (nt: NumNodeType) => NodeOutputs;
 
 const getOutputsFor: OutputsFabric = (nodeType: NumNodeType) => {
   switch (nodeType) {
@@ -141,11 +141,12 @@ const getOutputsFor: OutputsFabric = (nodeType: NumNodeType) => {
     case "to-deg":
     case "to-rad": {
       return {
-        N: { allowedTypes: ["number", "matrix", "vector"], type: null },
+        N: { possibleValues: ["number", "matrix", "vector"] },
       };
     }
     default: {
-      return { N: { allowedTypes: ["number"], type: null } };
+      // #TODO: Rename to possibleTypes for all outputs?
+      return { N: { possibleValues: ["number"] } };
     }
   }
 };

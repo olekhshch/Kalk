@@ -1,14 +1,16 @@
 import React, { useCallback } from "react";
 import useContent from "../../state/useContent";
 import { ValueType } from "../../types/nodes";
+import classNames from "classnames";
 
+// General container for node's content
 type props = {
   children: JSX.Element;
   title?: string;
   id: string;
-  outputValueType?: ValueType;
+  outputValueTypes?: ValueType[];
 };
-const NodeWrapper = ({ children, title, id, outputValueType }: props) => {
+const NodeWrapper = ({ children, title, id, outputValueTypes }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
   // const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
@@ -47,7 +49,26 @@ const NodeWrapper = ({ children, title, id, outputValueType }: props) => {
         {children}
         {/* <span className="absolute">{id}</span> */}
       </div>
-      {outputValueType && <span className="absolute">{outputValueType}</span>}
+      {outputValueTypes && <OutputValues values={outputValueTypes} />}
+    </>
+  );
+};
+
+type pr = { values: ValueType[] };
+const OutputValues = ({ values }: pr) => {
+  return (
+    <>
+      <p className="absolute max-h-[1rem] text-xs hover:min-w-max text-ellipsis overflow-hidden">
+        {values.map((value, idx) => {
+          const twClass = classNames(`text-` + value, "text-mono", "font-bold");
+          return (
+            <>
+              <span className={twClass}>{value}</span>
+              {idx < values.length - 1 && " | "}
+            </>
+          );
+        })}
+      </p>
     </>
   );
 };

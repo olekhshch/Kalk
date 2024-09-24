@@ -15,7 +15,7 @@ import ResultOutput from "../ports/ResultOutput";
 
 const VectorNode = ({
   id,
-  data: { inputs, numberOfEntries, outputs, showResult },
+  data: { inputs, numberOfEntries, showResult },
 }: NodeProps<VectorNodeType>) => {
   const [setNumOfEntriesFor] = useContent(
     useShallow((store) => [store.setNumOfEntriesFor])
@@ -32,7 +32,7 @@ const VectorNode = ({
     return entries.map(([key]) => key).join("\\\\");
   }, [numberOfEntries]);
 
-  const outputLabel = generateHandleLabel("V", [outputs.V]);
+  const outputLabel = generateHandleLabel("V", ["vector"]);
 
   const inputLabels = useMemo(() => {
     const step = 100 / (entries.length + 1);
@@ -55,7 +55,7 @@ const VectorNode = ({
   useEffect(() => console.log("VECTOR rerender"));
 
   return (
-    <NodeWrapper id={id}>
+    <NodeWrapper id={id} outputValueTypes={["vector"]}>
       <div className="p-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputLabels.map((il) => {

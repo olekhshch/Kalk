@@ -9,12 +9,12 @@ import Output from "../ports/Output";
 
 const IdentityMatrix = ({
   id,
-  data: { inputs, showResult, outputs },
+  data: { inputs, showResult },
 }: NodeProps<IdentityMtxNode>) => {
   const inputId = generateHandleLabel("n", inputs.n.allowedTypes);
-  const outputId = generateHandleLabel("M", [outputs.M]);
+  const outputId = generateHandleLabel("M", ["matrix"]);
   return (
-    <NodeWrapper id={id} outputValueType={"matrix"}>
+    <NodeWrapper id={id} outputValueTypes={["matrix"]}>
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} isShown={showResult} />
         <InputPort id={inputId} cssPosition="50%" label="n" showLabel />

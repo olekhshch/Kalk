@@ -7,11 +7,18 @@ import generateHandleId from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
 import ResultOutput from "../ports/ResultOutput";
 import Output from "../ports/Output";
+import useContent from "../../state/useContent";
+import getValueType from "../../utils/getValueType";
+import { useShallow } from "zustand/react/shallow";
 
 const MtxVecNode = ({
   id,
   data: { label, inputs, showResult, outputs },
 }: NodeProps<MtxVecFnNode>) => {
+  // calculated value of an output
+  const calculatedValue = useContent(useShallow((store) => store.values[id]));
+  const outputType = getValueType(calculatedValue);
+
   const inputsArray = useMemo(() => {
     const entries = Object.entries(inputs);
     const step = 100 / (entries.length + 1);
@@ -24,12 +31,12 @@ const MtxVecNode = ({
     });
   }, []);
 
+  const outputsEntries = Object.entries(outputs);
   const outputsArray = useMemo(() => {
-    const entries = Object.entries(outputs);
-    const step = 100 / (entries.length + 1);
+    const step = 100 / (outputsEntries.length + 1);
 
-    return entries.map(([key, output], idx) => {
-      const handleId = generateHandleId(key, [output]);
+    return outputsEntries.map(([key, output], idx) => {
+      const handleId = generateHandleId(key, output.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
 
       return { key, handleId, cssPosition };
@@ -37,7 +44,12 @@ const MtxVecNode = ({
   }, []);
 
   return (
-    <NodeWrapper id={id} outputValueType={"vector"}>
+    <NodeWrapper
+      id={id}
+      outputValueTypes={
+        outputType ? [outputType] : outputsEntries[0][1].possibleValues
+      }
+    >
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {

@@ -9,6 +9,11 @@
     --white: #F0F4F8;
     --main: #0A9396;
     --sec: #94D2BD;
+
+    /* value types colors*/
+    --number:var(--main);
+    --vector:#2563EB;
+    --matrix:#8B5CF6;
 }
 
 #canvas {
