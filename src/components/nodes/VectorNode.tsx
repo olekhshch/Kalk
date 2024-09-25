@@ -15,7 +15,7 @@ import ResultOutput from "../ports/ResultOutput";
 
 const VectorNode = ({
   id,
-  data: { inputs, numberOfEntries, showResult },
+  data: { inputs, numberOfEntries, showResult, comment },
 }: NodeProps<VectorNodeType>) => {
   const [setNumOfEntriesFor] = useContent(
     useShallow((store) => [store.setNumOfEntriesFor])
@@ -55,7 +55,11 @@ const VectorNode = ({
   useEffect(() => console.log("VECTOR rerender"));
 
   return (
-    <NodeWrapper id={id} outputValueTypes={["vector"]}>
+    <NodeWrapper
+      id={id}
+      outputValueTypes={["vector"]}
+      comment={comment ?? null}
+    >
       <div className="p-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} isShown={showResult} />
         {inputLabels.map((il) => {

@@ -13,7 +13,7 @@ import generateHandleId from "../../utils/generateHandleId";
 
 const ExpressionNode = ({
   id,
-  data: { value, showResult, outputs },
+  data: { value, showResult, outputs, comment },
 }: NodeProps<Expression>) => {
   const { isActive, activateNode, editExpressionValue } = useContent(
     useShallow((store) => ({
@@ -66,7 +66,11 @@ const ExpressionNode = ({
     <>
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />
-        <NodeWrapper id={id} outputValueTypes={["number"]}>
+        <NodeWrapper
+          id={id}
+          outputValueTypes={["number"]}
+          comment={comment ?? null}
+        >
           <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (
               <form onSubmit={submitHandler} className="h-[1rem] flex">

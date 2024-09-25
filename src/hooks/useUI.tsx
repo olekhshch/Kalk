@@ -12,13 +12,19 @@ type UIStore = {
     components: ContextMenuSection[];
     id: string | null;
     position: { x: number; y: number };
+    comment?: boolean;
   };
   openContext: (
     target: ContextMenuTarget,
     id: string | null,
-    position: { x: number; y: number }
+    position: { x: number; y: number },
+    comment?: boolean // if node has any comment
   ) => void;
   closeContext: () => void;
+  nodeCommentFieldFor: string[]; // Id of the node with an opened comment field
+  openNodeCommentField: (n: string) => void;
+  closeAllNodeComments: () => void;
+  closeCommentFielFor: (nodeId: string) => void;
 };
 
 const useUI = create<UIStore>((set, get) => ({
@@ -36,13 +42,18 @@ const useUI = create<UIStore>((set, get) => ({
         id: null,
       },
     }),
-  openContext: (ctxTarget, id, position) => {
+  openContext: (ctxTarget, id, position, comment) => {
     const components: ContextMenuSection[] = [];
 
     switch (ctxTarget) {
       case "node": {
         if (id || id === "0") {
-          components.push("node-dupl", "node-delete", "node-help");
+          components.push(
+            "node-comment",
+            "node-dupl",
+            "node-delete",
+            "node-help"
+          );
         }
         break;
       }
@@ -55,8 +66,21 @@ const useUI = create<UIStore>((set, get) => ({
 
     set({
       contextMenu: true,
-      contextMenuContent: { components, id: !id ? null : id, position },
+      contextMenuContent: {
+        components,
+        id: !id ? null : id,
+        position,
+        comment,
+      },
     });
+  },
+  nodeCommentFieldFor: [],
+  openNodeCommentField: (nodeId) =>
+    set({ nodeCommentFieldFor: [...get().nodeCommentFieldFor, nodeId] }),
+  closeAllNodeComments: () => set({ nodeCommentFieldFor: [] }),
+  closeCommentFielFor: (nodeId) => {
+    const comments = get().nodeCommentFieldFor.filter((id) => id !== nodeId);
+    set({ nodeCommentFieldFor: comments });
   },
 }));
 

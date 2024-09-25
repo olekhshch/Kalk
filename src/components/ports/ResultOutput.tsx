@@ -1,4 +1,4 @@
-import { Handle, Position, XYPosition } from "@xyflow/react";
+import { Handle, Position } from "@xyflow/react";
 import React from "react";
 import useContent from "../../state/useContent";
 
@@ -21,7 +21,7 @@ const ResultOutput = ({ nodeId, isShown }: props) => {
       id="res"
       type="source"
       position={Position.Right}
-      className="hover-main"
+      className="hover-main absolute z-10"
       title="Show result"
       style={{
         background: "var(--white)",

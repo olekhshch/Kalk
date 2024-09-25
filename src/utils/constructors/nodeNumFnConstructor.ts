@@ -100,29 +100,6 @@ const initialInput: Input = {
   allowedTypes: ["number"],
 };
 
-// type of = (nt: NumNodeType) => ValueType[];
-
-// const getAllowedOutputTypes: of = (nt: NumNodeType) => {
-//   switch (nt) {
-//     case "cos":
-//     case "sin":
-//     case "tg":
-//     case "ctg":
-//     case "to-deg":
-//     case "to-rad":
-//     case "asin":
-//     case "acos":
-//     case "abs":
-//     case "power":
-//     case "floor":
-//     case "ceil":
-//       return ["number", "matrix", "vector"];
-//     default: {
-//       return ["number"];
-//     }
-//   }
-// };
-
 type OutputsFabric = (nt: NumNodeType) => NodeOutputs;
 
 const getOutputsFor: OutputsFabric = (nodeType: NumNodeType) => {

@@ -1,6 +1,5 @@
 import {
   Input,
-  Matrix,
   MtxVecFnAction,
   MtxVecFnNode,
   MtxVecNodeType,
@@ -9,10 +8,8 @@ import {
 } from "../../types/nodes";
 import dotProduct from "../matrix/dotProduct";
 import Matrices from "../matrix/main/Matrices";
-import mtxOperations from "../matrix/mtxOperations";
 import scalarMultiplication from "../matrix/scalarMultiplication";
 import sumOfSquares from "../matrix/sumOfSquares";
-import vectorsOperarions from "../matrix/vectorsOperarions";
 import validate from "../validate";
 
 // matrix/vector function nodes
@@ -160,7 +157,7 @@ type o = (nt: MtxVecNodeType) => NodeOutputs | null;
 const getOutputs: o = (nodeType) => {
   switch (nodeType) {
     case "norm":
-      return { V: { possibleValues: ["vector"] } };
+      return { N: { possibleValues: ["number"] } };
     case "add-mtx":
       return { M: { possibleValues: ["matrix", "vector"] } };
     case "scalar-mult":

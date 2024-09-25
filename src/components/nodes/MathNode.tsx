@@ -16,7 +16,7 @@ import getValueType from "../../utils/getValueType";
 
 const MathNode = ({
   id,
-  data: { label, inputs, outputs, showResult },
+  data: { label, inputs, outputs, showResult, comment },
 }: NodeProps<NumberFunctionNode>) => {
   // calculated value of an output
   const calculatedValue = useContent(useShallow((store) => store.values[id]));
@@ -57,6 +57,7 @@ const MathNode = ({
       outputValueTypes={
         outputType ? [outputType] : outputsEntries[0][1].possibleValues
       }
+      comment={comment ?? null}
     >
       <div>
         <ResultOutput nodeId={id} isShown={showResult} />

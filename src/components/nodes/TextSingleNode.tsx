@@ -14,7 +14,7 @@ type Selector = {
 };
 
 const TextSingleNode = ({
-  data: { value },
+  data: { value, comment },
   id,
 }: NodeProps<TextSingle & AppNode>) => {
   const { isActive, activateNode, editTextValue } = useContent(
@@ -52,7 +52,7 @@ const TextSingleNode = ({
 
   return (
     <>
-      <NodeWrapper id={id}>
+      <NodeWrapper id={id} comment={comment ?? null}>
         <div className="py-2 px-3 font-textNode flex flex-col leading-3">
           {isActive && (
             <form

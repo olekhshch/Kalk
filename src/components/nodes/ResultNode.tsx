@@ -11,13 +11,16 @@ import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import Latex from "react-latex-next";
 
-const ResultNode = ({ id, data: { sourceId } }: NodeProps<ResultNodeType>) => {
+const ResultNode = ({
+  id,
+  data: { sourceId, comment },
+}: NodeProps<ResultNodeType>) => {
   const value = useContent(useShallow((store) => store.values[sourceId]));
 
   return (
     <>
       <Input cssPosition="50%" label="R" id="R" />
-      <NodeWrapper id={id}>
+      <NodeWrapper id={id} comment={comment ?? null}>
         <div className="p-2">
           <Latex>{resultLateX(value)}</Latex>
         </div>

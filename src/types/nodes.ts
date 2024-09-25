@@ -57,7 +57,10 @@ export type MtxNode =
 
 export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
-export type TextSingleNode = Node<{ value: string }, "text-single">;
+export type TextSingleNode = Node<
+  { value: string; comment?: string | null },
+  "text-single"
+>;
 
 export type ExpressionNode = Node<
   {
@@ -65,18 +68,17 @@ export type ExpressionNode = Node<
     showResult: boolean;
     inputs: { [x: string]: Input };
     outputs: { N: ValueType };
+    comment?: string | null;
   },
   "expression"
 >;
 
 export type OutputValue = number | Vector | Matrix | null;
 
-// export type Calculations = {
-//   values: CalculatedValues,
-
-// };
-
-export type ResultNode = Node<{ sourceId: string; value: string }, "result">;
+export type ResultNode = Node<
+  { sourceId: string; value: string; comment?: string | null },
+  "result"
+>;
 
 // general type for nodes with regular functions on numbers (e.g. adding, multiplying etc.)
 export type NumberFunctionNode = Node<
@@ -96,8 +98,7 @@ export type NumberFunctionNode = Node<
       vals: NumberFunctionParams,
       angleFormat?: AngleFormat
     ) => OutputValue | Promise<OutputValue>;
-    // trigonometry?: boolean;
-    // isAngle?: boolean;
+    comment?: string | null;
   },
   "num-fun"
 >;
@@ -132,6 +133,7 @@ export type IdentityMtxNode = Node<
     outputs: {
       M?: NodeOutput;
     };
+    comment?: string | null;
   },
   "i-mtx"
 >;
@@ -146,6 +148,7 @@ export type VectorNode = Node<
     allowedInputTypes: ValueType[];
     inputs: { [k: string]: Input };
     outputs: NodeOutputs;
+    comment?: string | null;
   },
   "vec"
 >;
@@ -159,6 +162,7 @@ export type MtxFromRowsNode = Node<
     allowedInputTypes: ValueType[];
     inputs: { [r: string]: Input };
     outputs: NodeOutputs;
+    comment?: string | null;
   },
   "mtx-rows"
 >;
@@ -173,6 +177,7 @@ export type MtxVecFnNode = Node<
     };
     outputs: NodeOutputs;
     action: MtxVecFnAction;
+    comment?: string | null;
   },
   "mtx-fn"
 >;

@@ -39,6 +39,7 @@ export interface NodesStore {
   higlightById: (ids: string[], only?: boolean) => void; // only = yes => hightlights passed Nodes only, otherway adds passed Nodes to allready hightlighted nodes
   activateNode: (nodeId: string | null) => void;
   connectNodes: (connection: Connection) => void;
+  setCommentFor: (nodeId: string, comm: string) => void;
 }
 
 export interface TextStore {
@@ -105,4 +106,5 @@ export type ContextMenuSection =
   | "creator"
   | "node-dupl"
   | "node-delete"
-  | "node-help";
+  | "node-help"
+  | "node-comment";

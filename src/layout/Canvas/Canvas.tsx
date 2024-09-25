@@ -35,6 +35,10 @@ const Canvas = () => {
     ])
   );
 
+  const closeCommentsForAllNodes = useUI(
+    useShallow((store) => store.closeAllNodeComments)
+  );
+
   // const [shift, setShift] = useState(false);
 
   const vpRef = useRef<HTMLDivElement>(null);
@@ -86,16 +90,12 @@ const Canvas = () => {
 
   const clickHandler = (e: React.MouseEvent) => {
     e.preventDefault();
-    e.stopPropagation();
+    // e.stopPropagation();
     console.log("canvas bg click");
     activateNode(null);
     closeScaleMenu();
     closeContext();
-
-    if (e.button === 2) {
-      const { clientX, clientY } = e;
-      openContext("canvas", null, { x: clientX, y: clientY });
-    }
+    closeCommentsForAllNodes();
 
     if (mode.current === "create" && mode.data) {
       addNode(mode.data as NodeType, prevPosition);

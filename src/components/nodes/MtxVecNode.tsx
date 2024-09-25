@@ -13,7 +13,7 @@ import { useShallow } from "zustand/react/shallow";
 
 const MtxVecNode = ({
   id,
-  data: { label, inputs, showResult, outputs },
+  data: { label, inputs, showResult, outputs, comment },
 }: NodeProps<MtxVecFnNode>) => {
   // calculated value of an output
   const calculatedValue = useContent(useShallow((store) => store.values[id]));
@@ -49,6 +49,7 @@ const MtxVecNode = ({
       outputValueTypes={
         outputType ? [outputType] : outputsEntries[0][1].possibleValues
       }
+      comment={comment ?? null}
     >
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} isShown={showResult} />

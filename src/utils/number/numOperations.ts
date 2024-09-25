@@ -1,4 +1,5 @@
 import { InputValue, Matrix, OutputValue, Vector } from "../../types/nodes";
+import getValueType from "../getValueType";
 import validate from "../validate";
 
 type f = (a: InputValue, b: InputValue) => Promise<OutputValue>;
@@ -6,34 +7,58 @@ type f = (a: InputValue, b: InputValue) => Promise<OutputValue>;
 //================== Power =======================
 
 const power: f = async (a, b) => {
-  if (!validate(a, "defined").valid || !validate(b, "defined").valid)
-    return null;
+  const typeA = getValueType(a);
+  const typeB = getValueType(b);
 
-  // b can only be a Number
-  if (!validate(b, "number").valid) return null;
+  if (!typeA || !typeB) return null;
+
+  // b can only be a number
+  if (typeB !== "number") return null;
 
   // base a is Number
-  if (!Array.isArray(a)) {
+  if (typeA === "number") {
     return powerNumBase(a as number, b as number);
   }
 
   // base is Vector
-  if (!Array.isArray(a[0])) {
+  if (typeA === "vector") {
     const vec = await powerVecBase(a as Vector, b as number);
     return vec;
   }
 
   // base if Matrix
+  let allVecsDefined = true;
   const mtx: Matrix = await Promise.all(
-    (a as Matrix).map(async (vec) => powerVecBase(vec, b as number))
+    (a as Matrix).map(async (vec) => {
+      const vecPwr = await powerVecBase(vec, b as number);
+      if (!vecPwr) {
+        allVecsDefined = false;
+        return vec;
+      }
+      return vecPwr;
+    })
   );
   return mtx;
 };
 
-const powerNumBase = (a: number, b: number) => Math.pow(a, b);
+const powerNumBase = (a: number, b: number) => {
+  if (a < 0) return null;
+  return Math.pow(a, b);
+};
 
 const powerVecBase = async (a: Vector, b: number) => {
-  const vec: Vector = await Promise.all(a.map(async (n) => powerNumBase(n, b)));
+  let allEntriesDefined = true;
+  const vec: Vector = await Promise.all(
+    a.map(async (n) => {
+      const res = powerNumBase(n, b);
+      if (getValueType(res) !== "number") {
+        allEntriesDefined = false;
+        return 0;
+      }
+      return res!;
+    })
+  );
+  if (!allEntriesDefined) return null;
   return vec;
 };
 

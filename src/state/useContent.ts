@@ -454,6 +454,18 @@ const useContent = create<ContentStore>()((set, get) => ({
       }),
     });
   },
+  setCommentFor: (nodeId, comm) => {
+    const comment = comm.trim() === "" ? null : comm;
+
+    const newNodes = get().nodes.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, comment } };
+      }
+      return node;
+    }) as AppNode[];
+
+    set({ nodes: newNodes });
+  },
 }));
 
 const initialInput: Input = {

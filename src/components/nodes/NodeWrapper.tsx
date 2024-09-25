@@ -2,6 +2,10 @@ import React, { useCallback } from "react";
 import useContent from "../../state/useContent";
 import { ValueType } from "../../types/nodes";
 import classNames from "classnames";
+import useUI from "../../hooks/useUI";
+import { useShallow } from "zustand/react/shallow";
+import CommentField from "./parts/CommentField";
+import CommentBtn from "./parts/CommentBtn";
 
 // General container for node's content
 type props = {
@@ -9,18 +13,37 @@ type props = {
   title?: string;
   id: string;
   outputValueTypes?: ValueType[];
+  comment: string | null;
 };
-const NodeWrapper = ({ children, title, id, outputValueTypes }: props) => {
+const NodeWrapper = ({
+  children,
+  title,
+  id,
+  outputValueTypes,
+  comment,
+}: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
+
+  const commentFieldOpened = useUI(
+    useShallow((store) => store.nodeCommentFieldFor.includes(id))
+  );
+
+  const [openContext] = useUI(useShallow((store) => [store.openContext]));
 
   // const isHightlighted = activeNodeId === id || highlightedNodesId.includes(id);
 
   const clickHandler = (e: React.MouseEvent) => {
+    e.stopPropagation();
     higlightById([id], true);
     if (activeNodeId !== id) {
       activateNode(id);
     }
-    e.stopPropagation();
+    console.log("NODE CLICK");
+
+    if (e.button === 2) {
+      e.stopPropagation();
+      openContext("node", id, { x: 200, y: 120 });
+    }
   };
 
   const doubleClickHandler = useCallback(() => {
@@ -29,18 +52,33 @@ const NodeWrapper = ({ children, title, id, outputValueTypes }: props) => {
     }
   }, [activeNodeId]);
 
+  const onContextMenuHandler = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openContext(
+      "node",
+      id,
+      { x: e.clientX, y: e.clientY },
+      comment ? true : false
+    );
+  };
+
   // #TODO: Flowchart handles
 
   return (
     <>
       <div
-        className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main`}
+        className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main relative`}
         // style={{
         //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
         // }}
         onDoubleClick={doubleClickHandler}
         onClick={clickHandler}
+        onContextMenu={onContextMenuHandler}
       >
+        {comment && <CommentBtn nodeId={id} />}
+        {commentFieldOpened && (
+          <CommentField nodeId={id} text={comment ?? ""} />
+        )}
         {title && (
           <article className="pl-[2px] bg-main text-white  h-5 rounded-t-[3px]">
             {title}
@@ -62,10 +100,10 @@ const OutputValues = ({ values }: pr) => {
         {values.map((value, idx) => {
           const twClass = classNames(`text-` + value, "text-mono", "font-bold");
           return (
-            <>
+            <span key={value}>
               <span className={twClass}>{value}</span>
               {idx < values.length - 1 && " | "}
-            </>
+            </span>
           );
         })}
       </p>

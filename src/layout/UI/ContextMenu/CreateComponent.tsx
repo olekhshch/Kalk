@@ -1,4 +1,3 @@
-import React from "react";
 import actions from "../../../state/config/actions";
 import MenuButton from "../../../components/MenuButton";
 import { NodeType } from "../../../types/nodes";
@@ -12,8 +11,6 @@ import classNames from "classnames";
 
 // Context Menu's block with app's actions
 const CreateComponent = () => {
-  const actionsEntries = Object.entries(actions);
-
   const [searchValue, onInputChange] = useInputChange({ initialValue: "" });
 
   const [debouncedSearch] = useDebounce(searchValue, 120);
@@ -29,33 +26,46 @@ const CreateComponent = () => {
         />
       </form>
       <ul className="max-h-[160px] overflow-y-scroll border-b-2 border-sec">
-        {actionsEntries.map(([key, actions]) => {
-          let actionsToShow = actions;
-          if (debouncedSearch.trim() !== "") {
-            actionsToShow = actions.filter(({ title }) =>
-              title.toLowerCase().includes(debouncedSearch.toLowerCase())
-            );
-          }
-          const actionItems = actionsToShow.map((action) => (
-            <ActionItem
-              key={action.title}
-              label={action.title}
-              command={action.command}
-              tab={key}
-            />
-          ));
-          return <>{...actionItems}</>;
-        })}
+        <ActionList filter={debouncedSearch} />
       </ul>
     </div>
   );
 };
 
-const ActionItem = (params: {
+type p = {
+  filter: string;
+};
+const ActionList = ({ filter }: p) => {
+  const actionsEntries = Object.entries(actions);
+
+  const list = actionsEntries.reduce((acc, [tab, actions]) => {
+    const items: AItem[] = actions.map((action) => ({
+      tab,
+      label: action.title,
+      command: action.command,
+    }));
+    acc.push(...items);
+    return acc;
+  }, [] as AItem[]);
+
+  if (filter.trim().length > 0) {
+    return list
+      .filter((aitem) =>
+        aitem.label.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+      )
+      .map((aitem) => <ActionItem key={aitem.command.data} {...aitem} />);
+  }
+  return list.map((aitem) => (
+    <ActionItem key={aitem.command.data ?? aitem.label} {...aitem} />
+  ));
+};
+
+type AItem = {
   label: string;
   tab: string;
   command: { type: "create" | "action"; data?: NodeType | ActionType };
-}) => {
+};
+const ActionItem = (params: AItem) => {
   const { label, command, tab } = params;
   const [closeContextMenu] = useUI(useShallow((store) => [store.closeContext]));
 
