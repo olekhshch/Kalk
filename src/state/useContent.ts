@@ -9,19 +9,19 @@ import {
   MathNode,
   MtxFromRowsNode,
   NumNodeType,
+  ResultNode,
   TextSingleNode,
   VectorNode,
 } from "../types/nodes";
 import { AngleFormat, ContentStore } from "../types/app";
-import createTextSingleNode from "./actions/createTextSingleNode";
-import showHideResult from "../utils/showHideResult";
+import showHideResult from "../utils/nodes/resultNodes";
 import connectNodes from "../utils/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
-import calculateNode from "../utils/calculateNode";
+import calculateNode from "../utils/calculations/calculateNode";
 import getById from "../utils/getById";
 import replaceNode from "../utils/replaseNode";
 import getChain from "../utils/getChainIdsFrom";
-import recalculateChain from "../utils/recalculateChain";
+import recalculateChain from "../utils/calculations/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
 import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
@@ -29,8 +29,9 @@ import generateHandleLabel, {
   deconstructHandleId,
 } from "../utils/generateHandleId";
 import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstructor";
-import recalculateAll from "../utils/recalculateAll";
+import recalculateAll from "../utils/calculations/recalculateAll";
 import isConnectable from "../utils/edges/isConnectable";
+import resultNodes from "../utils/nodes/resultNodes";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -58,7 +59,7 @@ const useContent = create<ContentStore>()((set, get) => ({
     set({ nodes: newNodes });
   },
   addNode: (nodeType, position) => {
-    const id = get().idCounter + 1;
+    let id = get().idCounter + 1;
     set({ idCounter: id });
     const nodeId = id.toString();
 
@@ -75,8 +76,32 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: { N: "number" },
           },
         };
+
+        id += 1;
+        set({ idCounter: id });
+
+        const resNode: ResultNode = {
+          id: id.toString(),
+          type: "result",
+          position: { x: position.x + 60, y: position.y - 60 },
+          data: {
+            sourceId: nodeId,
+            isShown: false,
+          },
+        };
+
+        const newEdgesRes = connectNodes(
+          nodeId,
+          id.toString(),
+          get().edges,
+          get().edgeCounter,
+          "R"
+        );
+
         set({
-          nodes: [...get().nodes, newNode],
+          nodes: [...get().nodes, newNode, resNode],
+          edges: newEdgesRes.edges,
+          edgeCounter: newEdgesRes.edgeCounter,
         });
         break;
       }
@@ -107,7 +132,33 @@ const useContent = create<ContentStore>()((set, get) => ({
             },
           },
         };
-        set({ nodes: [...get().nodes, newNode] });
+
+        id += 1;
+        set({ idCounter: id });
+
+        const resNode: ResultNode = {
+          id: id.toString(),
+          type: "result",
+          position: { x: position.x + 60, y: position.y - 60 },
+          data: {
+            sourceId: nodeId,
+            isShown: false,
+          },
+        };
+
+        const newEdgesRes = connectNodes(
+          nodeId,
+          id.toString(),
+          get().edges,
+          get().edgeCounter,
+          "R"
+        );
+
+        set({
+          nodes: [...get().nodes, newNode, resNode],
+          edges: newEdgesRes.edges,
+          edgeCounter: newEdgesRes.edgeCounter,
+        });
         break;
       }
       case "vec": {
@@ -131,7 +182,33 @@ const useContent = create<ContentStore>()((set, get) => ({
             },
           },
         };
-        set({ nodes: [...get().nodes, newNode] });
+
+        id += 1;
+        set({ idCounter: id });
+
+        const resNode: ResultNode = {
+          id: id.toString(),
+          type: "result",
+          position: { x: position.x + 60, y: position.y - 60 },
+          data: {
+            sourceId: nodeId,
+            isShown: false,
+          },
+        };
+
+        const newEdgesRes = connectNodes(
+          nodeId,
+          id.toString(),
+          get().edges,
+          get().edgeCounter,
+          "R"
+        );
+
+        set({
+          nodes: [...get().nodes, newNode, resNode],
+          edges: newEdgesRes.edges,
+          edgeCounter: newEdgesRes.edgeCounter,
+        });
         break;
       }
       case "mtx-rows": {
@@ -167,7 +244,33 @@ const useContent = create<ContentStore>()((set, get) => ({
             inputTemplate: (n) => `v${n}`,
           },
         };
-        set({ nodes: [...get().nodes, newNode] });
+
+        id += 1;
+        set({ idCounter: id });
+
+        const resNode: ResultNode = {
+          id: id.toString(),
+          type: "result",
+          position: { x: position.x + 60, y: position.y - 60 },
+          data: {
+            sourceId: nodeId,
+            isShown: false,
+          },
+        };
+
+        const newEdgesRes = connectNodes(
+          nodeId,
+          id.toString(),
+          get().edges,
+          get().edgeCounter,
+          "R"
+        );
+
+        set({
+          nodes: [...get().nodes, newNode, resNode],
+          edges: newEdgesRes.edges,
+          edgeCounter: newEdgesRes.edgeCounter,
+        });
         break;
       }
       case "cross-prod":
@@ -179,7 +282,32 @@ const useContent = create<ContentStore>()((set, get) => ({
         const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
 
         if (newNode) {
-          set({ nodes: [...get().nodes, newNode] });
+          id += 1;
+          set({ idCounter: id });
+
+          const resNode: ResultNode = {
+            id: id.toString(),
+            type: "result",
+            position: { x: position.x + 60, y: position.y - 60 },
+            data: {
+              sourceId: nodeId,
+              isShown: false,
+            },
+          };
+
+          const newEdgesRes = connectNodes(
+            nodeId,
+            id.toString(),
+            get().edges,
+            get().edgeCounter,
+            "R"
+          );
+
+          set({
+            nodes: [...get().nodes, newNode, resNode],
+            edges: newEdgesRes.edges,
+            edgeCounter: newEdgesRes.edgeCounter,
+          });
         }
         break;
       }
@@ -191,8 +319,31 @@ const useContent = create<ContentStore>()((set, get) => ({
         );
 
         if (newNode) {
+          id += 1;
+          set({ idCounter: id });
+
+          const resNode: ResultNode = {
+            id: id.toString(),
+            type: "result",
+            position: { x: position.x + 60, y: position.y - 60 },
+            data: {
+              sourceId: nodeId,
+              isShown: false,
+            },
+          };
+
+          const newEdgesRes = connectNodes(
+            nodeId,
+            id.toString(),
+            get().edges,
+            get().edgeCounter,
+            "R"
+          );
+
           set({
-            nodes: [...get().nodes, newNode],
+            nodes: [...get().nodes, newNode, resNode],
+            edges: newEdgesRes.edges,
+            edgeCounter: newEdgesRes.edgeCounter,
           });
         }
       }
@@ -214,13 +365,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           });
           return { nodes: selectedNodes };
         case "clear-all":
-          return { nodes: [] };
-        case "text-single":
-          const { nodes, idCounter } = createTextSingleNode({
-            nodes: state.nodes,
-            idCounter: state.idCounter,
-          });
-          return { nodes, idCounter };
+          return { nodes: [], edges: [], values: {} };
         default:
           console.log(action + " action doesn't exist in doAction command");
           return {};
@@ -281,7 +426,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newValues = await recalculateChain(
         chain,
         nodes,
-        newVals,
+        newVals.values,
         get().anglesFormat
       );
 
@@ -291,11 +436,18 @@ const useContent = create<ContentStore>()((set, get) => ({
     set({ nodes });
   },
   showResultFor: (nodeId) => {
-    const id = get().idCounter + 1;
-    set({ idCounter: id });
-    const { nodes, newNode } = showHideResult(true, nodeId, get().nodes, id);
+    // const id = get().idCounter + 1;
+    // set({ idCounter: id });
+    const { newNode, nodes, idCounter } = resultNodes.showResultFor(
+      nodeId,
+      get().nodes,
+      get().idCounter
+    );
 
-    if (newNode) {
+    if (newNode && idCounter && nodes.length > get().nodes.length) {
+      // new Node was created for Result
+      set({ idCounter: idCounter, nodes });
+
       const { edges, edgeCounter } = connectNodes(
         nodeId,
         newNode.id,
@@ -303,20 +455,28 @@ const useContent = create<ContentStore>()((set, get) => ({
         get().edgeCounter,
         "R"
       );
-
-      set({ nodes, edges, edgeCounter, activeNodeId: null });
+      set({ edges, edgeCounter, activeNodeId: null });
+    } else {
+      set({ nodes });
     }
   },
-  hideResultFor: (nodeId) =>
-    set((state) => {
-      const { nodes } = showHideResult(
-        false,
-        nodeId,
-        [...state.nodes],
-        state.idCounter
-      );
-      return { nodes };
-    }),
+  hideResultFor: (nodeId) => {
+    const { newEdges, newNodes } = resultNodes.hideResultFor(
+      nodeId,
+      get().nodes,
+      get().edges
+    );
+    set({ nodes: newNodes, edges: newEdges });
+  },
+  toggleResultFor: (nodeId) => {
+    const { newEdges, newNodes } = resultNodes.toggleResultFor(
+      nodeId,
+      get().nodes,
+      get().edges,
+      get().edgeCounter
+    );
+    set({ nodes: newNodes, edges: newEdges });
+  },
   connectNodes: async (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
     // checking if handle labels specified

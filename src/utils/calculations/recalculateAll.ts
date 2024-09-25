@@ -1,9 +1,9 @@
 // recalculation of all nodes
 
 import { Edge } from "@xyflow/react";
-import { AppNode, MathNode, MtxVecFnNode } from "../types/nodes";
-import { AngleFormat, CalculatedValues } from "../types/app";
-import getChainIdsFrom from "./getChainIdsFrom";
+import { AppNode, MathNode, MtxVecFnNode } from "../../types/nodes";
+import { AngleFormat, CalculatedValues } from "../../types/app";
+import getChainIdsFrom from "../getChainIdsFrom";
 import recalculateChain from "./recalculateChain";
 
 type f = (

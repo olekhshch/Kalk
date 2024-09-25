@@ -40,6 +40,9 @@ export interface NodesStore {
   activateNode: (nodeId: string | null) => void;
   connectNodes: (connection: Connection) => void;
   setCommentFor: (nodeId: string, comm: string) => void;
+  showResultFor: (nodeId: string) => void;
+  hideResultFor: (nodeId: string) => void;
+  toggleResultFor: (nodeId: string) => void;
 }
 
 export interface TextStore {
@@ -50,8 +53,6 @@ export interface MathStore {
   anglesFormat: AngleFormat;
   setAnglesFormat: (a: AngleFormat) => void;
   editExpressionValue: (nodeId: string, newValue: string) => void;
-  showResultFor: (nodeId: string) => void;
-  hideResultFor: (nodeId: string) => void;
   setNumOfEntriesFor: (nodeId: string, num: number) => void;
 }
 
@@ -81,7 +82,8 @@ export type CreateNodeAction = (params: NodeActionParams) => NodeActionOutput;
 export type NodeActionOutput = {
   newNode: AppNode | null;
   nodes: AppNode[];
-  idCounter: number;
+  idCounter?: number;
+  newEdge?: Edge;
 };
 
 export type EdgeActionOutput = {

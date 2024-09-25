@@ -4,16 +4,15 @@ import useContent from "../../state/useContent";
 
 type props = {
   nodeId: string;
-  isShown: boolean;
 };
 
-const ResultOutput = ({ nodeId, isShown }: props) => {
-  const { showResultFor, hideResultFor } = useContent();
+const ResultOutput = ({ nodeId }: props) => {
+  const { toggleResultFor } = useContent();
 
   const clickHandler = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("result click");
-    isShown ? hideResultFor(nodeId) : showResultFor(nodeId);
+    toggleResultFor(nodeId);
   };
 
   return (

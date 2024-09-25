@@ -1,5 +1,5 @@
 import { Node } from "@xyflow/react";
-import { AngleFormat, CalculatedValues } from "./app";
+import { AngleFormat } from "./app";
 
 // functions on numbers (...nums) => num
 export type NumNodeType =
@@ -76,7 +76,7 @@ export type ExpressionNode = Node<
 export type OutputValue = number | Vector | Matrix | null;
 
 export type ResultNode = Node<
-  { sourceId: string; value: string; comment?: string | null },
+  { sourceId: string; isShown: boolean; comment?: string | null },
   "result"
 >;
 

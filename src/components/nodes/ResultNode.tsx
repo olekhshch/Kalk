@@ -13,10 +13,13 @@ import Latex from "react-latex-next";
 
 const ResultNode = ({
   id,
-  data: { sourceId, comment },
+  data: { sourceId, comment, isShown },
 }: NodeProps<ResultNodeType>) => {
   const value = useContent(useShallow((store) => store.values[sourceId]));
 
+  if (!isShown) {
+    return null;
+  }
   return (
     <>
       <Input cssPosition="50%" label="R" id="R" />
