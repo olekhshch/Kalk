@@ -20,7 +20,7 @@ const IdentityMatrix = ({
       comment={comment ?? null}
     >
       <div className="p-2 pl-4">
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         <InputPort id={inputId} cssPosition="50%" label="n" showLabel />
         <Latex>$I_n$</Latex>
         <Output id={outputId} cssPosition="50%" />

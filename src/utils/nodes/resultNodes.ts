@@ -1,7 +1,6 @@
-import { AppNode, ResultNode, MathNode } from "../../types/nodes";
+import { AppNode, ResultNode, MathNode, NodeType } from "../../types/nodes";
 import { NodeActionOutput } from "../../types/app";
 import { Edge } from "@xyflow/react";
-import { Effect } from "@tauri-apps/api/window";
 import connectNodes from "../connectNodes";
 
 type f = (
@@ -80,10 +79,12 @@ const toggleResultFor = (
   sourceId: string,
   nodes: AppNode[],
   edges: Edge[],
-  edgeCounter: number
+  edgeCounter: number,
+  idCounter: number
 ) => {
   // #TODO: Rewrite better?
   let newEdges = edges;
+  let idCnt = idCounter;
   let edgeCnt = edgeCounter;
   const newNodes = nodes.map((node) => {
     if (node.type === "result" && node.data.sourceId === sourceId) {
@@ -94,7 +95,7 @@ const toggleResultFor = (
           data: { ...node.data, isShown: false },
         } as ResultNode;
       }
-      const { newNode } = showResultFor(sourceId, nodes, 0);
+      const { newNode, idCounter } = showResultFor(sourceId, nodes, idCnt);
       const es = connectNodes(sourceId, node.id, edges, edgeCounter);
       newEdges = es.edges;
       edgeCounter += 1;
@@ -104,7 +105,15 @@ const toggleResultFor = (
     return node;
   });
 
-  return { newNodes, newEdges, edgeCounter };
+  return { newNodes, newEdges, edgeCounter, idCounter };
+};
+
+const showAllResults = (nodes: AppNode[], idCounter: number) => {
+  const createdNodes: ResultNode[] = [];
+  const newNodes = nodes.map((node) => {
+    if (["num-fun", "mtx-fn"].includes(node.type!)) {
+    }
+  });
 };
 
 export default { showResultFor, hideResultFor, toggleResultFor };

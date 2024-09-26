@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import NodeWrapper from "./NodeWrapper";
 import {
   Matrix,
@@ -17,6 +17,7 @@ const ResultNode = ({
 }: NodeProps<ResultNodeType>) => {
   const value = useContent(useShallow((store) => store.values[sourceId]));
 
+  useEffect(() => console.log("RES RERENDERED"));
   if (!isShown) {
     return null;
   }

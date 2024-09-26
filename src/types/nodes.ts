@@ -20,7 +20,8 @@ export type NumNodeType =
   | "acos"
   | "atg"
   | "floor"
-  | "ceil";
+  | "ceil"
+  | "constant";
 
 // mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
 export type MtxVecNodeType =
@@ -32,7 +33,8 @@ export type MtxVecNodeType =
   | "scalar-mult"
   | "dot-prod"
   | "cross-prod"
-  | "sum-all";
+  | "sum-all"
+  | "det";
 
 export type OrganizationalNodeType = "text-single" | "result";
 
@@ -58,7 +60,7 @@ export type MtxNode =
 export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
 
 export type TextSingleNode = Node<
-  { value: string; comment?: string | null },
+  { value: string; comment?: string | null; tag: "text" },
   "text-single"
 >;
 
@@ -69,6 +71,7 @@ export type ExpressionNode = Node<
     inputs: { [x: string]: Input };
     outputs: { N: ValueType };
     comment?: string | null;
+    tag: "expression";
   },
   "expression"
 >;
@@ -76,7 +79,12 @@ export type ExpressionNode = Node<
 export type OutputValue = number | Vector | Matrix | null;
 
 export type ResultNode = Node<
-  { sourceId: string; isShown: boolean; comment?: string | null },
+  {
+    sourceId: string;
+    isShown: boolean;
+    comment?: string | null;
+    tag: "result";
+  },
   "result"
 >;
 

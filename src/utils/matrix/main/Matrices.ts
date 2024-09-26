@@ -2,6 +2,7 @@
 
 import { InputValue, Matrix, OutputValue, Vector } from "../../../types/nodes";
 import getValueType from "../../getValueType";
+import MatrixProp from "../MatrixProp";
 import mtxOperations from "../mtxOperations";
 import vectorsOperarions from "../vectorsOperarions";
 
@@ -56,4 +57,18 @@ const sumAllEntries: f2 = async (M) => {
 
 const sumAllVec = (vec: Vector) => vec.reduce((acc, num) => acc + num, 0);
 
-export default { addVecOrMtx, sumAllEntries };
+// ============= det(M) ===============================
+
+const det: f2 = (M: InputValue) => {
+  const type = getValueType(M);
+
+  if (type !== "matrix") return null;
+
+  const mtx = M as Matrix;
+
+  if (!MatrixProp.isSquare(mtx)) return null;
+
+  return null;
+};
+
+export default { addVecOrMtx, sumAllEntries, det };

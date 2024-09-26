@@ -1,7 +1,7 @@
 import { MtxVecFnAction, Vector } from "../../types/nodes";
 
 import { Matrix } from "../../types/nodes";
-import Matrices from "./Matrices_0";
+import Matrices from "./MatrixProp";
 import vectorsOperarions from "./vectorsOperarions";
 
 type f = (mtx1: Matrix, mtx2: Matrix) => Promise<Matrix | null>;

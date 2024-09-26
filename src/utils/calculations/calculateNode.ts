@@ -38,10 +38,14 @@ const calculateNode: f = async (node, values, angleFormat) => {
       const { value } = (node as ExpressionNode).data;
       const resCalc = (await invoke("evaluate_expression", {
         expr: value,
-      }).catch(
-        () =>
-          ({ success: false, res: "", msg: "Invoke error" } as RustCalculations)
-      )) as RustCalculations;
+      }).catch((err) => {
+        console.log(err);
+        return {
+          success: false,
+          res: "",
+          msg: "Invoke error",
+        } as RustCalculations;
+      })) as RustCalculations;
 
       if (!resCalc.success) {
         newValues[node.id] = null;

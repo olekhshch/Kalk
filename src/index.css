@@ -58,3 +58,7 @@ svg {
 .latin-math {
     font-family: 'Latin Modern Math';
 }
+
+.table-row:hover {
+    background-color: var(--sec);
+}

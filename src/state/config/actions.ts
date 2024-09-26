@@ -10,7 +10,8 @@ const actions: Actions = {
   Math: [
     {
       title: "Expression",
-      icon: "expression",
+      icon: null,
+      iconLatex: "\\boldsymbol{(1-2)^3}",
       large: true,
       command: {
         type: "create",
@@ -19,7 +20,8 @@ const actions: Actions = {
     },
     {
       title: "Add",
-      icon: "add",
+      icon: null,
+      iconLatex: "\\boldsymbol{+}",
       hideToolbarTitle: true,
       command: {
         type: "create",
@@ -27,8 +29,9 @@ const actions: Actions = {
       },
     },
     {
-      title: "Substract",
-      icon: "substract",
+      title: "Subtract",
+      icon: null,
+      iconLatex: "\\boldsymbol{-}",
       hideToolbarTitle: true,
       command: {
         type: "create",
@@ -37,7 +40,8 @@ const actions: Actions = {
     },
     {
       title: "Multiply",
-      icon: "multiply",
+      icon: null,
+      iconLatex: "\\boldsymbol{\\cdot}",
       hideToolbarTitle: true,
       command: {
         type: "create",
@@ -46,7 +50,8 @@ const actions: Actions = {
     },
     {
       title: "Divide",
-      icon: "divide",
+      icon: null,
+      iconLatex: "{\\div}",
       hideToolbarTitle: true,
       command: {
         type: "create",
@@ -55,15 +60,17 @@ const actions: Actions = {
     },
     {
       title: "Power",
-      icon: "power",
+      icon: null,
+      iconLatex: "a^b",
       command: {
         type: "create",
         data: "power",
       },
     },
     {
-      title: "Absolute",
-      icon: "abs",
+      title: "Abs",
+      icon: null,
+      iconLatex: "|a|",
       command: {
         type: "create",
         data: "abs",
@@ -157,11 +164,23 @@ const actions: Actions = {
         data: "ceil",
       },
     },
+    {
+      title: "Constant",
+      icon: null,
+      iconLatex: "\\pi",
+      large: true,
+      command: {
+        type: "action",
+        data: "constant",
+      },
+    },
   ],
   Matrices: [
     {
       title: "Matrix (from rows)",
-      icon: "",
+      icon: null,
+      iconLatex:
+        "\\tiny{\\begin{bmatrix}\\vec{v} \\\\ \\dots \\\\ \\vec{w}\\end{bmatrix} \\implies M}",
       large: true,
       command: {
         type: "create",
@@ -169,32 +188,29 @@ const actions: Actions = {
       },
     },
     {
-      title: "Identity matrix",
-      icon: "i_mtx",
-      command: {
-        type: "create",
-        data: "I-matrix",
-      },
-    },
-    {
       title: "Vector",
-      icon: "vec",
+      icon: null,
+      iconLatex: "\\vec{v}",
+      hideToolbarTitle: true,
       command: {
         type: "create",
         data: "vec",
       },
     },
     {
-      title: "Norm",
-      icon: "norm",
+      title: "Identity matrix",
+      icon: null,
+      iconLatex: "I_n",
+      hideToolbarTitle: true,
       command: {
         type: "create",
-        data: "norm",
+        data: "I-matrix",
       },
     },
     {
       title: "Add vectors/matrices",
-      icon: "add-mtx",
+      icon: null,
+      iconLatex: "\\scriptsize{A+B}",
       command: {
         type: "create",
         data: "add-mtx",
@@ -202,7 +218,8 @@ const actions: Actions = {
     },
     {
       title: "Scalar multiplication",
-      icon: "scalar",
+      icon: null,
+      iconLatex: "\\alpha\\vec{v}",
       command: {
         type: "create",
         data: "scalar-mult",
@@ -210,15 +227,26 @@ const actions: Actions = {
     },
     {
       title: "Dot product",
-      icon: "dot",
+      icon: null,
+      iconLatex: "\\small{\\vec{a}\\cdot\\vec{b}}",
       command: {
         type: "create",
         data: "dot-prod",
       },
     },
     {
+      title: "Norm",
+      icon: null,
+      iconLatex: "\\small{\\boldsymbol{\\lVert\\vec{v}\\rVert}}",
+      command: {
+        type: "create",
+        data: "norm",
+      },
+    },
+    {
       title: "Cross product",
-      icon: "cross",
+      icon: null,
+      iconLatex: "\\boldsymbol{\\times}",
       command: {
         type: "create",
         data: "cross-prod",
@@ -226,10 +254,19 @@ const actions: Actions = {
     },
     {
       title: "Sum all",
-      icon: "sum",
+      icon: null,
+      iconLatex: "\\sum{a_i}",
       command: {
         type: "create",
         data: "sum-all",
+      },
+    },
+    {
+      title: "det(M)",
+      icon: null,
+      command: {
+        type: "create",
+        data: "det",
       },
     },
   ],
@@ -257,13 +294,23 @@ const actions: Actions = {
         type: "action",
       },
     },
-  ],
-  File: [
     {
-      title: "File overview",
+      title: "Show all results",
+      icon: null,
+      command: {
+        type: "action",
+        data: "show-res",
+      },
+    },
+  ],
+  Project: [
+    {
+      title: "Project overview",
+      large: true,
       icon: "",
       command: {
         type: "action",
+        data: "project-overview",
       },
     },
   ],

@@ -3,6 +3,7 @@ import useContent from "../../state/useContent";
 import { getCurrentWindow, Window } from "@tauri-apps/api/window";
 import { Webview } from "@tauri-apps/api/webview";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { invoke } from "@tauri-apps/api/core";
 
 const Header = () => {
   const { nodes, edges, values } = useContent();
@@ -20,11 +21,10 @@ const Header = () => {
     window.minimize();
   };
 
-  const newWindow = new Window("FILE OVERVIEW");
-  const createWindow = async () => {
-    const webview = new WebviewWindow("FILE OVERVIEW", {
-      url: "https://github.com/tauri-apps/tauri",
-    });
+  const openWindow = () => {
+    invoke("open_project_overview")
+      .then(() => console.log("NEW WINDOW TS"))
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -33,7 +33,7 @@ const Header = () => {
         <button onClick={() => console.log({ nodes })}>NS</button>
         <button onClick={() => console.log({ edges })}>ES</button>
         <button onClick={() => console.log({ values })}>VAL</button>
-        <button onClick={createWindow}>WINDOW</button>
+        <button onClick={openWindow}>WINDOW</button>
       </div>
       <div
         className="text-base grow text-center"

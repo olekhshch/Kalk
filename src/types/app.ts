@@ -1,12 +1,13 @@
 import { AppNode, Matrix, NodeType, ValueType, Vector } from "./nodes";
 import { Connection, Edge, NodeChange, XYPosition } from "@xyflow/react";
 
-export type Tab = "All" | "Math" | "Matrices" | "Organize" | "File";
+export type Tab = "All" | "Math" | "Matrices" | "Organize" | "Project";
 
 export type Action = {
   title: string;
   hideToolbarTitle?: boolean;
   icon: string | null;
+  iconLatex?: string;
   large?: boolean;
   values?: ValueType[];
   category?: "math" | "matrices";
@@ -16,7 +17,12 @@ export type Action = {
   };
 };
 
-export type ActionType = "select-all" | "clear-all";
+export type ActionType =
+  | "select-all"
+  | "clear-all"
+  | "show-res"
+  | "project-overview"
+  | "constant"; // opens constant creation window
 
 export type Mode =
   | "edit" // regular mode
@@ -34,7 +40,7 @@ export interface NodesStore {
   activeNodeId: string | null; // Currently active (edited) node. Single node can be active at the same time
   onNodesChange: (changes: NodeChange[]) => void;
   addNode: (nodeType: NodeType, position: { x: number; y: number }) => void;
-  doAction: (action: string) => void; // Performs creation action which adds new Node to the state
+  doAction: (action: ActionType) => void; // Performs creation action which adds new Node to the state
   setNodes: (nds: AppNode[]) => void;
   higlightById: (ids: string[], only?: boolean) => void; // only = yes => hightlights passed Nodes only, otherway adds passed Nodes to allready hightlighted nodes
   activateNode: (nodeId: string | null) => void;
@@ -43,6 +49,7 @@ export interface NodesStore {
   showResultFor: (nodeId: string) => void;
   hideResultFor: (nodeId: string) => void;
   toggleResultFor: (nodeId: string) => void;
+  deleteNodes: (nodeIds: string[]) => void;
 }
 
 export interface TextStore {
@@ -58,6 +65,7 @@ export interface MathStore {
 
 export interface VariablesStore {
   values: CalculatedValues;
+  constants: Constant[];
   setValue: (varKey: string, newValue: number | null) => void;
 }
 
@@ -110,3 +118,21 @@ export type ContextMenuSection =
   | "node-delete"
   | "node-help"
   | "node-comment";
+
+// object for storing contant info
+export type Constant = {
+  name: string;
+  viewLabel: string;
+  valueType: ValueType;
+  value: number | Matrix | Vector;
+};
+
+// what filters should table offer for a column
+export enum FilterOptions {
+  NONE,
+  NUMBER,
+  TEXT,
+  LIST,
+}
+// items passing to a table
+export type TableItem = (string | number | null)[];

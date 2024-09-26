@@ -2,6 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import useUI from "../../../hooks/useUI";
 import CreateComponent from "./CreateComponent";
 import BigButton from "./BigButton";
+import useContent from "../../../state/useContent";
 
 const ContextMenu = () => {
   const [, components, targetId, position, comment] = useUI(
@@ -20,10 +21,19 @@ const ContextMenu = () => {
     useShallow((store) => store.openNodeCommentField)
   );
 
+  const deleteNodes = useContent(useShallow((store) => store.deleteNodes));
+
   const openCommentHandler = () => {
     console.log("CLICK");
     if (targetId) {
       openCommentField(targetId);
+    }
+    closeContext();
+  };
+
+  const deleteNodeHandler = () => {
+    if (targetId) {
+      deleteNodes([targetId]);
     }
     closeContext();
   };
@@ -45,6 +55,13 @@ const ContextMenu = () => {
             return (
               <BigButton onClick={openCommentHandler} key={component}>
                 <span>{comment ? "Edit comment" : "Add comment"}</span>
+              </BigButton>
+            );
+          }
+          case "node-delete": {
+            return (
+              <BigButton key={component} onClick={deleteNodeHandler}>
+                Remove Node
               </BigButton>
             );
           }

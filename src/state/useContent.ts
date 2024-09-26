@@ -14,7 +14,6 @@ import {
   VectorNode,
 } from "../types/nodes";
 import { AngleFormat, ContentStore } from "../types/app";
-import showHideResult from "../utils/nodes/resultNodes";
 import connectNodes from "../utils/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculations/calculateNode";
@@ -32,6 +31,8 @@ import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstruct
 import recalculateAll from "../utils/calculations/recalculateAll";
 import isConnectable from "../utils/edges/isConnectable";
 import resultNodes from "../utils/nodes/resultNodes";
+import deleteNodes from "../utils/nodes/deleteNodes";
+import { invoke } from "@tauri-apps/api/core";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -41,6 +42,10 @@ const useContent = create<ContentStore>()((set, get) => ({
   highlightedNodesId: [],
   activeNodeId: null,
   values: {},
+  constants: [
+    { name: "PI", viewLabel: "\\pi", valueType: "number", value: Math.PI },
+    { name: "e", viewLabel: "\\e", value: Math.E, valueType: "number" },
+  ],
   anglesFormat: AngleFormat.RAD,
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
@@ -70,6 +75,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           type: "expression",
           position,
           data: {
+            tag: "expression",
             value: "",
             showResult: false,
             inputs: {},
@@ -85,6 +91,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           type: "result",
           position: { x: position.x + 60, y: position.y - 60 },
           data: {
+            tag: "result",
             sourceId: nodeId,
             isShown: false,
           },
@@ -109,7 +116,7 @@ const useContent = create<ContentStore>()((set, get) => ({
         const newNode: TextSingleNode = {
           id: nodeId,
           type: "text-single",
-          data: { value: "" },
+          data: { value: "", tag: "text" },
           position,
         };
         set({
@@ -125,7 +132,11 @@ const useContent = create<ContentStore>()((set, get) => ({
           data: {
             showResult: false,
             inputs: {
-              n: { sourceId: null, allowedTypes: ["number"], type: "number" },
+              n: {
+                sourceId: null,
+                allowedTypes: ["number"],
+                type: "number",
+              },
             },
             outputs: {
               M: { possibleValues: ["matrix"] },
@@ -141,6 +152,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           type: "result",
           position: { x: position.x + 60, y: position.y - 60 },
           data: {
+            tag: "result",
             sourceId: nodeId,
             isShown: false,
           },
@@ -191,6 +203,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           type: "result",
           position: { x: position.x + 60, y: position.y - 60 },
           data: {
+            tag: "result",
             sourceId: nodeId,
             isShown: false,
           },
@@ -253,6 +266,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           type: "result",
           position: { x: position.x + 60, y: position.y - 60 },
           data: {
+            tag: "result",
             sourceId: nodeId,
             isShown: false,
           },
@@ -290,6 +304,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             type: "result",
             position: { x: position.x + 60, y: position.y - 60 },
             data: {
+              tag: "result",
               sourceId: nodeId,
               isShown: false,
             },
@@ -327,6 +342,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             type: "result",
             position: { x: position.x + 60, y: position.y - 60 },
             data: {
+              tag: "result",
               sourceId: nodeId,
               isShown: false,
             },
@@ -351,26 +367,39 @@ const useContent = create<ContentStore>()((set, get) => ({
     // sets null values for any created node
     set({ values: { ...get().values, [nodeId]: null } });
   },
-  doAction: (action) =>
-    set((state) => {
-      const command = action.toLocaleLowerCase();
-      switch (command) {
-        case "select-all":
-          const selectedNodes = state.nodes.map((node) => {
-            const [newNode] = applyNodeChanges(
-              [{ id: node.id, type: "select", selected: true }],
-              [node]
-            );
-            return newNode;
-          });
-          return { nodes: selectedNodes };
-        case "clear-all":
-          return { nodes: [], edges: [], values: {} };
-        default:
-          console.log(action + " action doesn't exist in doAction command");
-          return {};
+  doAction: (action) => {
+    switch (action) {
+      case "select-all":
+        const selectedNodes = get().nodes.map((node) => {
+          const [newNode] = applyNodeChanges(
+            [{ id: node.id, type: "select", selected: true }],
+            [node]
+          );
+          return newNode;
+        });
+        set({ nodes: selectedNodes });
+        break;
+      case "clear-all":
+        set({ nodes: [], edges: [], values: {} });
+        break;
+      case "project-overview": {
+        // persisting needed to PO window data
+        localStorage.setItem("app-nodes", JSON.stringify(get().nodes));
+        localStorage.setItem("app-values", JSON.stringify(get().values));
+        invoke("open_project_overview");
+        break;
       }
-    }),
+      case "constant": {
+        // passing constants to LS for Constants window
+        localStorage.setItem("app-const", JSON.stringify(get().constants));
+        invoke("open_constants_window");
+        break;
+      }
+      default:
+        console.log(action + " action doesn't exist in doAction command");
+        return {};
+    }
+  },
   setNodes: (nds) => {
     set({ nodes: nds });
   },
@@ -380,7 +409,9 @@ const useContent = create<ContentStore>()((set, get) => ({
         return { highlightedNodesId: nodeIds };
       }
 
-      return { highlightedNodesId: [...state.highlightedNodesId, ...nodeIds] };
+      return {
+        highlightedNodesId: [...state.highlightedNodesId, ...nodeIds],
+      };
     }),
   activateNode: (nodeId) => {
     set({ activeNodeId: nodeId });
@@ -429,7 +460,6 @@ const useContent = create<ContentStore>()((set, get) => ({
         newVals.values,
         get().anglesFormat
       );
-
       set({ values: newValues });
     }
 
@@ -469,13 +499,15 @@ const useContent = create<ContentStore>()((set, get) => ({
     set({ nodes: newNodes, edges: newEdges });
   },
   toggleResultFor: (nodeId) => {
-    const { newEdges, newNodes } = resultNodes.toggleResultFor(
-      nodeId,
-      get().nodes,
-      get().edges,
-      get().edgeCounter
-    );
-    set({ nodes: newNodes, edges: newEdges });
+    const { newEdges, newNodes, idCounter, edgeCounter } =
+      resultNodes.toggleResultFor(
+        nodeId,
+        get().nodes,
+        get().edges,
+        get().edgeCounter,
+        get().idCounter
+      );
+    set({ nodes: newNodes, edges: newEdges, idCounter, edgeCounter });
   },
   connectNodes: async (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
@@ -624,6 +656,10 @@ const useContent = create<ContentStore>()((set, get) => ({
       return node;
     }) as AppNode[];
 
+    set({ nodes: newNodes });
+  },
+  deleteNodes: (nodeIds) => {
+    const { newNodes } = deleteNodes(nodeIds, get().nodes);
     set({ nodes: newNodes });
   },
 }));

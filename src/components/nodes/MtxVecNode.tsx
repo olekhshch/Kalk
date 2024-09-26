@@ -52,7 +52,7 @@ const MtxVecNode = ({
       comment={comment ?? null}
     >
       <div className="p-2 pl-4">
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort
