@@ -72,7 +72,9 @@ const ActionItem = (params: AItem) => {
   const [setMode] = useAppState(useShallow((store) => [store.setMode]));
 
   const onClick = () => {
-    setMode(command.type === "action" ? "edit" : command.type, command.data);
+    setMode(command.type === "action" ? "edit" : command.type, {
+      type: command.data,
+    });
     closeContextMenu();
   };
 

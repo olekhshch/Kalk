@@ -32,13 +32,13 @@ const VectorNode = ({
     return entries.map(([key]) => key).join("\\\\");
   }, [numberOfEntries]);
 
-  const outputLabel = generateHandleLabel("V", ["vector"]);
+  const outputLabel = generateHandleLabel(id, "V", ["vector"]);
 
   const inputLabels = useMemo(() => {
     const step = 100 / (entries.length + 1);
 
     return entries.map(([key, input], idx) => ({
-      idLabel: generateHandleLabel(key, input.allowedTypes),
+      idLabel: generateHandleLabel(id, key, input.allowedTypes),
       key,
       css: `${step * (idx + 1)}%`,
     }));
@@ -61,7 +61,7 @@ const VectorNode = ({
       comment={comment ?? null}
     >
       <div className="p-2 pl-6 flex flex-col gap-1">
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         {inputLabels.map((il) => {
           return (
             <InputPort

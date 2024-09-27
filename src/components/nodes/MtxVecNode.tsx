@@ -24,7 +24,7 @@ const MtxVecNode = ({
     const step = 100 / (entries.length + 1);
 
     return entries.map(([key, input], idx) => {
-      const handleId = generateHandleId(key, input.allowedTypes);
+      const handleId = generateHandleId(id, key, input.allowedTypes);
       const cssPosition = `${step * (1 + idx)}%`;
 
       return { key, handleId, cssPosition };
@@ -36,7 +36,7 @@ const MtxVecNode = ({
     const step = 100 / (outputsEntries.length + 1);
 
     return outputsEntries.map(([key, output], idx) => {
-      const handleId = generateHandleId(key, output.possibleValues);
+      const handleId = generateHandleId(id, key, output.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
 
       return { key, handleId, cssPosition };

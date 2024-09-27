@@ -98,7 +98,9 @@ const Canvas = () => {
     closeCommentsForAllNodes();
 
     if (mode.current === "create" && mode.data) {
-      addNode(mode.data as NodeType, prevPosition);
+      addNode(mode.data.type as NodeType, prevPosition, {
+        constId: mode.data.id,
+      });
     }
     setMode("edit");
   };

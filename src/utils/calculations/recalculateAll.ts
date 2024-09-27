@@ -1,7 +1,7 @@
 // recalculation of all nodes
 
 import { Edge } from "@xyflow/react";
-import { AppNode, MathNode, MtxVecFnNode } from "../../types/nodes";
+import { AppNode, NumberFunctionNode } from "../../types/nodes";
 import { AngleFormat, CalculatedValues } from "../../types/app";
 import getChainIdsFrom from "../getChainIdsFrom";
 import recalculateChain from "./recalculateChain";
@@ -9,27 +9,31 @@ import recalculateChain from "./recalculateChain";
 type f = (
   nodes: AppNode[],
   edges: Edge[],
+  constValues: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<CalculatedValues>;
 
-const recalculateAll: f = async (nodes, edges, angleFormat) => {
+const recalculateAll: f = async (nodes, edges, constValues, angleFormat) => {
   // looking for nodes that doesn't have any inputs to start from
-  console.log({ nodes });
   const startingNodes = nodes.filter(
     (node) =>
-      !["text-single", "result"].includes(node.type!) &&
-      Object.keys((node as MathNode).data.inputs).length === 0
+      !["text-single", "result", "constant"].includes(node.type!) &&
+      Object.keys((node as NumberFunctionNode).data.inputs).length === 0
   );
 
   const chainsFrom = startingNodes.map((node) => getChainIdsFrom(node, edges));
-  console.log({ chainsFrom });
 
   const pairedObj = separateByPairs(chainsFrom);
-  console.log({ pairedObj });
 
   const mergedChain = await mergeAllChains(pairedObj, 0);
 
-  const newValues = recalculateChain(mergedChain, nodes, {}, angleFormat);
+  const newValues = recalculateChain(
+    mergedChain,
+    nodes,
+    {},
+    constValues,
+    angleFormat
+  );
 
   return newValues;
 };

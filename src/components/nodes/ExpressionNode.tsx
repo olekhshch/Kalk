@@ -13,7 +13,7 @@ import generateHandleId from "../../utils/generateHandleId";
 
 const ExpressionNode = ({
   id,
-  data: { value, showResult, outputs, comment },
+  data: { value, outputs, comment },
 }: NodeProps<Expression>) => {
   const { isActive, activateNode, editExpressionValue } = useContent(
     useShallow((store) => ({
@@ -58,14 +58,14 @@ const ExpressionNode = ({
     }
   };
 
-  const outputHandleId = generateHandleId("N", [outputs.N]);
+  const outputHandleId = generateHandleId(id, "N", [outputs.N]);
 
   //#TODO: Fix padding change when active/non active
 
   return (
     <>
       <div>
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         <NodeWrapper
           id={id}
           outputValueTypes={["number"]}

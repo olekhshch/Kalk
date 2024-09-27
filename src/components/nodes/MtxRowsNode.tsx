@@ -23,7 +23,7 @@ const MtxRowsNode = ({
 
   useEffect(() => console.log({ numberOfEntries }), [numberOfEntries]);
 
-  const outputHandleId = generateHandleId("M", ["matrix"]);
+  const outputHandleId = generateHandleId(id, "M", ["matrix"]);
 
   const entries = Object.entries(inputs);
   const step = 100 / (entries.length + 1);
@@ -38,7 +38,7 @@ const MtxRowsNode = ({
   const inputLabels = entries.map(([key, input], idx) => {
     return {
       key,
-      handleId: generateHandleId(key, input.allowedTypes),
+      handleId: generateHandleId(id, key, input.allowedTypes),
       cssPosition: `${step * (1 + idx)}%`,
     };
   });
@@ -61,7 +61,7 @@ const MtxRowsNode = ({
       comment={comment ?? null}
     >
       <div className="p-2 pl-6 flex flex-col gap-1">
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         {inputLabels.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort

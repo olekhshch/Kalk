@@ -3,17 +3,21 @@ import { ActionType, Mode, Tab } from "../types/app";
 import { BackgroundVariant } from "@xyflow/react";
 import { NodeType } from "../types/nodes";
 
+export type modeData = {
+  type?: NodeType | ActionType;
+  id?: string;
+};
 interface AppState {
   active_tab: Tab;
   scale: number;
-  mode: { current: Mode; data?: NodeType | ActionType };
+  mode: { current: Mode; data?: modeData };
   grid_type: BackgroundVariant;
   minimap: boolean;
 }
 
 interface AppActions {
   setActiveTab: (t: Tab) => void;
-  setMode: (mode: Mode, data?: NodeType | ActionType) => void;
+  setMode: (mode: Mode, data?: modeData) => void;
   setGridType: (g: BackgroundVariant) => void;
   showHideMinimap: (m: boolean) => void;
 }

@@ -8,7 +8,7 @@ import { ReactFlowProvider } from "@xyflow/react";
 import useAppState from "./state/useAppState";
 import { useShallow } from "zustand/react/shallow";
 import UILayer from "./layout/UI/UILayer";
-import { emit, listen } from "@tauri-apps/api/event";
+import { listen } from "@tauri-apps/api/event";
 
 const App = () => {
   const { setMode } = useAppState(
@@ -36,6 +36,20 @@ const App = () => {
 
     return () => document.removeEventListener("keydown", keyDownHandler);
   });
+
+  useEffect(() => {
+    // Listening to events from other windows
+    const unlisten = listen("const-picked", (ev) => {
+      const { payload } = ev;
+      if (payload) {
+        setMode("create", { type: "constant", id: payload as string });
+      }
+    });
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
 
   return (
     <ReactFlowProvider>

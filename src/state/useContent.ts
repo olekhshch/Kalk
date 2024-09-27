@@ -2,12 +2,15 @@ import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AppNode,
+  ConstantNode,
   ConstructorNode,
   ExpressionNode,
   IdentityMtxNode,
   Input,
   MathNode,
   MtxFromRowsNode,
+  MtxVecFnNode,
+  NumberFunctionNode,
   NumNodeType,
   ResultNode,
   TextSingleNode,
@@ -33,6 +36,8 @@ import isConnectable from "../utils/edges/isConnectable";
 import resultNodes from "../utils/nodes/resultNodes";
 import deleteNodes from "../utils/nodes/deleteNodes";
 import { invoke } from "@tauri-apps/api/core";
+import makeValueId from "../utils/makeValueId";
+import makeResultNode from "../utils/nodes/makeResultNode";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -43,9 +48,25 @@ const useContent = create<ContentStore>()((set, get) => ({
   activeNodeId: null,
   values: {},
   constants: [
-    { name: "PI", viewLabel: "\\pi", valueType: "number", value: Math.PI },
-    { name: "e", viewLabel: "\\e", value: Math.E, valueType: "number" },
+    {
+      id: "CONST_PI",
+      name: "PI",
+      viewLabel: "\\pi",
+      valueType: "number",
+      value: Math.PI,
+    },
+    {
+      id: "CONST_E",
+      name: "e",
+      viewLabel: "\\e",
+      value: Math.E,
+      valueType: "number",
+    },
   ],
+  constValues: {
+    CONST_E: Math.E,
+    CONST_PI: Math.PI,
+  },
   anglesFormat: AngleFormat.RAD,
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
@@ -53,6 +74,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newValues = await recalculateAll(
         get().nodes,
         get().edges,
+        get().constValues,
         newFormat
       );
       console.log({ newValues });
@@ -63,10 +85,11 @@ const useContent = create<ContentStore>()((set, get) => ({
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
   },
-  addNode: (nodeType, position) => {
+  addNode: (nodeType, position, data) => {
     let id = get().idCounter + 1;
     set({ idCounter: id });
     const nodeId = id.toString();
+    const newValues = { ...get().values };
 
     switch (nodeType) {
       case "expression": {
@@ -82,6 +105,8 @@ const useContent = create<ContentStore>()((set, get) => ({
             outputs: { N: "number" },
           },
         };
+        const valueId = makeValueId(nodeId, "N");
+        newValues[valueId] = null;
 
         id += 1;
         set({ idCounter: id });
@@ -93,6 +118,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           data: {
             tag: "result",
             sourceId: nodeId,
+            valueId,
             isShown: false,
           },
         };
@@ -124,6 +150,38 @@ const useContent = create<ContentStore>()((set, get) => ({
         });
         break;
       }
+      case "constant": {
+        if (!data || !data.constId) break;
+
+        const newNode: ConstantNode = {
+          id: nodeId,
+          position,
+          type: "constant",
+          data: {
+            constId: data.constId,
+          },
+        };
+
+        id += 1;
+        set({ idCounter: id });
+
+        const resNode: ResultNode = {
+          id: id.toString(),
+          position,
+          type: "result",
+          data: {
+            isShown: false,
+            sourceId: nodeId,
+            valueId: data.constId,
+            tag: "result",
+            comment: "",
+            isConst: true,
+          },
+        };
+
+        set({ nodes: [...get().nodes, newNode, resNode] });
+        break;
+      }
       case "I-matrix": {
         const newNode: IdentityMtxNode = {
           id: nodeId,
@@ -144,6 +202,9 @@ const useContent = create<ContentStore>()((set, get) => ({
           },
         };
 
+        const valueId = makeValueId(nodeId, "M");
+        newValues[valueId] = null;
+
         id += 1;
         set({ idCounter: id });
 
@@ -154,6 +215,7 @@ const useContent = create<ContentStore>()((set, get) => ({
           data: {
             tag: "result",
             sourceId: nodeId,
+            valueId,
             isShown: false,
           },
         };
@@ -195,6 +257,9 @@ const useContent = create<ContentStore>()((set, get) => ({
           },
         };
 
+        const valueId = makeValueId(nodeId, "V");
+        newValues[valueId] = null;
+
         id += 1;
         set({ idCounter: id });
 
@@ -206,6 +271,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             tag: "result",
             sourceId: nodeId,
             isShown: false,
+            valueId,
           },
         };
 
@@ -258,6 +324,9 @@ const useContent = create<ContentStore>()((set, get) => ({
           },
         };
 
+        const valueId = makeValueId(nodeId, "M");
+        newValues[valueId] = null;
+
         id += 1;
         set({ idCounter: id });
 
@@ -269,6 +338,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             tag: "result",
             sourceId: nodeId,
             isShown: false,
+            valueId,
           },
         };
 
@@ -299,6 +369,11 @@ const useContent = create<ContentStore>()((set, get) => ({
           id += 1;
           set({ idCounter: id });
 
+          // #TODO: Fix valueId
+          Object.keys(newNode.data.outputs).forEach((outputKey) => {
+            newValues[nodeId + "." + outputKey] = null;
+          });
+
           const resNode: ResultNode = {
             id: id.toString(),
             type: "result",
@@ -306,6 +381,7 @@ const useContent = create<ContentStore>()((set, get) => ({
             data: {
               tag: "result",
               sourceId: nodeId,
+              valueId: "",
               isShown: false,
             },
           };
@@ -334,38 +410,35 @@ const useContent = create<ContentStore>()((set, get) => ({
         );
 
         if (newNode) {
+          set({ nodes: [...get().nodes, newNode] });
+          Object.keys(newNode.data.outputs).forEach((outputKey) => {
+            newValues[nodeId + "." + outputKey] = null;
+          });
+
           id += 1;
           set({ idCounter: id });
 
-          const resNode: ResultNode = {
-            id: id.toString(),
-            type: "result",
-            position: { x: position.x + 60, y: position.y - 60 },
-            data: {
-              tag: "result",
-              sourceId: nodeId,
-              isShown: false,
-            },
-          };
+          const resultNode = makeResultNode(newNode, id.toString());
+          if (resultNode) {
+            const newEdgesRes = connectNodes(
+              nodeId,
+              resultNode.id,
+              get().edges,
+              get().edgeCounter,
+              "R"
+            );
 
-          const newEdgesRes = connectNodes(
-            nodeId,
-            id.toString(),
-            get().edges,
-            get().edgeCounter,
-            "R"
-          );
-
-          set({
-            nodes: [...get().nodes, newNode, resNode],
-            edges: newEdgesRes.edges,
-            edgeCounter: newEdgesRes.edgeCounter,
-          });
+            set({
+              nodes: [...get().nodes, resultNode],
+              edges: newEdgesRes.edges,
+              edgeCounter: newEdgesRes.edgeCounter,
+            });
+          }
         }
       }
     }
     // sets null values for any created node
-    set({ values: { ...get().values, [nodeId]: null } });
+    set({ values: newValues });
   },
   doAction: (action) => {
     switch (action) {
@@ -449,6 +522,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newVals = await calculateNode(
         newNode,
         get().values,
+        get().constValues,
         get().anglesFormat
       );
 
@@ -458,6 +532,7 @@ const useContent = create<ContentStore>()((set, get) => ({
         chain,
         nodes,
         newVals.values,
+        get().constValues,
         get().anglesFormat
       );
       set({ values: newValues });
@@ -559,7 +634,13 @@ const useContent = create<ContentStore>()((set, get) => ({
       ? addEdge(newEdge, get().edges)
       : reconnectEdge(existingEdge, connection, get().edges);
 
-    nodeB.data.inputs[targetHandleObj.label].sourceId = source;
+    // checking if source is constant
+    const isSourceConst = nodeA.type === "constant";
+    (nodeB as NumberFunctionNode | MtxVecFnNode).data.inputs[
+      targetHandleObj.outputLabel
+    ].sourceId = isSourceConst
+      ? (nodeA as ConstantNode).data.constId
+      : sourceHandleObj.label;
 
     const newNodes = replaceNode(nodeB, get().nodes);
 
@@ -569,6 +650,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       chain,
       newNodes,
       get().values,
+      get().constValues,
       get().anglesFormat
     );
 
@@ -581,7 +663,6 @@ const useContent = create<ContentStore>()((set, get) => ({
   },
   setValue: (valKey, newValue) =>
     set((state) => {
-      //#TODO: Fix floats
       return { values: { ...state.values, [valKey]: newValue } };
     }),
   setNumOfEntriesFor: (nodeId, newNum) => {
@@ -615,7 +696,7 @@ const useContent = create<ContentStore>()((set, get) => ({
         const sourceId = targetNode.data.inputs[key].sourceId;
         if (sourceId) {
           const types = targetNode.data.inputs[key].allowedTypes;
-          const handleId = generateHandleLabel(key, types);
+          const handleId = generateHandleLabel(nodeId, key, types);
 
           const edges = newEdges.filter(({ target, targetHandle }) => {
             return !(targetHandle === handleId && target === targetNode.id);
@@ -636,6 +717,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       chainFrom,
       newNodes,
       get().values,
+      get().constValues,
       get().anglesFormat
     ).then((newVals) => set({ values: newVals }));
 

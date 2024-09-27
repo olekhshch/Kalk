@@ -58,6 +58,7 @@ const BottomPanel = () => {
     <div className="bg-main px-2 text-white font-sys text-sm flex gap-2 items-center">
       <div>
         <Button
+          icon=""
           title={`${(zoom * 100).toFixed(2)}%`}
           showIcon={false}
           onClick={(e) => toggleScaleMenu(e)}
@@ -104,6 +105,7 @@ const BottomPanel = () => {
           showIcon
         />
         <Button
+          icon=""
           title={anglesFormat}
           hoverStyle="sec"
           showIcon={false}

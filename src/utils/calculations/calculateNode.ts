@@ -17,16 +17,19 @@ import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
 import makeVector from "../matrix/makeVector";
 import validate from "../validate";
 import makeMtxFromRows from "../matrix/makeMtxFromRows";
+import makeValueId from "../makeValueId";
+import getValueType from "../getValueType";
 
 type Calculations = { values: CalculatedValues };
 type f = (
   node: AppNode,
   values: CalculatedValues,
+  constValues: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<Calculations>;
 
 // #TODO: return null if no calculations were made?
-const calculateNode: f = async (node, values, angleFormat) => {
+const calculateNode: f = async (node, values, constVals, angleFormat) => {
   const newValues: CalculatedValues = { ...values };
 
   const calculations: Calculations = {
@@ -47,16 +50,20 @@ const calculateNode: f = async (node, values, angleFormat) => {
         } as RustCalculations;
       })) as RustCalculations;
 
+      const valueId = makeValueId(node.id, "N");
       if (!resCalc.success) {
-        newValues[node.id] = null;
+        newValues[valueId] = null;
       } else {
         // #TODO: Avoid parsing (Rust side)
-        newValues[node.id] = parseFloat(resCalc.res);
+        newValues[valueId] = parseFloat(resCalc.res);
       }
       return calculations;
     }
     case "num-fun": {
       const inputEntries = Object.entries(node.data.inputs);
+      const nodeOutputs = Object.keys(node.data.outputs);
+      const valueIds = nodeOutputs.map((label) => makeValueId(node.id, label));
+
       let allSourcesGiven = true;
 
       const sourceIds = inputEntries.map(([key, { sourceId }]) => {
@@ -66,12 +73,22 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return [key, sourceId as string];
       });
 
-      if (!allSourcesGiven) return calculations;
+      if (!allSourcesGiven) {
+        valueIds.forEach((valId) => {
+          newValues[valId] = null;
+        });
+        return calculations;
+      }
+
       let allValuesGiven = true;
 
       const params = sourceIds.reduce((acc, [key, id]) => {
         let val = values[id];
-        if (!val && val !== 0) {
+        // if source is a constant
+        if (id.includes("CONST")) {
+          val = constVals[id];
+        }
+        if (!getValueType(val)) {
           allValuesGiven = false;
           acc[key] = 0;
           return acc;
@@ -80,13 +97,21 @@ const calculateNode: f = async (node, values, angleFormat) => {
         return acc;
       }, {} as NumberFunctionParams);
 
-      if (!allValuesGiven) return calculations;
+      if (!allValuesGiven) {
+        valueIds.forEach((valId) => {
+          newValues[valId] = null;
+        });
+        return calculations;
+      }
 
       const { action } = node.data;
 
       // passing angleFormat for trigonometric functions
       const res = await action(params, angleFormat);
-      newValues[node.id] = res;
+      valueIds.forEach((valId) => {
+        newValues[valId] = res;
+      });
+      console.log({ calculations });
       return calculations;
     }
     case "i-mtx": {

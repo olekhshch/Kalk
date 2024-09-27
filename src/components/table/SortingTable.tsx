@@ -48,6 +48,7 @@ const SortingTable = ({
             key={idx}
             item={item}
             valueStyles={columnStyles ?? undefined}
+            onClick={item.onClick}
           />
         ))}
       </tbody>

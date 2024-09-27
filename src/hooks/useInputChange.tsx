@@ -15,7 +15,7 @@ const useInputChange = ({ initialValue, allowOnly }: props) => {
       let { value } = e.target;
 
       if (allowOnly) {
-        const filteredValue = value.match(expressionInputValues);
+        const filteredValue = value.match(allowOnly);
         setValue((filteredValue ?? []).join(""));
         return;
       }

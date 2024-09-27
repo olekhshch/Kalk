@@ -5,6 +5,7 @@ import SortingTable from "../../../components/table/SortingTable";
 import { FilterOptions, TableItem } from "../../../types/app";
 import { invoke } from "@tauri-apps/api/core";
 import ButtonMain from "../../../components/dialogs/ButtonMain";
+import { emit } from "@tauri-apps/api/event";
 
 const ConstantsWindow = () => {
   const [constants, initLoad] = useConstants(
@@ -19,14 +20,25 @@ const ConstantsWindow = () => {
   const openConstCreator = () => {
     invoke("open_new_constant_window");
   };
+
   // converting constants to table items to display
   const tableColumns: string[] = ["Name", "Label", "Value", "Type"];
-  const constItems: TableItem[] = constants.map((c) => [
-    c.name,
-    c.viewLabel,
-    JSON.stringify(c.value),
-    c.valueType,
-  ]);
+  // const constItems: TableItem[] = constants.map((c) => [
+  //   c.name,
+  //   c.viewLabel,
+  //   JSON.stringify(c.value),
+  //   c.valueType,
+  // ]);
+  const constItems: TableItem[] = constants.map((c) => ({
+    content: [c.name, c.viewLabel, JSON.stringify(c.value), c.valueType],
+    onClick: () => {
+      console.log(c.id);
+      invoke("emit_const_picked_event", { constId: c.id }).catch((err) =>
+        console.log({ err })
+      );
+    },
+  }));
+
   const tableFilters = {
     Name: FilterOptions.TEXT,
     Label: FilterOptions.NONE,

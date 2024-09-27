@@ -1,7 +1,7 @@
 mod numbers;
 mod vectors;
 
-use tauri::{Manager, WebviewWindowBuilder};
+use tauri::{Emitter, Manager, WebviewWindowBuilder};
 
 #[tauri::command]
 async fn open_project_overview(app_handle: tauri::AppHandle) {
@@ -40,6 +40,16 @@ async fn open_new_constant_window(app_handle: tauri::AppHandle) {
     .unwrap();
 }
 
+#[tauri::command]
+fn emit_const_picked_event(app_handle: tauri::AppHandle, const_id: String) {
+    let editor_window = app_handle.get_webview_window("calc");
+    match editor_window {
+        Some(window) => window.emit("const-picked", "RUST event").unwrap(),
+        None => {}
+    }
+    app_handle.emit("const-picked", const_id).unwrap();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -48,7 +58,8 @@ pub fn run() {
             numbers::evaluate_expression,
             open_project_overview,
             open_constants_window,
-            open_new_constant_window
+            open_new_constant_window,
+            emit_const_picked_event
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

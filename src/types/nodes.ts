@@ -46,7 +46,7 @@ export type Vector = number[];
 
 export type Matrix = Vector[];
 
-export type MathNode = ExpressionNode | NumberFunctionNode;
+export type MathNode = ExpressionNode | NumberFunctionNode | ConstantNode;
 
 // Nodes with dinamic number of inputs
 export type ConstructorNode = VectorNode | MtxFromRowsNode;
@@ -81,9 +81,11 @@ export type OutputValue = number | Vector | Matrix | null;
 export type ResultNode = Node<
   {
     sourceId: string;
+    valueId: string;
     isShown: boolean;
     comment?: string | null;
     tag: "result";
+    isConst?: boolean;
   },
   "result"
 >;
@@ -197,3 +199,11 @@ export type MtxVecFunctionParams = {
 export type MtxVecFnAction = (
   vals: MtxVecFunctionParams
 ) => OutputValue | Promise<OutputValue>;
+
+export type ConstantNode = Node<
+  {
+    constId: string;
+    comment?: string;
+  },
+  "constant"
+>;

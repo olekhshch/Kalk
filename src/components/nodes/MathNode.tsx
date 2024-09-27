@@ -30,7 +30,7 @@ const MathNode = ({
     const step = 100 / (numOfInputs + 1);
 
     const array = entries.map(([key, input], idx) => {
-      const handleId = generateHandleLabel(key, input.allowedTypes);
+      const handleId = generateHandleLabel(id, key, input.allowedTypes);
       const cssPosition = `${step * (1 + idx)}%`;
       return { handleId, cssPosition, key };
     });
@@ -45,7 +45,7 @@ const MathNode = ({
     const step = 100 / (numOfOutputs + 1);
 
     return outputsEntries.map(([key, output], idx) => {
-      const handleId = generateHandleLabel(key, output.possibleValues);
+      const handleId = generateHandleLabel(id, key, output.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
       return { handleId, cssPosition, key };
     });
@@ -60,7 +60,7 @@ const MathNode = ({
       comment={comment ?? null}
     >
       <div>
-        <ResultOutput nodeId={id} isShown={showResult} />
+        <ResultOutput nodeId={id} />
         {inputsArray.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort

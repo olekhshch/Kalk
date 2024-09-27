@@ -24,7 +24,7 @@ const ActionsPanel = () => {
     } = action;
     switch (type) {
       case "create": {
-        setMode("create", data);
+        setMode("create", { type: data });
         break;
       }
       case "action": {

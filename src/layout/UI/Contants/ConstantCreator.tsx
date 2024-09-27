@@ -11,12 +11,22 @@ import { AppNode } from "../../../types/nodes";
 import ModelNode, {
   ModelNode as ModelType,
 } from "../../../components/nodes/app/ModelNode";
+import useInputChange from "../../../hooks/useInputChange";
 
 const nodeTypes: NodeTypes = {
   model: ModelNode,
 };
 
 const ConstantCreator = () => {
+  const [name, onNameChange] = useInputChange({
+    initialValue: "",
+    allowOnly: /[a-zA-Z0-9\_\.]*/,
+  });
+
+  const [label, onLabelChange] = useInputChange({
+    initialValue: "",
+  });
+
   const previewNode: ModelType = {
     id: "000",
     type: "model",
@@ -26,29 +36,38 @@ const ConstantCreator = () => {
       outputValues: ["number"],
     },
   };
+
+  const twLabelClass = "bg-gray grow min-w-[120px] text-right float-left";
   return (
     <div className="p-2 flex">
-      <form className="flex flex-col">
-        <label>
-          Name:
-          <input />
-        </label>
-        <label>
-          Node label:
-          <input />
-        </label>
-        <label>
-          Type:
-          <select>
-            <option>Number</option>
-            <option>Vector</option>
-            <option>Matrix</option>
+      <form className="pr-2 flex flex-col gap-2 items-center w-[260px]">
+        <div className="w-full">
+          <label className={twLabelClass}>Name:</label>
+          <span className="block overflow-hidden px-2">
+            <input
+              value={name}
+              onChange={onNameChange}
+              className=" border-b-2 border-gray outline-none"
+            />
+          </span>
+        </div>
+        <div className="w-full">
+          <label className={twLabelClass}>Node label:</label>
+          <span className="block overflow-hidden px-2">
+            <input
+              value={label}
+              onChange={onLabelChange}
+              className=" border-b-2 border-gray outline-none"
+            />
+          </span>
+        </div>
+        <div className="w-full flex">
+          <label className={twLabelClass}>Type:</label>
+          <select className="grow">
+            <option value="number">Number</option>
+            <option value="vector">Vector</option>
           </select>
-        </label>
-        <label>
-          Value:
-          <input />
-        </label>
+        </div>
       </form>
       <div className="grow">
         <ReactFlow nodes={[previewNode]} nodeTypes={nodeTypes}>
