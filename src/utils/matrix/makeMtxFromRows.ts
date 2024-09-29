@@ -1,31 +1,45 @@
 // constructs new Matrix from passed row Vectors
 
-import { Matrix, Vector } from "../../types/nodes";
+import { InputValue, Matrix, Vector } from "../../types/nodes";
+import getValueType from "../getValueType";
 
-type f = (vecs: Vector[], defValue?: number) => Matrix;
+type f = (
+  vecs: { [k: string]: InputValue },
+  defValue?: number
+) => Matrix | null;
 
 const makeMtxFromRows: f = (vectors, defValue) => {
   // checking if the same size
 
   let size = 0;
   let areSameSize = true;
+  let allVectors = true;
+  const mtx: Matrix = [];
 
-  vectors.forEach((vec) => {
-    const vecSize = vec.length;
+  const vecValues = Object.values(vectors);
+
+  vecValues.forEach((vec) => {
+    const valType = getValueType(vec);
+    if (valType !== "vector") {
+      allVectors = false;
+      return null;
+    }
+    const vecSize = (vec as Vector).length;
     if (vecSize > size) {
       size = vecSize;
     }
     if (vecSize !== size) {
       areSameSize = false;
     }
+    mtx.push(vec as Vector);
   });
 
-  if (areSameSize) return [...vectors];
+  if (areSameSize) return mtx;
 
   // #TODO: Make warning for user
   console.log("Vectors have a different size");
 
-  const newVecs = vectors.map((vec) => {
+  return mtx.map((vec) => {
     if (vec.length < size) {
       const adjustedVec = [...vec];
       const remainingNum = size - vec.length;
@@ -34,10 +48,7 @@ const makeMtxFromRows: f = (vectors, defValue) => {
       }
       return adjustedVec;
     }
-    return vec;
   });
-
-  return [...newVecs];
 };
 
 export default makeMtxFromRows;

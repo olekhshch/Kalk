@@ -1,6 +1,8 @@
 import {
   AppNode,
+  AppNodeBase,
   Matrix,
+  NodeTag,
   NodeType,
   OutputValue,
   ValueType,
@@ -39,7 +41,7 @@ export type Mode =
 export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
-  nodes: AppNode[];
+  nodes: AppNodeBase[];
   edges: Edge[];
   idCounter: number;
   edgeCounter: number;
@@ -47,7 +49,7 @@ export interface NodesStore {
   activeNodeId: string | null; // Currently active (edited) node. Single node can be active at the same time
   onNodesChange: (changes: NodeChange[]) => void;
   addNode: (
-    nodeType: NodeType,
+    nodeTag: NodeTag,
     position: { x: number; y: number },
     data?: { nodeId?: string; constId?: string }
   ) => void;

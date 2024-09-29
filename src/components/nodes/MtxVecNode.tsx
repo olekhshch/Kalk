@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
 import { NodeProps } from "@xyflow/react";
-import { MtxVecFnNode } from "../../types/nodes";
+import { MtxNode, MtxVecFnNode } from "../../types/nodes";
 import Latex from "react-latex-next";
 import generateHandleId from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
@@ -13,8 +13,8 @@ import { useShallow } from "zustand/react/shallow";
 
 const MtxVecNode = ({
   id,
-  data: { label, inputs, showResult, outputs, comment },
-}: NodeProps<MtxVecFnNode>) => {
+  data: { inputs, outputs, value, comment },
+}: NodeProps<MtxNode>) => {
   // calculated value of an output
   const calculatedValue = useContent(useShallow((store) => store.values[id]));
   const outputType = getValueType(calculatedValue);
@@ -64,7 +64,7 @@ const MtxVecNode = ({
             />
           );
         })}
-        <Latex>${label}$</Latex>
+        <Latex>${value}$</Latex>
         {outputsArray.map(({ cssPosition, handleId, key }) => {
           return <Output key={key} id={handleId} cssPosition={cssPosition} />;
         })}

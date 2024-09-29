@@ -2,6 +2,7 @@ import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AppNode,
+  AppNodeBase,
   ConstantNode,
   ConstructorNode,
   ExpressionNode,
@@ -10,6 +11,7 @@ import {
   MathNode,
   MtxFromRowsNode,
   MtxVecFnNode,
+  NodePurpose,
   NumberFunctionNode,
   NumNodeType,
   ResultNode,
@@ -38,6 +40,7 @@ import deleteNodes from "../utils/nodes/deleteNodes";
 import { invoke } from "@tauri-apps/api/core";
 import makeValueId from "../utils/makeValueId";
 import makeResultNode from "../utils/nodes/makeResultNode";
+import createNode from "../utils/nodes/createNode";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -85,360 +88,343 @@ const useContent = create<ContentStore>()((set, get) => ({
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
   },
-  addNode: (nodeType, position, data) => {
+  addNode: (nodeTag, position, data) => {
     let id = get().idCounter + 1;
-    set({ idCounter: id });
-    const nodeId = id.toString();
-    const newValues = { ...get().values };
 
-    switch (nodeType) {
-      case "expression": {
-        const newNode: ExpressionNode = {
-          id: nodeId,
-          type: "expression",
-          position,
-          data: {
-            tag: "expression",
-            value: "",
-            showResult: false,
-            inputs: {},
-            outputs: { N: "number" },
-          },
-        };
-        const valueId = makeValueId(nodeId, "N");
-        newValues[valueId] = null;
+    const newNode = createNode(nodeTag, id.toString(), position);
 
-        id += 1;
-        set({ idCounter: id });
+    if (!newNode) return;
 
-        const resNode: ResultNode = {
-          id: id.toString(),
-          type: "result",
-          position: { x: position.x + 60, y: position.y - 60 },
-          data: {
-            tag: "result",
-            sourceId: nodeId,
-            valueId,
-            isShown: false,
-          },
-        };
+    set({ nodes: [...get().nodes, newNode], idCounter: id });
 
-        const newEdgesRes = connectNodes(
-          nodeId,
-          id.toString(),
-          get().edges,
-          get().edgeCounter,
-          "R"
-        );
+    id += 1;
 
-        set({
-          nodes: [...get().nodes, newNode, resNode],
-          edges: newEdgesRes.edges,
-          edgeCounter: newEdgesRes.edgeCounter,
-        });
-        break;
-      }
-      case "text-single": {
-        const newNode: TextSingleNode = {
-          id: nodeId,
-          type: "text-single",
-          data: { value: "", tag: "text" },
-          position,
-        };
-        set({
-          nodes: [...get().nodes, newNode],
-        });
-        break;
-      }
-      case "constant": {
-        if (!data || !data.constId) break;
+    const resNode = makeResultNode(newNode, id.toString());
 
-        const newNode: ConstantNode = {
-          id: nodeId,
-          position,
-          type: "constant",
-          data: {
-            constId: data.constId,
-          },
-        };
+    if (!resNode) return;
 
-        id += 1;
-        set({ idCounter: id });
+    set({ nodes: [...get().nodes, resNode], idCounter: id });
 
-        const resNode: ResultNode = {
-          id: id.toString(),
-          position,
-          type: "result",
-          data: {
-            isShown: false,
-            sourceId: nodeId,
-            valueId: data.constId,
-            tag: "result",
-            comment: "",
-            isConst: true,
-          },
-        };
-
-        set({ nodes: [...get().nodes, newNode, resNode] });
-        break;
-      }
-      case "I-matrix": {
-        const newNode: IdentityMtxNode = {
-          id: nodeId,
-          position,
-          type: "i-mtx",
-          data: {
-            showResult: false,
-            inputs: {
-              n: {
-                sourceId: null,
-                allowedTypes: ["number"],
-                type: "number",
-              },
-            },
-            outputs: {
-              M: { possibleValues: ["matrix"] },
-            },
-          },
-        };
-
-        const valueId = makeValueId(nodeId, "M");
-        newValues[valueId] = null;
-
-        id += 1;
-        set({ idCounter: id });
-
-        const resNode: ResultNode = {
-          id: id.toString(),
-          type: "result",
-          position: { x: position.x + 60, y: position.y - 60 },
-          data: {
-            tag: "result",
-            sourceId: nodeId,
-            valueId,
-            isShown: false,
-          },
-        };
-
-        const newEdgesRes = connectNodes(
-          nodeId,
-          id.toString(),
-          get().edges,
-          get().edgeCounter,
-          "R"
-        );
-
-        set({
-          nodes: [...get().nodes, newNode, resNode],
-          edges: newEdgesRes.edges,
-          edgeCounter: newEdgesRes.edgeCounter,
-        });
-        break;
-      }
-      case "vec": {
-        const newNode: VectorNode = {
-          id: nodeId,
-          position,
-          type: "vec",
-          data: {
-            isConstructor: true,
-            inputTemplate: (n) => `v${n}`,
-            showResult: false,
-            numberOfEntries: 3,
-            allowedInputTypes: ["number"],
-            inputs: {
-              v1: { ...initialInput },
-              v2: { ...initialInput },
-              v3: { ...initialInput },
-            },
-            outputs: {
-              V: { possibleValues: ["vector"] },
-            },
-          },
-        };
-
-        const valueId = makeValueId(nodeId, "V");
-        newValues[valueId] = null;
-
-        id += 1;
-        set({ idCounter: id });
-
-        const resNode: ResultNode = {
-          id: id.toString(),
-          type: "result",
-          position: { x: position.x + 60, y: position.y - 60 },
-          data: {
-            tag: "result",
-            sourceId: nodeId,
-            isShown: false,
-            valueId,
-          },
-        };
-
-        const newEdgesRes = connectNodes(
-          nodeId,
-          id.toString(),
-          get().edges,
-          get().edgeCounter,
-          "R"
-        );
-
-        set({
-          nodes: [...get().nodes, newNode, resNode],
-          edges: newEdgesRes.edges,
-          edgeCounter: newEdgesRes.edgeCounter,
-        });
-        break;
-      }
-      case "mtx-rows": {
-        const newNode: MtxFromRowsNode = {
-          id: nodeId,
-          position,
-          type: "mtx-rows",
-          data: {
-            showResult: false,
-            isConstructor: true,
-            numberOfEntries: 3,
-            allowedInputTypes: ["vector"],
-            outputs: {
-              M: { possibleValues: ["matrix"] },
-            },
-            inputs: {
-              v1: {
-                sourceId: null,
-                allowedTypes: ["vector"],
-                type: "vector",
-              },
-              v2: {
-                sourceId: null,
-                allowedTypes: ["vector"],
-                type: "vector",
-              },
-              v3: {
-                sourceId: null,
-                allowedTypes: ["vector"],
-                type: "vector",
-              },
-            },
-            inputTemplate: (n) => `v${n}`,
-          },
-        };
-
-        const valueId = makeValueId(nodeId, "M");
-        newValues[valueId] = null;
-
-        id += 1;
-        set({ idCounter: id });
-
-        const resNode: ResultNode = {
-          id: id.toString(),
-          type: "result",
-          position: { x: position.x + 60, y: position.y - 60 },
-          data: {
-            tag: "result",
-            sourceId: nodeId,
-            isShown: false,
-            valueId,
-          },
-        };
-
-        const newEdgesRes = connectNodes(
-          nodeId,
-          id.toString(),
-          get().edges,
-          get().edgeCounter,
-          "R"
-        );
-
-        set({
-          nodes: [...get().nodes, newNode, resNode],
-          edges: newEdgesRes.edges,
-          edgeCounter: newEdgesRes.edgeCounter,
-        });
-        break;
-      }
-      case "cross-prod":
-      case "norm":
-      case "dot-prod":
-      case "add-mtx":
-      case "sum-all":
-      case "scalar-mult": {
-        const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
-
-        if (newNode) {
-          id += 1;
-          set({ idCounter: id });
-
-          // #TODO: Fix valueId
-          Object.keys(newNode.data.outputs).forEach((outputKey) => {
-            newValues[nodeId + "." + outputKey] = null;
-          });
-
-          const resNode: ResultNode = {
-            id: id.toString(),
-            type: "result",
-            position: { x: position.x + 60, y: position.y - 60 },
-            data: {
-              tag: "result",
-              sourceId: nodeId,
-              valueId: "",
-              isShown: false,
-            },
-          };
-
-          const newEdgesRes = connectNodes(
-            nodeId,
-            id.toString(),
-            get().edges,
-            get().edgeCounter,
-            "R"
-          );
-
-          set({
-            nodes: [...get().nodes, newNode, resNode],
-            edges: newEdgesRes.edges,
-            edgeCounter: newEdgesRes.edgeCounter,
-          });
-        }
-        break;
-      }
-      default: {
-        const newNode = nodeFunctionContructor(
-          nodeType as NumNodeType,
-          position,
-          nodeId
-        );
-
-        if (newNode) {
-          set({ nodes: [...get().nodes, newNode] });
-          Object.keys(newNode.data.outputs).forEach((outputKey) => {
-            newValues[nodeId + "." + outputKey] = null;
-          });
-
-          id += 1;
-          set({ idCounter: id });
-
-          const resultNode = makeResultNode(newNode, id.toString());
-          if (resultNode) {
-            const newEdgesRes = connectNodes(
-              nodeId,
-              resultNode.id,
-              get().edges,
-              get().edgeCounter,
-              "R"
-            );
-
-            set({
-              nodes: [...get().nodes, resultNode],
-              edges: newEdgesRes.edges,
-              edgeCounter: newEdgesRes.edgeCounter,
-            });
-          }
-        }
-      }
-    }
-    // sets null values for any created node
-    set({ values: newValues });
+    // let id = get().idCounter + 1;
+    // set({ idCounter: id });
+    // const nodeId = id.toString();
+    // const newValues = { ...get().values };
+    // switch (nodeType) {
+    //   case "expression": {
+    //     const newNode: ExpressionNode = {
+    //       id: nodeId,
+    //       type: "expression",
+    //       position,
+    //       data: {
+    //         tag: "expression",
+    //         value: "",
+    //         showResult: false,
+    //         inputs: {},
+    //         outputs: { N: "number" },
+    //       },
+    //     };
+    //     const valueId = makeValueId(nodeId, "N");
+    //     newValues[valueId] = null;
+    //     id += 1;
+    //     set({ idCounter: id });
+    //     const resNode: ResultNode = {
+    //       id: id.toString(),
+    //       type: "result",
+    //       position: { x: position.x + 60, y: position.y - 60 },
+    //       data: {
+    //         tag: "result",
+    //         sourceId: nodeId,
+    //         valueId,
+    //         isShown: false,
+    //       },
+    //     };
+    //     const newEdgesRes = connectNodes(
+    //       nodeId,
+    //       id.toString(),
+    //       get().edges,
+    //       get().edgeCounter,
+    //       "R"
+    //     );
+    //     set({
+    //       nodes: [...get().nodes, newNode, resNode],
+    //       edges: newEdgesRes.edges,
+    //       edgeCounter: newEdgesRes.edgeCounter,
+    //     });
+    //     break;
+    //   }
+    //   case "text-single": {
+    //     const newNode: TextSingleNode = {
+    //       id: nodeId,
+    //       type: "text-single",
+    //       data: { value: "", tag: "text" },
+    //       position,
+    //     };
+    //     set({
+    //       nodes: [...get().nodes, newNode],
+    //     });
+    //     break;
+    //   }
+    //   case "constant": {
+    //     if (!data || !data.constId) break;
+    //     const newNode: ConstantNode = {
+    //       id: nodeId,
+    //       position,
+    //       type: "constant",
+    //       data: {
+    //         constId: data.constId,
+    //       },
+    //     };
+    //     id += 1;
+    //     set({ idCounter: id });
+    //     const resNode: ResultNode = {
+    //       id: id.toString(),
+    //       position,
+    //       type: "result",
+    //       data: {
+    //         isShown: false,
+    //         sourceId: nodeId,
+    //         valueId: data.constId,
+    //         tag: "result",
+    //         comment: "",
+    //         isConst: true,
+    //       },
+    //     };
+    //     set({ nodes: [...get().nodes, newNode, resNode] });
+    //     break;
+    //   }
+    //   case "I-matrix": {
+    //     const newNode: IdentityMtxNode = {
+    //       id: nodeId,
+    //       position,
+    //       type: "i-mtx",
+    //       data: {
+    //         showResult: false,
+    //         inputs: {
+    //           n: {
+    //             sourceId: null,
+    //             allowedTypes: ["number"],
+    //             type: "number",
+    //           },
+    //         },
+    //         outputs: {
+    //           M: { possibleValues: ["matrix"] },
+    //         },
+    //       },
+    //     };
+    //     const valueId = makeValueId(nodeId, "M");
+    //     newValues[valueId] = null;
+    //     id += 1;
+    //     set({ idCounter: id });
+    //     const resNode: ResultNode = {
+    //       id: id.toString(),
+    //       type: "result",
+    //       position: { x: position.x + 60, y: position.y - 60 },
+    //       data: {
+    //         tag: "result",
+    //         sourceId: nodeId,
+    //         valueId,
+    //         isShown: false,
+    //       },
+    //     };
+    //     const newEdgesRes = connectNodes(
+    //       nodeId,
+    //       id.toString(),
+    //       get().edges,
+    //       get().edgeCounter,
+    //       "R"
+    //     );
+    //     set({
+    //       nodes: [...get().nodes, newNode, resNode],
+    //       edges: newEdgesRes.edges,
+    //       edgeCounter: newEdgesRes.edgeCounter,
+    //     });
+    //     break;
+    //   }
+    //   case "vec": {
+    //     const newNode: VectorNode = {
+    //       id: nodeId,
+    //       position,
+    //       type: "vec",
+    //       data: {
+    //         isConstructor: true,
+    //         inputTemplate: (n) => `v${n}`,
+    //         showResult: false,
+    //         numberOfEntries: 3,
+    //         allowedInputTypes: ["number"],
+    //         inputs: {
+    //           v1: { ...initialInput },
+    //           v2: { ...initialInput },
+    //           v3: { ...initialInput },
+    //         },
+    //         outputs: {
+    //           V: { possibleValues: ["vector"] },
+    //         },
+    //       },
+    //     };
+    //     const valueId = makeValueId(nodeId, "V");
+    //     newValues[valueId] = null;
+    //     id += 1;
+    //     set({ idCounter: id });
+    //     const resNode: ResultNode = {
+    //       id: id.toString(),
+    //       type: "result",
+    //       position: { x: position.x + 60, y: position.y - 60 },
+    //       data: {
+    //         tag: "result",
+    //         sourceId: nodeId,
+    //         isShown: false,
+    //         valueId,
+    //       },
+    //     };
+    //     const newEdgesRes = connectNodes(
+    //       nodeId,
+    //       id.toString(),
+    //       get().edges,
+    //       get().edgeCounter,
+    //       "R"
+    //     );
+    //     set({
+    //       nodes: [...get().nodes, newNode, resNode],
+    //       edges: newEdgesRes.edges,
+    //       edgeCounter: newEdgesRes.edgeCounter,
+    //     });
+    //     break;
+    //   }
+    //   case "mtx-rows": {
+    //     const newNode: MtxFromRowsNode = {
+    //       id: nodeId,
+    //       position,
+    //       type: "mtx-rows",
+    //       data: {
+    //         showResult: false,
+    //         isConstructor: true,
+    //         numberOfEntries: 3,
+    //         allowedInputTypes: ["vector"],
+    //         outputs: {
+    //           M: { possibleValues: ["matrix"] },
+    //         },
+    //         inputs: {
+    //           v1: {
+    //             sourceId: null,
+    //             allowedTypes: ["vector"],
+    //             type: "vector",
+    //           },
+    //           v2: {
+    //             sourceId: null,
+    //             allowedTypes: ["vector"],
+    //             type: "vector",
+    //           },
+    //           v3: {
+    //             sourceId: null,
+    //             allowedTypes: ["vector"],
+    //             type: "vector",
+    //           },
+    //         },
+    //         inputTemplate: (n) => `v${n}`,
+    //       },
+    //     };
+    //     const valueId = makeValueId(nodeId, "M");
+    //     newValues[valueId] = null;
+    //     id += 1;
+    //     set({ idCounter: id });
+    //     const resNode: ResultNode = {
+    //       id: id.toString(),
+    //       type: "result",
+    //       position: { x: position.x + 60, y: position.y - 60 },
+    //       data: {
+    //         tag: "result",
+    //         sourceId: nodeId,
+    //         isShown: false,
+    //         valueId,
+    //       },
+    //     };
+    //     const newEdgesRes = connectNodes(
+    //       nodeId,
+    //       id.toString(),
+    //       get().edges,
+    //       get().edgeCounter,
+    //       "R"
+    //     );
+    //     set({
+    //       nodes: [...get().nodes, newNode, resNode],
+    //       edges: newEdgesRes.edges,
+    //       edgeCounter: newEdgesRes.edgeCounter,
+    //     });
+    //     break;
+    //   }
+    //   case "cross-prod":
+    //   case "norm":
+    //   case "dot-prod":
+    //   case "add-mtx":
+    //   case "sum-all":
+    //   case "scalar-mult": {
+    //     const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
+    //     if (newNode) {
+    //       id += 1;
+    //       set({ idCounter: id });
+    //       // #TODO: Fix valueId
+    //       Object.keys(newNode.data.outputs).forEach((outputKey) => {
+    //         newValues[nodeId + "." + outputKey] = null;
+    //       });
+    //       const resNode: ResultNode = {
+    //         id: id.toString(),
+    //         type: "result",
+    //         position: { x: position.x + 60, y: position.y - 60 },
+    //         data: {
+    //           tag: "result",
+    //           sourceId: nodeId,
+    //           valueId: "",
+    //           isShown: false,
+    //         },
+    //       };
+    //       const newEdgesRes = connectNodes(
+    //         nodeId,
+    //         id.toString(),
+    //         get().edges,
+    //         get().edgeCounter,
+    //         "R"
+    //       );
+    //       set({
+    //         nodes: [...get().nodes, newNode, resNode],
+    //         edges: newEdgesRes.edges,
+    //         edgeCounter: newEdgesRes.edgeCounter,
+    //       });
+    //     }
+    //     break;
+    //   }
+    //   default: {
+    //     const newNode = nodeFunctionContructor(
+    //       nodeType as NumNodeType,
+    //       position,
+    //       nodeId
+    //     );
+    //     if (newNode) {
+    //       set({ nodes: [...get().nodes, newNode] });
+    //       Object.keys(newNode.data.outputs).forEach((outputKey) => {
+    //         newValues[nodeId + "." + outputKey] = null;
+    //       });
+    //       id += 1;
+    //       set({ idCounter: id });
+    //       const resultNode = makeResultNode(newNode, id.toString());
+    //       if (resultNode) {
+    //         const newEdgesRes = connectNodes(
+    //           nodeId,
+    //           resultNode.id,
+    //           get().edges,
+    //           get().edgeCounter,
+    //           "R"
+    //         );
+    //         set({
+    //           nodes: [...get().nodes, resultNode],
+    //           edges: newEdgesRes.edges,
+    //           edgeCounter: newEdgesRes.edgeCounter,
+    //         });
+    //       }
+    //     }
+    //   }
+    // }
+    // // sets null values for any created node
+    // set({ values: newValues });
   },
   doAction: (action) => {
     switch (action) {
@@ -605,11 +591,12 @@ const useContent = create<ContentStore>()((set, get) => ({
       !isConnectable(sourceHandleObj.allowedTypes, targetHandleObj.allowedTypes)
     )
       return;
+    console.log({ targetHandleObj, sourceHandleObj });
 
     const [nodeA, nodeB] = (await Promise.all([
       getById(get().nodes, source)[0],
       getById(get().nodes, target)[0],
-    ])) as [MathNode, MathNode];
+    ])) as [AppNode, AppNode];
 
     // checking if not connecting into loop
     const chainTo = getChainIdsTo(nodeA, get().edges);
@@ -626,6 +613,18 @@ const useContent = create<ContentStore>()((set, get) => ({
       ...connection,
     };
 
+    const targetInput = nodeB.data.inputs[targetHandleObj.outputLabel];
+
+    if (!targetInput) {
+      console.log(
+        "Can't connect: Target " +
+          nodeB.id +
+          " doesn't have input " +
+          targetHandleObj.outputLabel
+      );
+      return;
+    }
+
     // checking if input is connected to other node - if true then replases the edge
     const existingEdge = get().edges.find(
       (edge) => edge.target === target && edge.targetHandle === targetHandle
@@ -634,13 +633,10 @@ const useContent = create<ContentStore>()((set, get) => ({
       ? addEdge(newEdge, get().edges)
       : reconnectEdge(existingEdge, connection, get().edges);
 
-    // checking if source is constant
-    const isSourceConst = nodeA.type === "constant";
-    (nodeB as NumberFunctionNode | MtxVecFnNode).data.inputs[
-      targetHandleObj.outputLabel
-    ].sourceId = isSourceConst
-      ? (nodeA as ConstantNode).data.constId
-      : sourceHandleObj.label;
+    // #TODO: checking if source is constant
+    // const isSourceConst = nodeA.type === "constant";
+    targetInput.valueId = sourceHandleObj.label;
+    console.log({ targetInput, newEdges });
 
     const newNodes = replaceNode(nodeB, get().nodes);
 
@@ -669,12 +665,12 @@ const useContent = create<ContentStore>()((set, get) => ({
     const targetNode = getById(get().nodes, nodeId)[0] as ConstructorNode;
 
     // checking if exists and is constructor
-    if (!targetNode || !targetNode.data.isConstructor) return;
+    if (!targetNode || targetNode.data.purpose !== NodePurpose.CONSTRUCT)
+      return;
 
-    const { numberOfEntries, inputTemplate, allowedInputTypes } =
-      targetNode.data;
+    const { allowedVariableTypes, numOfInputVars } = targetNode.data;
     // checking if new number is not the same
-    if (newNum === numberOfEntries) return;
+    if (newNum === numOfInputVars) return;
 
     const { inputs } = targetNode.data;
 

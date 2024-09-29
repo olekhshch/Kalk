@@ -1,13 +1,18 @@
 // Identity matrix constructor
 
-import { Matrix, Vector } from "../../types/nodes";
+import { InputValue, Matrix, Vector } from "../../types/nodes";
+import getValueType from "../getValueType";
 
-type f = (n: number) => Matrix | null;
+type f = (n: InputValue) => Matrix | null;
 
-const makeIdentityMatrix: f = (n: number) => {
-  const size = Math.floor(n);
+const makeIdentityMatrix: f = (n) => {
+  const valueType = getValueType(n);
+  if (valueType !== "number") return null;
+
+  const size = Math.floor(n as number);
 
   if (size < 1) return null;
+
   const matrix: Vector[] = [];
   for (let i = 0; i < size; i++) {
     const row: number[] = [];

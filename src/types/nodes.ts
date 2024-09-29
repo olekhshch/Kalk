@@ -1,8 +1,15 @@
 import { Node } from "@xyflow/react";
 import { AngleFormat } from "./app";
 
-// functions on numbers (...nums) => num
-export type NumNodeType =
+export enum NodePurpose {
+  FN, // function with static number of inputs/outputs
+  CONSTRUCT, // constructs new values based on dinamic number of inputs
+  DECONSTRUCT, // de-constructs values into new values
+  DECOR, // no action (e.g. text nodes)
+}
+
+// _ functions on numbers (...nums) => num
+export type NumNodeTag =
   | "expression"
   | "add"
   | "subtract"
@@ -23,8 +30,8 @@ export type NumNodeType =
   | "ceil"
   | "constant";
 
-// mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
-export type MtxVecNodeType =
+// _ mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num
+export type MtxVecNodeTag =
   | "I-matrix"
   | "mtx-rows"
   | "vec"
@@ -36,9 +43,17 @@ export type MtxVecNodeType =
   | "sum-all"
   | "det";
 
-export type OrganizationalNodeType = "text-single" | "result";
+export type OrganizationalNodeTag = "text-single" | "result";
+export type NodeTag = OrganizationalNodeTag | NumNodeTag | MtxVecNodeTag;
 
-export type NodeType = OrganizationalNodeType | NumNodeType | MtxVecNodeType;
+// export type NodeType = OrganizationalNodeType | NumNodeType | MtxVecNodeType;
+export type NodeType =
+  | "expression"
+  | "math-fn"
+  | "text-single"
+  | "result"
+  | "mtx-fn"
+  | "mtx-constr";
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 
@@ -46,49 +61,78 @@ export type Vector = number[];
 
 export type Matrix = Vector[];
 
-export type MathNode = ExpressionNode | NumberFunctionNode | ConstantNode;
+// !!!!!
+// export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
+export type AppNode =
+  | ResultNode
+  | MathNode
+  | MtxNode
+  | ConstructorNode
+  | TextSingleNode;
+
+export type MathNode = ExpressionNode | FnNode;
+
+export type MtxNode = AppNodeBase<"mtx-fn">;
+
+export type FnNode = AppNodeBase<"math-fn">;
+
+export type AppNodeBase<NT extends NodeType> = Node<
+  {
+    comment?: string;
+    inputs: NodeInputs;
+    outputs: NodeOutputs;
+    tag: NodeTag;
+    value: string;
+    action?: NodeAction;
+    purpose: NodePurpose;
+    // constructor nodes
+    // numOfInputVars?: number; // number of inputs (e.g. number of entries to construct a vector)
+    // defaultInputs?: NodeInputs;
+    // inputLabelTemplate?: (...params: (number | string)[]) => string; // how additional inputs should be named
+    // allowedVariableTypes?: ValueType[];
+  },
+  NT
+>;
+
+export type ExpressionNode = AppNodeBase<"expression"> & {
+  data: {
+    action: NodeAction;
+  };
+};
+
+export type TextSingleNode = AppNodeBase<"text-single">;
+
+export type ResultNode = AppNodeBase<"result"> & {
+  sourceNodeId: string;
+  valueId: string;
+  isShown: boolean;
+};
 
 // Nodes with dinamic number of inputs
-export type ConstructorNode = VectorNode | MtxFromRowsNode;
+export type ConstructorNode = AppNodeBase<"mtx-constr"> & {
+  data: {
+    purpose: NodePurpose.CONSTRUCT;
+    numOfInputVars: number;
+    // defaultInputs: NodeInputs;
+    inputLabelTemplate: (...params: (string | number)[]) => string;
+    allowedVariableTypes: ValueType[];
+  };
+};
 
-export type MtxNode =
-  | IdentityMtxNode
-  | VectorNode
-  | MtxVecFnNode
-  | MtxFromRowsNode;
+// labels of node's handles
+export type handleLabel = "a" | "b" | "n" | "v" | "N" | "M" | "d" | string;
 
-export type AppNode = TextSingleNode | ResultNode | MathNode | MtxNode;
+export type NodeInput = {
+  valueId: string | null;
+  allowedTypes: ValueType[];
+  defValue?: InputValue;
+};
 
-export type TextSingleNode = Node<
-  { value: string; comment?: string | null; tag: "text" },
-  "text-single"
->;
-
-export type ExpressionNode = Node<
-  {
-    value: string;
-    showResult: boolean;
-    inputs: { [x: string]: Input };
-    outputs: { N: ValueType };
-    comment?: string | null;
-    tag: "expression";
-  },
-  "expression"
->;
+export type NodeInputs = {
+  [k in keyof handleLabel as handleLabel]?: NodeInput;
+};
 
 export type OutputValue = number | Vector | Matrix | null;
-
-export type ResultNode = Node<
-  {
-    sourceId: string;
-    valueId: string;
-    isShown: boolean;
-    comment?: string | null;
-    tag: "result";
-    isConst?: boolean;
-  },
-  "result"
->;
 
 // general type for nodes with regular functions on numbers (e.g. adding, multiplying etc.)
 export type NumberFunctionNode = Node<
@@ -115,9 +159,7 @@ export type NumberFunctionNode = Node<
 
 export type NodeOutput = { possibleValues: ValueType[] };
 export type NodeOutputs = {
-  N?: NodeOutput;
-  V?: NodeOutput;
-  M?: NodeOutput;
+  [k in keyof handleLabel as handleLabel]?: NodeOutput;
 };
 
 // value that can be get from the Values Store
@@ -207,3 +249,11 @@ export type ConstantNode = Node<
   },
   "constant"
 >;
+
+export type NodeAction = (
+  params: {
+    [k: string]: InputValue;
+  },
+  value?: string,
+  angleFormat?: AngleFormat
+) => OutputValue | Promise<OutputValue>;

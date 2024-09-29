@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { ExpressionNode as Expression } from "../../types/nodes";
+import { AppNodeBase, ExpressionNode as Expression } from "../../types/nodes";
 import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";
 import useInputChange from "../../hooks/useInputChange";
@@ -14,7 +14,7 @@ import generateHandleId from "../../utils/generateHandleId";
 const ExpressionNode = ({
   id,
   data: { value, outputs, comment },
-}: NodeProps<Expression>) => {
+}: NodeProps<AppNodeBase>) => {
   const { isActive, activateNode, editExpressionValue } = useContent(
     useShallow((store) => ({
       isActive: store.activeNodeId === id,
@@ -58,7 +58,7 @@ const ExpressionNode = ({
     }
   };
 
-  const outputHandleId = generateHandleId(id, "N", [outputs.N]);
+  const outputHandleId = generateHandleId(id, "N", outputs.N!.possibleValues);
 
   //#TODO: Fix padding change when active/non active
 

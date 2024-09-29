@@ -8,12 +8,15 @@ const nonresultNodeTypes = ["text-single", "result"];
 const makeResultNode = (node: AppNode, resultNodeId: string) => {
   // checking if node should have a result node
   if (nonresultNodeTypes.includes(node.type!)) return null;
+  if (!node.data.action) return null;
 
   // if node has several outputs - ignore
-  const outputKeys = Object.keys((node as NumberFunctionNode).data.outputs);
+  const outputKeys = Object.keys(node.data.outputs);
   if (outputKeys.length > 1) return null;
 
+  // #TODO: Different valueId if Constant Node
   const valueId = makeValueId(node.id, outputKeys[0]);
+  if (!valueId) return null; // result node should always have valueId deffined
   const position = { x: node.position.x + 50, y: node.position.y - 40 };
 
   const newNode: ResultNode = {
@@ -22,9 +25,12 @@ const makeResultNode = (node: AppNode, resultNodeId: string) => {
     type: "result",
     data: {
       isShown: false,
-      sourceId: node.id,
+      sourceNodeId: node.id,
       tag: "result",
       valueId,
+      inputs: {},
+      outputs: {},
+      value: "",
     },
   };
 

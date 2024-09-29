@@ -9,17 +9,20 @@ import VectorNode from "../../components/nodes/VectorNode";
 import MtxVecNode from "../../components/nodes/MtxVecNode";
 import MtxRowsNode from "../../components/nodes/MtxRowsNode";
 import { ConstantNode } from "../../components/nodes/ConstantNode";
+import ConstructorNode from "../../components/nodes/ConstructorNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
   "text-single": TextSingleNode,
   expression: ExpressionNode,
+  "math-fn": MathNode,
   result: ResultNode,
   "num-fun": MathNode,
   preview: NodePreview,
   "i-mtx": IdentityMatrix,
   vec: VectorNode,
   "mtx-fn": MtxVecNode,
+  "mtx-constr": ConstructorNode,
   "mtx-rows": MtxRowsNode,
   constant: ConstantNode,
 };

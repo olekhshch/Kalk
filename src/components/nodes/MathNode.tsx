@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { NumberFunctionNode } from "../../types/nodes";
+import { AppNodeBase, NumberFunctionNode } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
 import generateHandleLabel from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
@@ -16,8 +16,8 @@ import getValueType from "../../utils/getValueType";
 
 const MathNode = ({
   id,
-  data: { label, inputs, outputs, showResult, comment },
-}: NodeProps<NumberFunctionNode>) => {
+  data: { inputs, outputs, value, comment },
+}: NodeProps<AppNodeBase>) => {
   // calculated value of an output
   const calculatedValue = useContent(useShallow((store) => store.values[id]));
   const outputType = getValueType(calculatedValue);
@@ -73,7 +73,7 @@ const MathNode = ({
           );
         })}
         <div className="p-2 pl-4 italic font-bold">
-          <Latex>${label}$</Latex>
+          <Latex>${value}$</Latex>
         </div>
         {outputsArray.map(({ cssPosition, handleId, key }) => {
           return <Output key={key} id={handleId} cssPosition={cssPosition} />;

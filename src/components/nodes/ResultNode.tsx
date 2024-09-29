@@ -13,18 +13,14 @@ import Latex from "react-latex-next";
 
 const ResultNode = ({
   id,
-  data: { comment, isShown, isConst, valueId },
+  data: { comment, isShown, valueId },
 }: NodeProps<ResultNodeType>) => {
-  const value = useContent(
-    useShallow((store) =>
-      isConst ? store.constValues[valueId] : store.values[valueId]
-    )
-  );
+  const value = useContent(useShallow((store) => store.values[valueId]));
 
   useEffect(() => console.log("RES RERENDERED"));
-  if (!isShown) {
-    return null;
-  }
+  // if (!isShown) {
+  //   return null;
+  // }
   return (
     <>
       <Input cssPosition="50%" label="R" id="R" />

@@ -1,11 +1,13 @@
 import React, { useCallback } from "react";
 import useContent from "../../state/useContent";
-import { ValueType } from "../../types/nodes";
+import { NodeOutputs, ValueType } from "../../types/nodes";
 import classNames from "classnames";
 import useUI from "../../hooks/useUI";
 import { useShallow } from "zustand/react/shallow";
 import CommentField from "./parts/CommentField";
 import CommentBtn from "./parts/CommentBtn";
+import generateHandleId from "../../utils/generateHandleId";
+import Output from "../ports/Output";
 
 // General container for node's content
 type props = {
@@ -62,7 +64,14 @@ const NodeWrapper = ({
     );
   };
 
-  // #TODO: Flowchart handles
+  // const outputsEntries = Object.entries(outputs);
+  // const step = 100 / (outputsEntries.length + 1);
+
+  // const outputsHandleObjs = outputsEntries.map(([label, output], idx) => {
+  //   const handleId = generateHandleId(id, label, output!.possibleValues);
+  //   const cssPosition = `${step * (1 + idx)}%`;
+  //   return { handleId, key: label, cssPosition };
+  // });
 
   return (
     <>
@@ -84,6 +93,9 @@ const NodeWrapper = ({
             {title}
           </article>
         )}
+        {/* {outputsHandleObjs.map(({ handleId, cssPosition, key }) => (
+          <Output key={key} cssPosition={cssPosition} id={handleId} />
+        ))} */}
         {children}
         {/* <span className="absolute">{id}</span> */}
       </div>
