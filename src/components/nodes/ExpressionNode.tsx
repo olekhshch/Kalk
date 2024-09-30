@@ -14,7 +14,7 @@ import generateHandleId from "../../utils/generateHandleId";
 const ExpressionNode = ({
   id,
   data: { value, outputs, comment },
-}: NodeProps<AppNodeBase>) => {
+}: NodeProps<Expression>) => {
   const { isActive, activateNode, editExpressionValue } = useContent(
     useShallow((store) => ({
       isActive: store.activeNodeId === id,

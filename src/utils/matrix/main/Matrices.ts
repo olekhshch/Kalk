@@ -71,4 +71,47 @@ const det: f2 = (M: InputValue) => {
   return null;
 };
 
-export default { addVecOrMtx, sumAllEntries, det };
+// ================== Mtx from COLUMN vectors ================
+
+type constr = (params: { [k: string]: InputValue }) => Matrix | null;
+
+const fromColumns: constr = (params) => {
+  const { d, n, ...vectors } = params;
+
+  // defaultValue should be Vector
+  let defValue = d as Vector | null;
+  const defValType = getValueType(defValue);
+  if (!defValType || defValType !== "vector") {
+    defValue = null;
+  }
+
+  // #TODO: Ensure right order of row vectors in final matrix
+  const colVectors = Object.values(vectors);
+
+  const mtx: Matrix = [];
+
+  for (let i = 0; i < (n as number); i++) {
+    mtx.push([]);
+  }
+
+  // #TODO: Add async
+  for (let i = 0; i < colVectors.length; i++) {
+    let vector = colVectors[i] as Vector;
+    const valType = getValueType(vector);
+    if (!valType && !(!defValue && defValue !== 0)) {
+      vector = defValue;
+    } else if (!valType && !defValue) {
+      return null;
+    } else if (valType !== "vector") {
+      return null;
+    }
+
+    for (let j = 0; j < vector.length; j++) {
+      mtx[j][i] = vector[j];
+    }
+  }
+
+  return mtx;
+};
+
+export default { addVecOrMtx, sumAllEntries, det, fromColumns };

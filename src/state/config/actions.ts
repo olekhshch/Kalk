@@ -188,6 +188,17 @@ const actions: Actions = {
       },
     },
     {
+      title: "Matrix (from columns)",
+      icon: null,
+      iconLatex:
+        "\\tiny{\\begin{bmatrix}\\vec{v} & \\dots & \\vec{w}\\end{bmatrix} \\implies M}",
+      large: true,
+      command: {
+        type: "create",
+        data: "mtx-cols",
+      },
+    },
+    {
       title: "Vector",
       icon: null,
       iconLatex: "\\vec{v}",
@@ -195,6 +206,16 @@ const actions: Actions = {
       command: {
         type: "create",
         data: "vec",
+      },
+    },
+    {
+      title: "Entries from vector",
+      icon: null,
+      iconLatex: "\\vec{v}_n \\implies v_1 \\dots v_n",
+      hideToolbarTitle: true,
+      command: {
+        type: "create",
+        data: "entries-vec",
       },
     },
     {

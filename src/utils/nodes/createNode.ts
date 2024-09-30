@@ -1,7 +1,10 @@
 import {
   AppNode,
   AppNodeBase,
+  ConstantNode,
   ConstructorNode,
+  DeconstructAction,
+  DeConstructorNode,
   ExpressionNode,
   MathNode,
   MtxNode,
@@ -22,10 +25,11 @@ import nodeInputs from "./nodesInputs";
 type Factory = (
   tag: NodeTag,
   id: string,
-  position: { x: number; y: number }
+  position: { x: number; y: number },
+  constId?: string
 ) => AppNode | null;
 
-const createNode: Factory = (tag, nodeId, position) => {
+const createNode: Factory = (tag, nodeId, position, constId) => {
   // separate util for Result Nodes
   if (tag === "result") return null;
 
@@ -57,7 +61,7 @@ const createNode: Factory = (tag, nodeId, position) => {
         ...base,
         type,
         data: {
-          action,
+          action: action as NodeAction,
           tag,
           value,
           inputs,
@@ -89,7 +93,7 @@ const createNode: Factory = (tag, nodeId, position) => {
           purpose: NodePurpose.FN,
           tag,
           value,
-          action,
+          action: action as NodeAction,
           inputs,
           outputs,
         },
@@ -104,7 +108,7 @@ const createNode: Factory = (tag, nodeId, position) => {
           purpose: NodePurpose.FN,
           tag,
           value,
-          action,
+          action: action as NodeAction,
           inputs,
           outputs,
         },
@@ -128,13 +132,53 @@ const createNode: Factory = (tag, nodeId, position) => {
           purpose: NodePurpose.CONSTRUCT,
           tag,
           value,
-          action,
+          action: action as NodeAction,
           allowedVariableTypes,
           // defaultInputs: { ...defaultInputs },
           inputLabelTemplate,
           numOfInputVars,
           inputs,
           outputs,
+        },
+      };
+      return newNode;
+    }
+    case "constant": {
+      if (!constId) return null;
+
+      const newNode: ConstantNode = {
+        id: nodeId,
+        position,
+        type: "constant",
+        data: {
+          purpose: NodePurpose.DECOR,
+          inputs,
+          outputs: {
+            [constId]: { possibleValues: ["matrix", "number", "vector"] },
+          },
+          tag: "constant",
+          value,
+          constId,
+        },
+      };
+      return newNode;
+    }
+    case "mtx-deconstr": {
+      if (!action) {
+        console.log("No action for " + type);
+        return null;
+      }
+      const newNode: DeConstructorNode = {
+        id: nodeId,
+        position,
+        type: "mtx-deconstr",
+        data: {
+          action: action as DeconstructAction,
+          tag,
+          inputs,
+          outputs,
+          purpose: NodePurpose.DECONSTRUCT,
+          value,
         },
       };
       return newNode;
@@ -173,10 +217,23 @@ const numFnTags: NumNodeTag[] = [
   "cos",
   "tg",
   "ctg",
+  "to-deg",
+  "to-rad",
+  "power",
+  "floor",
+  "ceil",
 ];
 
-const mtxNodeTags: MtxVecNodeTag[] = ["I-matrix"];
-const constrNodeTags: NodeTag[] = ["vec", "mtx-rows"];
+const mtxNodeTags: MtxVecNodeTag[] = [
+  "I-matrix",
+  "add-mtx",
+  "scalar-mult",
+  "dot-prod",
+  "norm",
+  "sum-all",
+];
+const constrNodeTags: NodeTag[] = ["vec", "mtx-rows", "mtx-cols"];
+const deconstrNodeTags: NodeTag[] = ["entries-vec"];
 
 type f = (tag: NodeTag) => NodeType | null;
 const getNodeType: f = (tag) => {
@@ -184,11 +241,15 @@ const getNodeType: f = (tag) => {
 
   if (tag === "text-single") return "text-single";
 
+  if (tag === "constant") return "constant";
+
   if (numFnTags.includes(tag as NumNodeTag)) return "math-fn";
 
   if (mtxNodeTags.includes(tag as MtxVecNodeTag)) return "mtx-fn";
 
   if (constrNodeTags.includes(tag)) return "mtx-constr";
+
+  if (deconstrNodeTags.includes(tag)) return "mtx-deconstr";
 
   return null;
 };
@@ -215,12 +276,32 @@ const getNodeValue = (tag: NodeTag) => {
       return "\\tan(a)";
     case "ctg":
       return "\\cot(a)";
+    case "to-deg":
+      return "\\text{rad} \\to \\text{deg}\\degree";
+    case "to-rad":
+      return "\\text{deg}\\degree \\to \\text{rad}";
+    case "add-mtx":
+      return "A_{n \\times m} + B_{n \\times m}";
+    case "scalar-mult":
+      return "\\alpha\\vec{v}";
+    case "power":
+      return "a^b";
+    case "floor":
+      return "\\text{floor}(a)";
+    case "ceil":
+      return "\\text{ceil}(a)";
+    case "dot-prod":
+      return "\\vec{v}\\cdot\\vec{w}";
+    case "norm":
+      return "\\lVert \\vec{v} \\rVert";
+    case "sum-all":
+      return "\\sum{m_i}";
     default:
       return "";
   }
 };
 
-const constructNodes: NodeTag[] = ["vec", "mtx-rows"];
+const constructNodes: NodeTag[] = ["vec", "mtx-rows", "mtx-cols"];
 
 // const getPurpose = (tag: NodeTag) => {
 //   if (constructNodes.includes(tag)) return NodePurpose.CONSTRUCT;
@@ -252,6 +333,16 @@ const getConstructorData: g = (tag) => {
   }
 
   if (tag === "mtx-rows") {
+    return {
+      defaultInputs: {
+        d: { allowedTypes: ["vector"], valueId: null },
+      },
+      allowedVariableTypes: ["vector"],
+      inputLabelTemplate: (n) => `v${n}`,
+    };
+  }
+
+  if (tag === "mtx-cols") {
     return {
       defaultInputs: {
         d: { allowedTypes: ["vector"], valueId: null },

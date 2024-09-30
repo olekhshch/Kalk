@@ -10,6 +10,7 @@ import MtxVecNode from "../../components/nodes/MtxVecNode";
 import MtxRowsNode from "../../components/nodes/MtxRowsNode";
 import { ConstantNode } from "../../components/nodes/ConstantNode";
 import ConstructorNode from "../../components/nodes/ConstructorNode";
+import DeconstructorNode from "../../components/nodes/DeconstructorNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
@@ -25,6 +26,7 @@ const nodeTypes: NodeTypes = {
   "mtx-constr": ConstructorNode,
   "mtx-rows": MtxRowsNode,
   constant: ConstantNode,
+  "mtx-deconstr": DeconstructorNode,
 };
 
 export default nodeTypes;

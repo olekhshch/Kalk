@@ -5,7 +5,7 @@ export enum NodePurpose {
   FN, // function with static number of inputs/outputs
   CONSTRUCT, // constructs new values based on dinamic number of inputs
   DECONSTRUCT, // de-constructs values into new values
-  DECOR, // no action (e.g. text nodes)
+  DECOR, // no action (e.g. text nodes, constants)
 }
 
 // _ functions on numbers (...nums) => num
@@ -34,6 +34,8 @@ export type NumNodeTag =
 export type MtxVecNodeTag =
   | "I-matrix"
   | "mtx-rows"
+  | "mtx-cols"
+  | "entries-vec"
   | "vec"
   | "norm"
   | "add-mtx"
@@ -53,7 +55,9 @@ export type NodeType =
   | "text-single"
   | "result"
   | "mtx-fn"
-  | "mtx-constr";
+  | "mtx-constr"
+  | "constant"
+  | "mtx-deconstr";
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 
@@ -68,7 +72,9 @@ export type AppNode =
   | MathNode
   | MtxNode
   | ConstructorNode
-  | TextSingleNode;
+  | DeConstructorNode
+  | TextSingleNode
+  | ConstantNode;
 
 export type MathNode = ExpressionNode | FnNode;
 
@@ -83,7 +89,7 @@ export type AppNodeBase<NT extends NodeType> = Node<
     outputs: NodeOutputs;
     tag: NodeTag;
     value: string;
-    action?: NodeAction;
+    action?: NodeAction | DeconstructAction;
     purpose: NodePurpose;
     // constructor nodes
     // numOfInputVars?: number; // number of inputs (e.g. number of entries to construct a vector)
@@ -103,9 +109,11 @@ export type ExpressionNode = AppNodeBase<"expression"> & {
 export type TextSingleNode = AppNodeBase<"text-single">;
 
 export type ResultNode = AppNodeBase<"result"> & {
-  sourceNodeId: string;
-  valueId: string;
-  isShown: boolean;
+  data: {
+    sourceNodeId: string;
+    valueId: string;
+    isShown: boolean;
+  };
 };
 
 // Nodes with dinamic number of inputs
@@ -116,6 +124,19 @@ export type ConstructorNode = AppNodeBase<"mtx-constr"> & {
     // defaultInputs: NodeInputs;
     inputLabelTemplate: (...params: (string | number)[]) => string;
     allowedVariableTypes: ValueType[];
+  };
+};
+
+export type DeConstructorNode = AppNodeBase<"mtx-deconstr"> & {
+  data: {
+    purpose: NodePurpose.DECONSTRUCT;
+    action: DeconstructAction;
+  };
+};
+
+export type ConstantNode = AppNodeBase<"constant"> & {
+  data: {
+    constId: string;
   };
 };
 
@@ -242,14 +263,6 @@ export type MtxVecFnAction = (
   vals: MtxVecFunctionParams
 ) => OutputValue | Promise<OutputValue>;
 
-export type ConstantNode = Node<
-  {
-    constId: string;
-    comment?: string;
-  },
-  "constant"
->;
-
 export type NodeAction = (
   params: {
     [k: string]: InputValue;
@@ -257,3 +270,15 @@ export type NodeAction = (
   value?: string,
   angleFormat?: AngleFormat
 ) => OutputValue | Promise<OutputValue>;
+
+export type DeconstructAction = (
+  params: {
+    [k: string]: InputValue;
+  },
+  value?: string,
+  angleFormat?: AngleFormat
+) => DeconstructActionResult | null;
+
+export type DeconstructActionResult = {
+  [k: string]: { possibleValues: ValueType[]; value: OutputValue };
+};

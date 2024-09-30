@@ -49,7 +49,10 @@ const useContent = create<ContentStore>()((set, get) => ({
   edgeCounter: 0,
   highlightedNodesId: [],
   activeNodeId: null,
-  values: {},
+  values: {
+    CONST_PI: Math.PI,
+    CONST_E: Math.E,
+  },
   constants: [
     {
       id: "CONST_PI",
@@ -91,7 +94,7 @@ const useContent = create<ContentStore>()((set, get) => ({
   addNode: (nodeTag, position, data) => {
     let id = get().idCounter + 1;
 
-    const newNode = createNode(nodeTag, id.toString(), position);
+    const newNode = createNode(nodeTag, id.toString(), position, data?.constId);
 
     if (!newNode) return;
 
@@ -103,7 +106,19 @@ const useContent = create<ContentStore>()((set, get) => ({
 
     if (!resNode) return;
 
-    set({ nodes: [...get().nodes, resNode], idCounter: id });
+    const newEdges = connectNodes(
+      newNode.id,
+      resNode.id,
+      get().edges,
+      get().edgeCounter
+    );
+
+    set({
+      nodes: [...get().nodes, resNode],
+      idCounter: id,
+      edges: newEdges.edges,
+      edgeCounter: get().edgeCounter + 1,
+    });
 
     // let id = get().idCounter + 1;
     // set({ idCounter: id });
@@ -505,10 +520,9 @@ const useContent = create<ContentStore>()((set, get) => ({
     );
 
     if (newNode) {
-      const newVals = await calculateNode(
+      const calcRes = await calculateNode(
         newNode,
         get().values,
-        get().constValues,
         get().anglesFormat
       );
 
@@ -517,11 +531,11 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newValues = await recalculateChain(
         chain,
         nodes,
-        newVals.values,
+        calcRes.values,
         get().constValues,
         get().anglesFormat
       );
-      set({ values: newValues });
+      set({ values: calcRes.values });
     }
 
     set({ nodes });
@@ -591,7 +605,6 @@ const useContent = create<ContentStore>()((set, get) => ({
       !isConnectable(sourceHandleObj.allowedTypes, targetHandleObj.allowedTypes)
     )
       return;
-    console.log({ targetHandleObj, sourceHandleObj });
 
     const [nodeA, nodeB] = (await Promise.all([
       getById(get().nodes, source)[0],
@@ -633,16 +646,18 @@ const useContent = create<ContentStore>()((set, get) => ({
       ? addEdge(newEdge, get().edges)
       : reconnectEdge(existingEdge, connection, get().edges);
 
-    // #TODO: checking if source is constant
-    // const isSourceConst = nodeA.type === "constant";
-    targetInput.valueId = sourceHandleObj.label;
+    const isSourceConst = nodeA.type === "constant";
+    console.log({ targetHandleObj, sourceHandleObj });
+    targetInput.valueId = isSourceConst
+      ? sourceHandleObj.outputLabel
+      : sourceHandleObj.label;
     console.log({ targetInput, newEdges });
 
     const newNodes = replaceNode(nodeB, get().nodes);
 
     // recalculates chain
     const chain = getChainIdsFrom(nodeB, newEdges);
-    const newValues = await recalculateChain(
+    const calcRes = await recalculateChain(
       chain,
       newNodes,
       get().values,
@@ -650,10 +665,17 @@ const useContent = create<ContentStore>()((set, get) => ({
       get().anglesFormat
     );
 
+    if (calcRes.nodesToReplace.length > 0) {
+      // #TODO: Rewrite util to accept multiple nodes
+      let newNodes0: AppNode[] = newNodes;
+      calcRes.nodesToReplace.forEach((node) => replaceNode(node, newNodes0));
+      set({ nodes: newNodes });
+    }
+
     set({
       edges: newEdges,
       edgeCounter: id,
-      values: newValues,
+      values: calcRes.values,
       nodes: newNodes,
     });
   },

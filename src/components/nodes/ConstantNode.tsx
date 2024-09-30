@@ -26,7 +26,7 @@ export const ConstantNode = ({
     key: "N",
     id: generateHandleId(
       id,
-      "CONST",
+      constId,
       constObj?.valueType ? [constObj.valueType] : ["number"]
     ),
   };

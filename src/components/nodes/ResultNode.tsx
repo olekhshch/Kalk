@@ -10,6 +10,7 @@ import { NodeProps } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import Latex from "react-latex-next";
+import getValueType from "../../utils/getValueType";
 
 const ResultNode = ({
   id,
@@ -35,6 +36,9 @@ const ResultNode = ({
 
 function resultLateX(value: number | Matrix | Vector | null) {
   let str = "";
+  const valueType = getValueType(value);
+
+  if (!valueType) return str;
 
   if (Array.isArray(value)) {
     // checking if Matrix or Vector

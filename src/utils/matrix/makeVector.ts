@@ -17,10 +17,8 @@ const makeVector = (params: { [k: string]: InputValue }) => {
 
   // all entries should be Numbers and defined. If not defined then default Value should be provided
   for (const value of vecEntries) {
-    console.log({ value });
-
     const valType = getValueType(value);
-    if (!valType && defValue) {
+    if (!valType && !(!defValue && defValue !== 0)) {
       vec.push(defValue as number);
     } else if (!valType && !defValue) {
       return null;

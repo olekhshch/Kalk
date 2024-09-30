@@ -63,7 +63,7 @@ const ConstructorNode = ({
           <input
             value={varNum}
             onChange={onVarChange}
-            className="px-1 w-[40px] bg-transparent border-b-gray border-b-solid border-b-[1px]"
+            className="px-1 w-[40px] bg-transparent border-b-gray border-b-solid border-b-[1px] nodrag"
           />
         </form>
         {inputsHandleObjs.map(({ handleId, cssPosition, key }) => (
@@ -110,6 +110,17 @@ const ConstrNodeLabel = ({ tag, numOfVars }: pr) => {
         str += `\\vec{v_${i}}`;
         if (i < numOfVars) {
           str += "\\\\";
+        }
+      }
+      str += "\\end{bmatrix}";
+      break;
+    }
+    case "mtx-cols": {
+      str += "M=\\begin{bmatrix}";
+      for (let i = 1; i <= numOfVars; i++) {
+        str += `\\vec{v_${i}} `;
+        if (i < numOfVars) {
+          str += "\\ ";
         }
       }
       str += "\\end{bmatrix}";

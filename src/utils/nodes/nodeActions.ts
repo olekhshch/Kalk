@@ -1,7 +1,7 @@
 // collection of all node's actions
 
 import { invoke } from "@tauri-apps/api/core";
-import { NodeAction, NodeTag } from "../../types/nodes";
+import { DeconstructAction, NodeAction, NodeTag } from "../../types/nodes";
 import { RustCalculations } from "../../types/app";
 import arithmetic from "../number/arithmetic";
 import numOperations from "../number/numOperations";
@@ -9,9 +9,17 @@ import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
 import trigonometry from "../number/trigonometry";
 import makeVector from "../matrix/makeVector";
 import makeMtxFromRows from "../matrix/makeMtxFromRows";
+import convertToDEG from "../convertToDEG";
+import convertToRAD from "../convertToRAD";
+import mtxOperations from "../matrix/mtxOperations";
+import Matrices from "../matrix/main/Matrices";
+import scalarMultiplication from "../matrix/scalarMultiplication";
+import dotProduct from "../matrix/dotProduct";
+import vectorNorm from "../matrix/vectorNorm";
+import Vectors from "../matrix/main/Vectors";
 
 type obj = {
-  [k in keyof NodeTag as NodeTag]?: NodeAction;
+  [k in keyof NodeTag as NodeTag]?: NodeAction | DeconstructAction;
 };
 
 const nodeActions: obj = {
@@ -34,6 +42,18 @@ const nodeActions: obj = {
   ctg: ({ a }, value, angleFormat) => trigonometry.ctg(a, angleFormat!),
   vec: (params) => makeVector(params),
   "mtx-rows": (params) => makeMtxFromRows(params),
+  "to-deg": ({ a }) => convertToDEG(a),
+  "to-rad": ({ a }) => convertToRAD(a),
+  "add-mtx": ({ A, B }) => Matrices.addVecOrMtx(A, B),
+  "scalar-mult": ({ a, V }) => scalarMultiplication(a, V),
+  power: ({ a, b }) => numOperations.power(a, b),
+  floor: ({ a }) => numOperations.floor(a),
+  ceil: ({ a }) => numOperations.ceil(a),
+  "dot-prod": ({ v, w }) => dotProduct(v, w),
+  norm: ({ v }) => vectorNorm(v),
+  "sum-all": ({ M }) => Matrices.sumAllEntries(M),
+  "mtx-cols": (params) => Matrices.fromColumns(params),
+  "entries-vec": (params) => Vectors.deconstructVec(params),
 };
 
 export default nodeActions;

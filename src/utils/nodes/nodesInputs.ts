@@ -50,10 +50,57 @@ const nodeInputs: obj = {
     v3: { allowedTypes: ["number"], valueId: null },
   },
   "mtx-rows": {
-    d: { allowedTypes: ["number"], valueId: null },
+    d: { allowedTypes: ["vector"], valueId: null },
     v1: { allowedTypes: ["vector"], valueId: null },
     v2: { allowedTypes: ["vector"], valueId: null },
     v3: { allowedTypes: ["vector"], valueId: null },
+  },
+  "to-deg": {
+    a: { allowedTypes: ["number", "matrix", "vector"], valueId: null },
+  },
+  "to-rad": {
+    a: { allowedTypes: ["number", "matrix", "vector"], valueId: null },
+  },
+  "add-mtx": {
+    A: { allowedTypes: ["vector", "matrix"], valueId: null },
+    B: { allowedTypes: ["vector", "matrix"], valueId: null },
+  },
+  "scalar-mult": {
+    a: { allowedTypes: ["number"], valueId: null },
+    V: { allowedTypes: ["vector", "matrix"], valueId: null },
+  },
+  constant: {},
+  power: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+    b: { allowedTypes: ["number"], valueId: null },
+  },
+  floor: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+  },
+  ceil: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+  },
+  "dot-prod": {
+    v: { allowedTypes: ["vector"], valueId: null },
+    w: { allowedTypes: ["vector"], valueId: null },
+  },
+  norm: {
+    v: { allowedTypes: ["vector"], valueId: null },
+  },
+  "sum-all": {
+    M: { allowedTypes: ["vector", "matrix"], valueId: null },
+  },
+  "mtx-cols": {
+    d: { allowedTypes: ["vector"], valueId: null },
+    v1: { allowedTypes: ["vector"], valueId: null },
+    v2: { allowedTypes: ["vector"], valueId: null },
+    v3: { allowedTypes: ["vector"], valueId: null },
+  },
+  "entries-vec": {
+    v: {
+      allowedTypes: ["vector"],
+      valueId: null,
+    },
   },
 };
 

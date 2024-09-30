@@ -47,6 +47,43 @@ const nodeOutputs: obj = {
   "mtx-rows": {
     M: { possibleValues: ["matrix"] },
   },
+  "to-rad": {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  "to-deg": {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  "add-mtx": {
+    M: { possibleValues: ["vector", "matrix"] },
+  },
+  "scalar-mult": {
+    M: { possibleValues: ["vector", "matrix"] },
+  },
+  constant: {
+    CONST: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  power: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  floor: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  ceil: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  "dot-prod": {
+    N: { possibleValues: ["number"] },
+  },
+  norm: {
+    N: { possibleValues: ["number"] },
+  },
+  "sum-all": {
+    N: { possibleValues: ["number"] },
+  },
+  "mtx-cols": {
+    M: { possibleValues: ["matrix"] },
+  },
+  "entries-vec": {},
 };
 
 export default nodeOutputs;

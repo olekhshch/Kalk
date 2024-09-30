@@ -1,9 +1,20 @@
 // created result node for specified node (without an edge)
 
-import { AppNode, NumberFunctionNode, ResultNode } from "../../types/nodes";
+import {
+  AppNode,
+  NodePurpose,
+  NodeTag,
+  NodeType,
+  NumberFunctionNode,
+  ResultNode,
+} from "../../types/nodes";
 import makeValueId from "../makeValueId";
 
-const nonresultNodeTypes = ["text-single", "result"];
+const nonresultNodeTypes: NodeType[] = [
+  "text-single",
+  "result",
+  "mtx-deconstr",
+];
 
 const makeResultNode = (node: AppNode, resultNodeId: string) => {
   // checking if node should have a result node
@@ -31,6 +42,7 @@ const makeResultNode = (node: AppNode, resultNodeId: string) => {
       inputs: {},
       outputs: {},
       value: "",
+      purpose: NodePurpose.DECOR,
     },
   };
 

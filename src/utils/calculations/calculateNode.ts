@@ -3,13 +3,17 @@ import {
   AppNode,
   AppNodeBase,
   ConstructorNode,
+  DeconstructActionResult,
+  DeConstructorNode,
   ExpressionNode,
   IdentityMtxNode,
   InputValue,
   Matrix,
   MtxVecFunctionParams,
+  NodeOutputs,
   NodePurpose,
   NumberFunctionParams,
+  OutputValue,
   Vector,
 } from "../../types/nodes";
 import {
@@ -24,19 +28,20 @@ import makeMtxFromRows from "../matrix/makeMtxFromRows";
 import makeValueId from "../makeValueId";
 import getValueType from "../getValueType";
 
-type Calculations = { values: CalculatedValues };
+type Calculations = { values: CalculatedValues; nodesToReplace: AppNode[] };
 type f = (
   node: AppNode,
   values: CalculatedValues,
-  constValues: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<Calculations>;
 
-const calculateNode: f = async (node, values, constVals, angleFormat) => {
+const calculateNode: f = async (node, values, angleFormat) => {
   const newValues: CalculatedValues = { ...values };
+  const nodesToReplace: AppNode[] = [];
 
   const calculations: Calculations = {
     values: newValues,
+    nodesToReplace,
   };
 
   const { action, inputs, outputs, value, purpose } = node.data;
@@ -58,7 +63,7 @@ const calculateNode: f = async (node, values, constVals, angleFormat) => {
   const params: { [k: string]: InputValue } = {};
 
   // ========== FN Node =================
-  if (purpose === NodePurpose.FN) {
+  if (purpose === NodePurpose.FN || purpose === NodePurpose.DECONSTRUCT) {
     for (const [inputLabel, input] of inputEntries) {
       if (!input) {
         return resetResult();
@@ -87,7 +92,7 @@ const calculateNode: f = async (node, values, constVals, angleFormat) => {
     const { numOfInputVars } = (node as ConstructorNode).data;
     params.n = numOfInputVars;
     for (const [inputLabel, input] of inputEntries) {
-      if (!input) {
+      if (!input && input !== 0) {
         return resetResult();
       }
 
@@ -98,7 +103,10 @@ const calculateNode: f = async (node, values, constVals, angleFormat) => {
       } else {
         // if value is not defined or is not valid calculations will not continue
         const value = values[valueId];
-        if (!value || !input.allowedTypes.includes(getValueType(value)!)) {
+        if (
+          (!value && value !== 0) ||
+          !input.allowedTypes.includes(getValueType(value)!)
+        ) {
           return resetResult();
         }
 
@@ -121,12 +129,36 @@ const calculateNode: f = async (node, values, constVals, angleFormat) => {
       // }
     }
   }
+  console.log({ params });
 
   const res = await action(params, value, angleFormat);
 
-  valueIds.forEach((valId) => {
-    newValues[valId] = res;
-  });
+  if (purpose === NodePurpose.DECONSTRUCT) {
+    const resOutputs = res;
+    console.log({ resOutputs });
+    const outputs: NodeOutputs = {};
+    if (!resOutputs) {
+      (node as DeConstructorNode).data.outputs = {};
+      nodesToReplace.push(node);
+      // #TODO Clearing all of the previous output values
+      return calculations;
+    }
+    Object.entries(resOutputs as DeconstructActionResult).forEach(
+      ([label, { possibleValues, value }]) => {
+        outputs[label] = { possibleValues };
+        newValues[makeValueId(node.id, label)] = value;
+      }
+    );
+    node.data.outputs = outputs;
+    console.log({ node });
+    nodesToReplace.push(node);
+    return calculations;
+  } else {
+    const resValue = res as OutputValue;
+    valueIds.forEach((valId) => {
+      newValues[valId] = resValue;
+    });
+  }
 
   return calculations;
 

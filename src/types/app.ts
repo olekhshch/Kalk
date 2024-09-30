@@ -22,7 +22,7 @@ export type Action = {
   category?: "math" | "matrices";
   command: {
     type: "create" | "action";
-    data?: NodeType | ActionType;
+    data?: NodeTag;
   };
 };
 
@@ -41,7 +41,7 @@ export type Mode =
 export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
-  nodes: AppNodeBase[];
+  nodes: AppNode[];
   edges: Edge[];
   idCounter: number;
   edgeCounter: number;
