@@ -9,11 +9,11 @@ import {
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
 import nodeTypes from "../../state/config/nodeTypes";
-import edgeTypes from "../../state/edgeTypes";
 import { useShallow } from "zustand/react/shallow";
-import { NodeType } from "../../types/nodes";
+import { NodeTag } from "../../types/nodes";
 import { PreviewNode } from "../../components/NodePreview";
 import useUI from "../../hooks/useUI";
+import edgeTypes from "../../state/config/edgeTypes";
 
 const Canvas = () => {
   const { nodes, edges, activateNode, onNodesChange, connectNodes, addNode } =
@@ -98,7 +98,7 @@ const Canvas = () => {
     closeCommentsForAllNodes();
 
     if (mode.current === "create" && mode.data) {
-      addNode(mode.data.type as NodeType, prevPosition, {
+      addNode(mode.data.type as NodeTag, prevPosition, {
         constId: mode.data.id,
       });
     }

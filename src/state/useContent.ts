@@ -1,22 +1,10 @@
-import { addEdge, applyNodeChanges, Edge, reconnectEdge } from "@xyflow/react";
+import { applyNodeChanges } from "@xyflow/react";
 import { create } from "zustand";
 import {
   AppNode,
-  AppNodeBase,
-  ConstantNode,
   ConstructorNode,
-  ExpressionNode,
-  IdentityMtxNode,
-  Input,
-  MathNode,
-  MtxFromRowsNode,
-  MtxVecFnNode,
+  NodeInput,
   NodePurpose,
-  NumberFunctionNode,
-  NumNodeType,
-  ResultNode,
-  TextSingleNode,
-  VectorNode,
 } from "../types/nodes";
 import { AngleFormat, ContentStore } from "../types/app";
 import connectNodes from "../utils/connectNodes";
@@ -28,19 +16,17 @@ import getChain from "../utils/getChainIdsFrom";
 import recalculateChain from "../utils/calculations/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
 import getChainIdsTo from "../utils/getChainIdsTo";
-import nodeFunctionContructor from "../utils/constructors/nodeNumFnConstructor";
 import generateHandleLabel, {
   deconstructHandleId,
 } from "../utils/generateHandleId";
-import nodeMatrixFnConstructor from "../utils/constructors/nodeMatrixFnConstructor";
 import recalculateAll from "../utils/calculations/recalculateAll";
 import isConnectable from "../utils/edges/isConnectable";
 import resultNodes from "../utils/nodes/resultNodes";
 import deleteNodes from "../utils/nodes/deleteNodes";
 import { invoke } from "@tauri-apps/api/core";
-import makeValueId from "../utils/makeValueId";
 import makeResultNode from "../utils/nodes/makeResultNode";
 import createNode from "../utils/nodes/createNode";
+import { AppEdge } from "../types/edges";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -99,347 +85,6 @@ const useContent = create<ContentStore>()((set, get) => ({
     if (!newNode) return;
 
     set({ nodes: [...get().nodes, newNode], idCounter: id });
-
-    id += 1;
-
-    const resNode = makeResultNode(newNode, id.toString());
-
-    if (!resNode) return;
-
-    const newEdges = connectNodes(
-      newNode.id,
-      resNode.id,
-      get().edges,
-      get().edgeCounter
-    );
-
-    set({
-      nodes: [...get().nodes, resNode],
-      idCounter: id,
-      edges: newEdges.edges,
-      edgeCounter: get().edgeCounter + 1,
-    });
-
-    // let id = get().idCounter + 1;
-    // set({ idCounter: id });
-    // const nodeId = id.toString();
-    // const newValues = { ...get().values };
-    // switch (nodeType) {
-    //   case "expression": {
-    //     const newNode: ExpressionNode = {
-    //       id: nodeId,
-    //       type: "expression",
-    //       position,
-    //       data: {
-    //         tag: "expression",
-    //         value: "",
-    //         showResult: false,
-    //         inputs: {},
-    //         outputs: { N: "number" },
-    //       },
-    //     };
-    //     const valueId = makeValueId(nodeId, "N");
-    //     newValues[valueId] = null;
-    //     id += 1;
-    //     set({ idCounter: id });
-    //     const resNode: ResultNode = {
-    //       id: id.toString(),
-    //       type: "result",
-    //       position: { x: position.x + 60, y: position.y - 60 },
-    //       data: {
-    //         tag: "result",
-    //         sourceId: nodeId,
-    //         valueId,
-    //         isShown: false,
-    //       },
-    //     };
-    //     const newEdgesRes = connectNodes(
-    //       nodeId,
-    //       id.toString(),
-    //       get().edges,
-    //       get().edgeCounter,
-    //       "R"
-    //     );
-    //     set({
-    //       nodes: [...get().nodes, newNode, resNode],
-    //       edges: newEdgesRes.edges,
-    //       edgeCounter: newEdgesRes.edgeCounter,
-    //     });
-    //     break;
-    //   }
-    //   case "text-single": {
-    //     const newNode: TextSingleNode = {
-    //       id: nodeId,
-    //       type: "text-single",
-    //       data: { value: "", tag: "text" },
-    //       position,
-    //     };
-    //     set({
-    //       nodes: [...get().nodes, newNode],
-    //     });
-    //     break;
-    //   }
-    //   case "constant": {
-    //     if (!data || !data.constId) break;
-    //     const newNode: ConstantNode = {
-    //       id: nodeId,
-    //       position,
-    //       type: "constant",
-    //       data: {
-    //         constId: data.constId,
-    //       },
-    //     };
-    //     id += 1;
-    //     set({ idCounter: id });
-    //     const resNode: ResultNode = {
-    //       id: id.toString(),
-    //       position,
-    //       type: "result",
-    //       data: {
-    //         isShown: false,
-    //         sourceId: nodeId,
-    //         valueId: data.constId,
-    //         tag: "result",
-    //         comment: "",
-    //         isConst: true,
-    //       },
-    //     };
-    //     set({ nodes: [...get().nodes, newNode, resNode] });
-    //     break;
-    //   }
-    //   case "I-matrix": {
-    //     const newNode: IdentityMtxNode = {
-    //       id: nodeId,
-    //       position,
-    //       type: "i-mtx",
-    //       data: {
-    //         showResult: false,
-    //         inputs: {
-    //           n: {
-    //             sourceId: null,
-    //             allowedTypes: ["number"],
-    //             type: "number",
-    //           },
-    //         },
-    //         outputs: {
-    //           M: { possibleValues: ["matrix"] },
-    //         },
-    //       },
-    //     };
-    //     const valueId = makeValueId(nodeId, "M");
-    //     newValues[valueId] = null;
-    //     id += 1;
-    //     set({ idCounter: id });
-    //     const resNode: ResultNode = {
-    //       id: id.toString(),
-    //       type: "result",
-    //       position: { x: position.x + 60, y: position.y - 60 },
-    //       data: {
-    //         tag: "result",
-    //         sourceId: nodeId,
-    //         valueId,
-    //         isShown: false,
-    //       },
-    //     };
-    //     const newEdgesRes = connectNodes(
-    //       nodeId,
-    //       id.toString(),
-    //       get().edges,
-    //       get().edgeCounter,
-    //       "R"
-    //     );
-    //     set({
-    //       nodes: [...get().nodes, newNode, resNode],
-    //       edges: newEdgesRes.edges,
-    //       edgeCounter: newEdgesRes.edgeCounter,
-    //     });
-    //     break;
-    //   }
-    //   case "vec": {
-    //     const newNode: VectorNode = {
-    //       id: nodeId,
-    //       position,
-    //       type: "vec",
-    //       data: {
-    //         isConstructor: true,
-    //         inputTemplate: (n) => `v${n}`,
-    //         showResult: false,
-    //         numberOfEntries: 3,
-    //         allowedInputTypes: ["number"],
-    //         inputs: {
-    //           v1: { ...initialInput },
-    //           v2: { ...initialInput },
-    //           v3: { ...initialInput },
-    //         },
-    //         outputs: {
-    //           V: { possibleValues: ["vector"] },
-    //         },
-    //       },
-    //     };
-    //     const valueId = makeValueId(nodeId, "V");
-    //     newValues[valueId] = null;
-    //     id += 1;
-    //     set({ idCounter: id });
-    //     const resNode: ResultNode = {
-    //       id: id.toString(),
-    //       type: "result",
-    //       position: { x: position.x + 60, y: position.y - 60 },
-    //       data: {
-    //         tag: "result",
-    //         sourceId: nodeId,
-    //         isShown: false,
-    //         valueId,
-    //       },
-    //     };
-    //     const newEdgesRes = connectNodes(
-    //       nodeId,
-    //       id.toString(),
-    //       get().edges,
-    //       get().edgeCounter,
-    //       "R"
-    //     );
-    //     set({
-    //       nodes: [...get().nodes, newNode, resNode],
-    //       edges: newEdgesRes.edges,
-    //       edgeCounter: newEdgesRes.edgeCounter,
-    //     });
-    //     break;
-    //   }
-    //   case "mtx-rows": {
-    //     const newNode: MtxFromRowsNode = {
-    //       id: nodeId,
-    //       position,
-    //       type: "mtx-rows",
-    //       data: {
-    //         showResult: false,
-    //         isConstructor: true,
-    //         numberOfEntries: 3,
-    //         allowedInputTypes: ["vector"],
-    //         outputs: {
-    //           M: { possibleValues: ["matrix"] },
-    //         },
-    //         inputs: {
-    //           v1: {
-    //             sourceId: null,
-    //             allowedTypes: ["vector"],
-    //             type: "vector",
-    //           },
-    //           v2: {
-    //             sourceId: null,
-    //             allowedTypes: ["vector"],
-    //             type: "vector",
-    //           },
-    //           v3: {
-    //             sourceId: null,
-    //             allowedTypes: ["vector"],
-    //             type: "vector",
-    //           },
-    //         },
-    //         inputTemplate: (n) => `v${n}`,
-    //       },
-    //     };
-    //     const valueId = makeValueId(nodeId, "M");
-    //     newValues[valueId] = null;
-    //     id += 1;
-    //     set({ idCounter: id });
-    //     const resNode: ResultNode = {
-    //       id: id.toString(),
-    //       type: "result",
-    //       position: { x: position.x + 60, y: position.y - 60 },
-    //       data: {
-    //         tag: "result",
-    //         sourceId: nodeId,
-    //         isShown: false,
-    //         valueId,
-    //       },
-    //     };
-    //     const newEdgesRes = connectNodes(
-    //       nodeId,
-    //       id.toString(),
-    //       get().edges,
-    //       get().edgeCounter,
-    //       "R"
-    //     );
-    //     set({
-    //       nodes: [...get().nodes, newNode, resNode],
-    //       edges: newEdgesRes.edges,
-    //       edgeCounter: newEdgesRes.edgeCounter,
-    //     });
-    //     break;
-    //   }
-    //   case "cross-prod":
-    //   case "norm":
-    //   case "dot-prod":
-    //   case "add-mtx":
-    //   case "sum-all":
-    //   case "scalar-mult": {
-    //     const newNode = nodeMatrixFnConstructor(nodeType, position, nodeId);
-    //     if (newNode) {
-    //       id += 1;
-    //       set({ idCounter: id });
-    //       // #TODO: Fix valueId
-    //       Object.keys(newNode.data.outputs).forEach((outputKey) => {
-    //         newValues[nodeId + "." + outputKey] = null;
-    //       });
-    //       const resNode: ResultNode = {
-    //         id: id.toString(),
-    //         type: "result",
-    //         position: { x: position.x + 60, y: position.y - 60 },
-    //         data: {
-    //           tag: "result",
-    //           sourceId: nodeId,
-    //           valueId: "",
-    //           isShown: false,
-    //         },
-    //       };
-    //       const newEdgesRes = connectNodes(
-    //         nodeId,
-    //         id.toString(),
-    //         get().edges,
-    //         get().edgeCounter,
-    //         "R"
-    //       );
-    //       set({
-    //         nodes: [...get().nodes, newNode, resNode],
-    //         edges: newEdgesRes.edges,
-    //         edgeCounter: newEdgesRes.edgeCounter,
-    //       });
-    //     }
-    //     break;
-    //   }
-    //   default: {
-    //     const newNode = nodeFunctionContructor(
-    //       nodeType as NumNodeType,
-    //       position,
-    //       nodeId
-    //     );
-    //     if (newNode) {
-    //       set({ nodes: [...get().nodes, newNode] });
-    //       Object.keys(newNode.data.outputs).forEach((outputKey) => {
-    //         newValues[nodeId + "." + outputKey] = null;
-    //       });
-    //       id += 1;
-    //       set({ idCounter: id });
-    //       const resultNode = makeResultNode(newNode, id.toString());
-    //       if (resultNode) {
-    //         const newEdgesRes = connectNodes(
-    //           nodeId,
-    //           resultNode.id,
-    //           get().edges,
-    //           get().edgeCounter,
-    //           "R"
-    //         );
-    //         set({
-    //           nodes: [...get().nodes, resultNode],
-    //           edges: newEdgesRes.edges,
-    //           edgeCounter: newEdgesRes.edgeCounter,
-    //         });
-    //       }
-    //     }
-    //   }
-    // }
-    // // sets null values for any created node
-    // set({ values: newValues });
   },
   doAction: (action) => {
     switch (action) {
@@ -467,6 +112,49 @@ const useContent = create<ContentStore>()((set, get) => ({
         // passing constants to LS for Constants window
         localStorage.setItem("app-const", JSON.stringify(get().constants));
         invoke("open_constants_window");
+        break;
+      }
+      case "hide-res": {
+        const { newEdges, newNodes } = resultNodes.hideAllResults(
+          get().nodes,
+          get().edges
+        );
+        set({ nodes: newNodes, edges: newEdges });
+        break;
+      }
+      case "show-res": {
+        const { newResNodes, newEdges } = get().nodes.reduce(
+          (acc, node) => {
+            const resNode = makeResultNode(node);
+            if (resNode) {
+              acc.newResNodes.push(resNode);
+              const edgeId = get().edgeCounter + 1;
+              const { newEdge } = connectNodes({
+                sourceId: node.id,
+                targetId: resNode.id,
+                edgeId: edgeId.toString(),
+                edges: [],
+                result: true,
+              });
+              if (newEdge) {
+                set({ edgeCounter: edgeId });
+
+                acc.newEdges.push(newEdge);
+              }
+            }
+            return acc;
+          },
+          { newEdges: [], newResNodes: [] } as {
+            newResNodes: AppNode[];
+            newEdges: AppEdge[];
+          }
+        );
+
+        set({
+          nodes: [...get().nodes, ...newResNodes],
+          edges: [...get().edges, ...newEdges],
+        });
+
         break;
       }
       default:
@@ -535,35 +223,33 @@ const useContent = create<ContentStore>()((set, get) => ({
         get().constValues,
         get().anglesFormat
       );
-      set({ values: calcRes.values });
+      set({ values: newValues.values });
     }
 
     set({ nodes });
   },
-  showResultFor: (nodeId) => {
+  showResultFor: () => {
     // const id = get().idCounter + 1;
     // set({ idCounter: id });
-    const { newNode, nodes, idCounter } = resultNodes.showResultFor(
-      nodeId,
-      get().nodes,
-      get().idCounter
-    );
-
-    if (newNode && idCounter && nodes.length > get().nodes.length) {
-      // new Node was created for Result
-      set({ idCounter: idCounter, nodes });
-
-      const { edges, edgeCounter } = connectNodes(
-        nodeId,
-        newNode.id,
-        get().edges,
-        get().edgeCounter,
-        "R"
-      );
-      set({ edges, edgeCounter, activeNodeId: null });
-    } else {
-      set({ nodes });
-    }
+    // const { newNode, nodes, idCounter } = resultNodes.showResultFor(
+    //   nodeId,
+    //   get().nodes,
+    //   get().idCounter
+    // );
+    // if (newNode && idCounter && nodes.length > get().nodes.length) {
+    //   // new Node was created for Result
+    //   set({ idCounter: idCounter, nodes });
+    //   const { edges, edgeCounter } = connectNodes(
+    //     nodeId,
+    //     newNode.id,
+    //     get().edges,
+    //     get().edgeCounter,
+    //     "R"
+    //   );
+    //   set({ edges, edgeCounter, activeNodeId: null });
+    // } else {
+    //   set({ nodes });
+    // }
   },
   hideResultFor: (nodeId) => {
     const { newEdges, newNodes } = resultNodes.hideResultFor(
@@ -574,15 +260,47 @@ const useContent = create<ContentStore>()((set, get) => ({
     set({ nodes: newNodes, edges: newEdges });
   },
   toggleResultFor: (nodeId) => {
-    const { newEdges, newNodes, idCounter, edgeCounter } =
-      resultNodes.toggleResultFor(
-        nodeId,
-        get().nodes,
-        get().edges,
-        get().edgeCounter,
-        get().idCounter
-      );
-    set({ nodes: newNodes, edges: newEdges, idCounter, edgeCounter });
+    const resNodeId = "r" + nodeId;
+    const targetResNode = get().nodes.find((node) => node.id === resNodeId);
+
+    if (!targetResNode) {
+      // targetResNode is not shown => create new one
+      const sourceNode = get().nodes.find((node) => node.id === nodeId);
+      if (!sourceNode) return;
+
+      const resNode = makeResultNode(sourceNode);
+      if (!resNode) return;
+
+      const edgeId = get().edgeCounter + 1;
+      const { newEdge } = connectNodes({
+        sourceId: nodeId,
+        targetId: resNode.id,
+        edges: get().edges,
+        edgeId: edgeId.toString(),
+      });
+      if (newEdge) {
+        set({
+          nodes: [...get().nodes, resNode],
+          edges: [...get().edges, newEdge],
+          edgeCounter: edgeId,
+        });
+      }
+    } else {
+      // deleting shown ResultNode and connecting edge
+      const newNodes = get().nodes.filter((node) => node.id !== resNodeId);
+      const newEdges = get().edges.filter((edge) => edge.target !== resNodeId);
+
+      set({ nodes: newNodes, edges: newEdges });
+    }
+    // const { newEdges, newNodes, idCounter, edgeCounter } =
+    //   resultNodes.toggleResultFor(
+    //     nodeId,
+    //     get().nodes,
+    //     get().edges,
+    //     get().edgeCounter,
+    //     get().idCounter
+    //   );
+    // set({ nodes: newNodes, edges: newEdges, idCounter, edgeCounter });
   },
   connectNodes: async (connection) => {
     const { source, sourceHandle, target, targetHandle } = connection;
@@ -621,10 +339,10 @@ const useContent = create<ContentStore>()((set, get) => ({
     }
 
     const id = get().edgeCounter + 1;
-    const newEdge: Edge = {
-      id: id.toString(),
-      ...connection,
-    };
+    // const newEdge: Edge = {
+    //   id: id.toString(),
+    //   ...connection,
+    // };
 
     const targetInput = nodeB.data.inputs[targetHandleObj.outputLabel];
 
@@ -639,19 +357,33 @@ const useContent = create<ContentStore>()((set, get) => ({
     }
 
     // checking if input is connected to other node - if true then replases the edge
-    const existingEdge = get().edges.find(
-      (edge) => edge.target === target && edge.targetHandle === targetHandle
-    );
-    const newEdges = !existingEdge
-      ? addEdge(newEdge, get().edges)
-      : reconnectEdge(existingEdge, connection, get().edges);
+    const newEdges = connectNodes({
+      sourceId: nodeA.id,
+      targetId: nodeB.id,
+      edges: get().edges,
+      edgeId: id.toString(),
+      sourceHandle,
+      targetHandle,
+    }).edges;
+    // const existingEdge = get().edges.find(
+    //   (edge) => edge.target === target && edge.targetHandle === targetHandle
+    // );
+    // const newEdges = !existingEdge
+    //   ? connectNodes({
+    //       sourceId: nodeA.id,
+    //       targetId: nodeB.id,
+    //       edges: get().edges,
+    //       edgeId: id.toString(),
+    //       sourceHandle: sourceHandleObj.outputLabel,
+    //       targetHandle: targetHandleObj.outputLabel,
+    //     }).edges
+    //   : reconnectEdge(existingEdge, connection, get().edges);
 
     const isSourceConst = nodeA.type === "constant";
-    console.log({ targetHandleObj, sourceHandleObj });
+
     targetInput.valueId = isSourceConst
       ? sourceHandleObj.outputLabel
       : sourceHandleObj.label;
-    console.log({ targetInput, newEdges });
 
     const newNodes = replaceNode(nodeB, get().nodes);
 
@@ -690,44 +422,47 @@ const useContent = create<ContentStore>()((set, get) => ({
     if (!targetNode || targetNode.data.purpose !== NodePurpose.CONSTRUCT)
       return;
 
-    const { allowedVariableTypes, numOfInputVars } = targetNode.data;
+    const { allowedVariableTypes, numOfInputVars, inputs, inputLabelTemplate } =
+      targetNode.data;
     // checking if new number is not the same
     if (newNum === numOfInputVars) return;
 
-    const { inputs } = targetNode.data;
+    // const { inputs } = targetNode.data;
 
-    if (newNum > numberOfEntries) {
+    if (newNum > numOfInputVars) {
       // adding new entries
-      for (let i = numberOfEntries + 1; i <= newNum; i++) {
-        const key = inputTemplate(i);
+      for (let i = numOfInputVars + 1; i <= newNum; i++) {
+        const key = inputLabelTemplate(i);
         targetNode.data.inputs[key] = {
           ...initialInput,
-          allowedTypes: [...allowedInputTypes],
+          allowedTypes: [...allowedVariableTypes],
         };
       }
     } else {
       // removing last entries and connected to them edges
       let newEdges = get().edges;
 
-      for (let i = numberOfEntries; i > newNum; i--) {
-        const key = inputTemplate(i);
-        const sourceId = targetNode.data.inputs[key].sourceId;
-        if (sourceId) {
-          const types = targetNode.data.inputs[key].allowedTypes;
-          const handleId = generateHandleLabel(nodeId, key, types);
-
-          const edges = newEdges.filter(({ target, targetHandle }) => {
-            return !(targetHandle === handleId && target === targetNode.id);
-          });
-          newEdges = edges;
+      for (let i = numOfInputVars; i > newNum; i--) {
+        const key = inputLabelTemplate(i);
+        const inputToRemove = targetNode.data.inputs[key];
+        if (inputToRemove) {
+          const { valueId, allowedTypes } = inputToRemove;
+          if (valueId) {
+            const handleId = generateHandleLabel(nodeId, key, allowedTypes);
+            const edges = newEdges.filter(({ target, targetHandle }) => {
+              return !(targetHandle === handleId && target === targetNode.id);
+            });
+            newEdges = edges;
+          }
         }
+
         delete inputs[key];
       }
 
       set({ edges: newEdges });
     }
 
-    targetNode.data.numberOfEntries = newNum;
+    targetNode.data.numOfInputVars = newNum;
     const newNodes = replaceNode(targetNode, get().nodes);
     // recalculate node and chainFrom it
     const chainFrom = getChainIdsFrom(targetNode, get().edges);
@@ -737,7 +472,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       get().values,
       get().constValues,
       get().anglesFormat
-    ).then((newVals) => set({ values: newVals }));
+    ).then((newVals) => set({ values: newVals.values }));
 
     set({
       nodes: get().nodes.map((node) => {
@@ -764,10 +499,9 @@ const useContent = create<ContentStore>()((set, get) => ({
   },
 }));
 
-const initialInput: Input = {
+const initialInput: NodeInput = {
   allowedTypes: ["number"],
-  sourceId: null,
-  type: "number",
+  valueId: null,
 };
 
 export default useContent;

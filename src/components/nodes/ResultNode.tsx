@@ -24,9 +24,9 @@ const ResultNode = ({
   // }
   return (
     <>
-      <Input cssPosition="50%" label="R" id="R" />
       <NodeWrapper id={id} comment={comment ?? null}>
         <div className="p-2">
+          <Input cssPosition="50%" label="R" id="R" />
           <Latex>{resultLateX(value)}</Latex>
         </div>
       </NodeWrapper>

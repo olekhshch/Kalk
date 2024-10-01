@@ -1,13 +1,6 @@
 // created result node for specified node (without an edge)
 
-import {
-  AppNode,
-  NodePurpose,
-  NodeTag,
-  NodeType,
-  NumberFunctionNode,
-  ResultNode,
-} from "../../types/nodes";
+import { AppNode, NodePurpose, NodeType, ResultNode } from "../../types/nodes";
 import makeValueId from "../makeValueId";
 
 const nonresultNodeTypes: NodeType[] = [
@@ -16,7 +9,7 @@ const nonresultNodeTypes: NodeType[] = [
   "mtx-deconstr",
 ];
 
-const makeResultNode = (node: AppNode, resultNodeId: string) => {
+const makeResultNode = (node: AppNode) => {
   // checking if node should have a result node
   if (nonresultNodeTypes.includes(node.type!)) return null;
   if (!node.data.action) return null;
@@ -28,10 +21,19 @@ const makeResultNode = (node: AppNode, resultNodeId: string) => {
   // #TODO: Different valueId if Constant Node
   const valueId = makeValueId(node.id, outputKeys[0]);
   if (!valueId) return null; // result node should always have valueId deffined
-  const position = { x: node.position.x + 50, y: node.position.y - 40 };
+
+  let dX = 50;
+  let dY = -40;
+  const { measured } = node;
+  console.log({ measured });
+  if (measured) {
+    dX += measured.width ?? 0;
+    // dY += (measured.width ?? 0);
+  }
+  const position = { x: node.position.x + dX, y: node.position.y + dY };
 
   const newNode: ResultNode = {
-    id: resultNodeId,
+    id: "r" + node.id,
     position,
     type: "result",
     data: {

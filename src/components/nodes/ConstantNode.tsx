@@ -1,7 +1,6 @@
 // Node which refer to one of the constants in the project
 
 import { NodeProps } from "@xyflow/react";
-import React from "react";
 import { ConstantNode as ConstantNodeType } from "../../types/nodes";
 import NodeWrapper from "./NodeWrapper";
 import useContent from "../../state/useContent";

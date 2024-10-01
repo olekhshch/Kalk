@@ -323,6 +323,14 @@ const actions: Actions = {
         data: "show-res",
       },
     },
+    {
+      title: "Hide all results",
+      icon: null,
+      command: {
+        type: "action",
+        data: "hide-res",
+      },
+    },
   ],
   Project: [
     {

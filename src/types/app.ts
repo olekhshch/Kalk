@@ -1,9 +1,8 @@
+import { AppEdge } from "./edges";
 import {
   AppNode,
-  AppNodeBase,
   Matrix,
   NodeTag,
-  NodeType,
   OutputValue,
   ValueType,
   Vector,
@@ -22,7 +21,7 @@ export type Action = {
   category?: "math" | "matrices";
   command: {
     type: "create" | "action";
-    data?: NodeTag;
+    data?: NodeTag | ActionType;
   };
 };
 
@@ -30,6 +29,7 @@ export type ActionType =
   | "select-all"
   | "clear-all"
   | "show-res"
+  | "hide-res"
   | "project-overview"
   | "constant"; // opens constant creation window
 
@@ -42,7 +42,7 @@ export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
 
 export interface NodesStore {
   nodes: AppNode[];
-  edges: Edge[];
+  edges: AppEdge[];
   idCounter: number;
   edgeCounter: number;
   highlightedNodesId: string[]; // list of highlighted (not neccesaraly selected) nodes. Can be multiple
@@ -111,9 +111,9 @@ export type NodeActionOutput = {
 };
 
 export type EdgeActionOutput = {
-  newEdge: Edge | null;
-  edges: Edge[];
-  edgeCounter: number;
+  newEdge: AppEdge | null;
+  edges: AppEdge[];
+  // edgeCounter: number;
 };
 
 export type RustCalculations = {

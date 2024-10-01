@@ -2,6 +2,8 @@ import { AppNode, ResultNode, MathNode, NodeType } from "../../types/nodes";
 import { NodeActionOutput } from "../../types/app";
 import { Edge } from "@xyflow/react";
 import connectNodes from "../connectNodes";
+import { AppEdge } from "../../types/edges";
+import makeResultNode from "./makeResultNode";
 
 type f = (
   sourceNodeId: string,
@@ -61,59 +63,99 @@ const showResultFor: f = (sourceNodeId, nodes, idCounter) => {
 const hideResultFor = (
   sourceNodeId: string,
   nodes: AppNode[],
-  edges: Edge[]
+  edges: AppEdge[]
 ) => {
-  let newEdges = edges.filter((edge) => edge.source !== sourceNodeId);
-  console.log({ newEdges, sourceNodeId });
-  const newNodes = nodes.map((node) => {
-    if (node.type === "result" && node.data.sourceId === sourceNodeId) {
-      return { ...node, data: { ...node.data, isShown: false } };
-    }
-    return node;
-  });
+  // let newEdges = edges.filter((edge) => edge.source !== sourceNodeId);
+  // console.log({ newEdges, sourceNodeId });
+  // const newNodes = nodes.map((node) => {
+  //   if (node.type === "result" && node.data.sourceId === sourceNodeId) {
+  //     return { ...node, data: { ...node.data, isShown: false } };
+  //   }
+  //   return node;
+  // });
+  const resNodeId = "r" + sourceNodeId;
+  const newEdges = edges.filter((edge) => edge.target !== resNodeId);
+
+  const newNodes = nodes.filter((node) => node.id !== resNodeId);
 
   return { newNodes, newEdges };
 };
 
-const toggleResultFor = (
-  sourceId: string,
-  nodes: AppNode[],
-  edges: Edge[],
-  edgeCounter: number,
-  idCounter: number
-) => {
-  // #TODO: Rewrite better?
-  let newEdges = edges;
-  let idCnt = idCounter;
-  let edgeCnt = edgeCounter;
-  const newNodes = nodes.map((node) => {
-    if (node.type === "result" && node.data.sourceId === sourceId) {
-      if (node.data.isShown) {
-        newEdges = edges.filter((edge) => edge.target !== node.id);
-        return {
-          ...node,
-          data: { ...node.data, isShown: false },
-        } as ResultNode;
-      }
-      const { newNode, idCounter } = showResultFor(sourceId, nodes, idCnt);
-      const es = connectNodes(sourceId, node.id, edges, edgeCounter);
-      newEdges = es.edges;
-      edgeCounter += 1;
+const toggleResultFor = (params: {
+  sourceNode: AppNode;
+  nodes: AppNode[];
+  edges: Edge[];
+  edgeCounter: number;
+}) => {
+  // // #TODO: Rewrite better?
+  const { nodes, edges, sourceNode, edgeCounter } = params;
+  let wasShown = false;
 
-      return newNode ?? node;
+  const resNodeId = "r" + sourceNode.id;
+
+  const newNodes = nodes.filter((node) => {
+    if (node.id === resNodeId) {
+      wasShown = true;
     }
-    return node;
+    return node.id !== resNodeId;
   });
+
+  if (wasShown) {
+    // if resNode was shown - delete edge
+    return { newNodes, newEdges: edges };
+  }
+
+  if (!wasShown) {
+    // if wasn't shown - new node and connection should be created
+    const resNode = makeResultNode(sourceNode);
+
+    if (resNode) {
+    }
+  }
+  // let newEdges = edges;
+  // let idCnt = idCounter;
+  // let edgeCnt = edgeCounter;
+  // const newNodes = nodes.map((node) => {
+  //   if (node.type === "result" && node.data.sourceId === sourceId) {
+  //     if (node.data.isShown) {
+  //       newEdges = edges.filter((edge) => edge.target !== node.id);
+  //       return {
+  //         ...node,
+  //         data: { ...node.data, isShown: false },
+  //       } as ResultNode;
+  //     }
+  //     const { newNode, idCounter } = showResultFor(sourceId, nodes, idCnt);
+  //     const es = connectNodes(sourceId, node.id, edges, edgeCounter);
+  //     newEdges = es.edges;
+  //     edgeCounter += 1;
+
+  //     return newNode ?? node;
+  //   }
+  //   return node;
+  // });
 
   return { newNodes, newEdges, edgeCounter, idCounter };
 };
 
-const showAllResults = (nodes: AppNode[], idCounter: number) => {
-  const createdNodes: ResultNode[] = [];
-  const newNodes = nodes.map((node) => {
-    if (["num-fun", "mtx-fn"].includes(node.type!)) {
-    }
-  });
+// const showAllResults = (nodes: AppNode[], idCounter: number) => {
+//   const createdNodes: ResultNode[] = [];
+//   const newNodes = nodes.map((node) => {
+//     if (["num-fun", "mtx-fn"].includes(node.type!)) {
+//     }
+//   });
+// };
+
+const hideAllResults = (nodes: AppNode[], edges: AppEdge[]) => {
+  const newEdges = edges.filter((edge) => !edge.target.includes("r"));
+
+  const newNodes = nodes.filter((node) => !node.id.includes("r"));
+
+  return { newNodes, newEdges };
 };
 
-export default { showResultFor, hideResultFor, toggleResultFor };
+export default {
+  showResultFor,
+  hideResultFor,
+  toggleResultFor,
+  hideAllResults,
+};

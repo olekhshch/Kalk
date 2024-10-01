@@ -14,6 +14,7 @@ import InputPort from "../ports/Input";
 import useInputChange from "../../hooks/useInputChange";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
+import ResultOutput from "../ports/ResultOutput";
 
 const ConstructorNode = ({
   id,
@@ -48,14 +49,15 @@ const ConstructorNode = ({
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     const newNum = parseInt(varNum);
-    if (Number.isInteger(newNum)) {
-      // setNumOfEntriesFor(id, newNum);
+    if (Number.isInteger(newNum) && newNum > 0) {
+      setNumOfEntriesFor(id, newNum);
     }
   };
 
   return (
     <NodeWrapper id={id} comment={comment ?? null}>
       <div className="p-1 px-2 pl-6 flex flex-col gap-1">
+        <ResultOutput nodeId={id} />
         <form className="text-sm" onSubmit={submitHandler}>
           <label>
             <LateXformula value={"n="} />
