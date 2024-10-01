@@ -3,6 +3,7 @@
 import { AngleFormat } from "../../types/app";
 import { InputValue, Matrix, OutputValue, Vector } from "../../types/nodes";
 import convertToRAD from "../convertToRAD";
+import getValueType from "../getValueType";
 import validate from "../validate";
 
 type f = (a: InputValue, angleFormat: AngleFormat) => Promise<OutputValue>;
@@ -153,25 +154,29 @@ const ctgOfVec = async (vec: Vector, angleFormat: AngleFormat) => {
 };
 
 const asin: f = async (a, angleFormat) => {
-  if (!validate(a, "defined").valid) return null;
+  const aType = getValueType(a);
 
   // number
-  if (!Array.isArray(a)) {
+  if (aType === "number") {
     const res = await asinOfNum(a as number, angleFormat);
     return res;
   }
 
   // Vector
-  if (!Array.isArray(a[0])) {
+  if (aType === "vector") {
     const vec: Vector = await asinOfVec(a as Vector, angleFormat);
     return vec;
   }
 
   // Matrix
-  const mtx: Matrix = await Promise.all(
-    (a as Matrix).map(async (vec) => asinOfVec(vec, angleFormat))
-  );
-  return mtx;
+  if (aType === "matrix") {
+    const mtx: Matrix = await Promise.all(
+      (a as Matrix).map(async (vec) => asinOfVec(vec, angleFormat))
+    );
+    return mtx;
+  }
+
+  return null;
 };
 
 const asinOfNum = async (a: number, angleFormat: AngleFormat) => {
@@ -188,37 +193,79 @@ const asinOfVec = async (vec: Vector, angleFormat: AngleFormat) => {
 
 // #TODO: asin, acos when a > 1 || a < 1
 const acos: f = async (a, angleFormat) => {
-  if (!validate(a, "defined").valid) return null;
+  const aType = getValueType(a);
+
+  if (!aType) return null;
 
   // number
-  if (!Array.isArray(a)) {
+  if (aType === "number") {
     const res = await acosOfNum(a as number, angleFormat);
     return res;
   }
 
   // Vector
-  if (!Array.isArray(a[0])) {
+  if (aType === "vector") {
     const vec: Vector = await acosOfVec(a as Vector, angleFormat);
     return vec;
   }
 
   // Matrix
-  const mtx: Matrix = await Promise.all(
-    (a as Matrix).map(async (vec) => acosOfVec(vec, angleFormat))
-  );
-  return mtx;
+  if (aType === "matrix") {
+    const mtx: Matrix = await Promise.all(
+      (a as Matrix).map(async (vec) => acosOfVec(vec, angleFormat))
+    );
+    return mtx;
+  }
+
+  return null;
 };
 
 const acosOfNum = async (a: number, angleFormat: AngleFormat) => {
   const coeff = angleFormat === AngleFormat.DEG ? 180 / Math.PI : 1;
-  return Math.asin(a) * coeff;
+  return Math.acos(a) * coeff;
 };
 
 const acosOfVec = async (vec: Vector, angleFormat: AngleFormat) => {
   const res = await Promise.all(
-    vec.map(async (num) => asinOfNum(num, angleFormat))
+    vec.map(async (num) => acosOfNum(num, angleFormat))
   );
   return res;
 };
 
-export default { sin, cos, tg, ctg, asin, acos };
+const atg: f = async (a, angleFormat) => {
+  const aType = getValueType(a);
+
+  switch (aType) {
+    case "number": {
+      const res = await atgOfNum(a as number, angleFormat);
+      return res;
+    }
+    case "vector": {
+      const res = await atgOfVec(a as Vector, angleFormat);
+      return res;
+    }
+    case "matrix": {
+      const mtx: Matrix = await Promise.all(
+        (a as Matrix).map(async (vec) => atgOfVec(vec, angleFormat))
+      );
+      return mtx;
+    }
+    default: {
+      return null;
+    }
+  }
+};
+
+const atgOfNum = async (a: number, angleFormat: AngleFormat) => {
+  const coeff = angleFormat === AngleFormat.DEG ? 180 / Math.PI : 1;
+  return Math.atan(a) * coeff;
+};
+
+const atgOfVec = async (vec: Vector, angleFormat: AngleFormat) => {
+  const res = await Promise.all(
+    vec.map(async (num) => atgOfNum(num, angleFormat))
+  );
+  return res;
+};
+
+export default { sin, cos, tg, ctg, asin, acos, atg };

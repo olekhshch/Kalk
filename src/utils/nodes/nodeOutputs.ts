@@ -84,6 +84,15 @@ const nodeOutputs: obj = {
     M: { possibleValues: ["matrix"] },
   },
   "entries-vec": {},
+  asin: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  acos: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
+  atg: {
+    N: { possibleValues: ["number", "vector", "matrix"] },
+  },
 };
 
 export default nodeOutputs;

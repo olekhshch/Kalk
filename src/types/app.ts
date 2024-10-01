@@ -25,6 +25,20 @@ export type Action = {
   };
 };
 
+// specifies how action should appear on the Toolbar
+export type ActionToolbar = {
+  title: string;
+  large?: boolean;
+  iconType: "url" | "latex";
+  icon: string;
+  hideTitle?: boolean;
+  hideIcon?: boolean;
+  command: {
+    type: "create" | "action";
+    data?: NodeTag | ActionType;
+  };
+};
+
 export type ActionType =
   | "select-all"
   | "clear-all"

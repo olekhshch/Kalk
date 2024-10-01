@@ -1,6 +1,5 @@
 import {
   AppNode,
-  AppNodeBase,
   ConstantNode,
   ConstructorNode,
   DeconstructAction,
@@ -187,24 +186,6 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
       return null;
     }
   }
-
-  // const newNode: AppNode = {
-  //   id: nodeId,
-  //   position,
-  //   type,
-  //   data: {
-  //     inputs,
-  //     outputs,
-  //     value,
-  //     tag,
-  //     action,
-  //     purpose,
-  //     numOfInputVars,
-  //     defaultInputs,
-  //     inputLabelTemplate,
-  //     allowedVariableTypes,
-  //   },
-  // };
 };
 
 const numFnTags: NumNodeTag[] = [
@@ -222,6 +203,9 @@ const numFnTags: NumNodeTag[] = [
   "power",
   "floor",
   "ceil",
+  "asin",
+  "acos",
+  "atg",
 ];
 
 const mtxNodeTags: MtxVecNodeTag[] = [
@@ -296,6 +280,12 @@ const getNodeValue = (tag: NodeTag) => {
       return "\\lVert \\vec{v} \\rVert";
     case "sum-all":
       return "\\sum{m_i}";
+    case "asin":
+      return "\\arcsin(a)";
+    case "acos":
+      return "\\arccos(a)";
+    case "atg":
+      return "\\arctan(a)";
     default:
       return "";
   }

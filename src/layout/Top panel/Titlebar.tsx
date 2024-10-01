@@ -21,19 +21,12 @@ const Header = () => {
     window.minimize();
   };
 
-  const openWindow = () => {
-    invoke("open_project_overview")
-      .then(() => console.log("NEW WINDOW TS"))
-      .catch((err) => console.log(err));
-  };
-
   return (
     <div className="px-2 flex justify-between">
       <div className="flex gap-3">
         <button onClick={() => console.log({ nodes })}>NS</button>
         <button onClick={() => console.log({ edges })}>ES</button>
         <button onClick={() => console.log({ values })}>VAL</button>
-        <button onClick={openWindow}>WINDOW</button>
       </div>
       <div
         className="text-base grow text-center"

@@ -102,6 +102,15 @@ const nodeInputs: obj = {
       valueId: null,
     },
   },
+  asin: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+  },
+  acos: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+  },
+  atg: {
+    a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
+  },
 };
 
 export default nodeInputs;

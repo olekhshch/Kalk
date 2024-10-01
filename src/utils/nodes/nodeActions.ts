@@ -54,6 +54,9 @@ const nodeActions: obj = {
   "sum-all": ({ M }) => Matrices.sumAllEntries(M),
   "mtx-cols": (params) => Matrices.fromColumns(params),
   "entries-vec": (params) => Vectors.deconstructVec(params),
+  asin: ({ a }, value, angleFormat) => trigonometry.asin(a, angleFormat!),
+  acos: ({ a }, value, angleFormat) => trigonometry.acos(a, angleFormat!),
+  atg: ({ a }, value, angleFormat) => trigonometry.atg(a, angleFormat!),
 };
 
 export default nodeActions;

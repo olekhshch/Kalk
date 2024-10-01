@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Header from "./Titlebar";
 import Tabs from "./Tabs";
-import ActionsPanel from "./ActionsPanel";
+import Toolbar from "./Toolbar";
 
 const TopPanel = () => {
   useEffect(() => {
@@ -10,10 +10,10 @@ const TopPanel = () => {
 
   // #TODO: Overflow handle, fix height
   return (
-    <nav className="bg-main text-white font-sys select-none">
+    <nav className="gradient-bg text-white font-sys select-none">
       <Header />
       <Tabs />
-      <ActionsPanel />
+      <Toolbar />
     </nav>
   );
 };

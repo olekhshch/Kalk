@@ -28,7 +28,7 @@
 #layout {
     display: grid;
     height: 100vh;
-    grid-template-rows: 121px 1fr 24px;
+    grid-template-rows: 128px 1fr 24px;
 }
 
 svg {
@@ -61,4 +61,36 @@ svg {
 
 .table-row:hover {
     background-color: var(--sec);
+}
+
+.gradient-bg {
+    background: linear-gradient(var(--main),70%, var(--sec));
+}
+
+@keyframes tabHovering {
+    from {
+        color: var(--white)
+    }
+
+    to {
+        color: black
+    }
+}
+.tab:hover {
+animation: tabHovering 0.2s forwards;
+}
+
+@keyframes hoveringBgToMain {
+    from {
+        background: transparent;
+        color: black
+    }
+    to {
+        background: var(--main);
+        color: var(--white)
+    }
+}
+
+.main-bg-hover:hover {
+    animation: hoveringBgToMain 0.2s forwards;
 }

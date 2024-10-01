@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { ActionType, Mode, Tab } from "../types/app";
 import { BackgroundVariant } from "@xyflow/react";
-import { NodeType } from "../types/nodes";
+import { NodeTag, NodeType } from "../types/nodes";
 
 export type modeData = {
-  type?: NodeType | ActionType;
+  type?: NodeTag | ActionType;
   id?: string;
 };
 interface AppState {

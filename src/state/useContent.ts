@@ -69,8 +69,7 @@ const useContent = create<ContentStore>()((set, get) => ({
         get().constValues,
         newFormat
       );
-      console.log({ newValues });
-      set({ values: newValues });
+      set({ values: newValues.values });
     }
   },
   onNodesChange: (changes) => {
@@ -357,10 +356,13 @@ const useContent = create<ContentStore>()((set, get) => ({
     }
 
     // checking if input is connected to other node - if true then replases the edge
+    const cleanEdges = get().edges.filter(
+      (edge) => edge.targetHandle !== targetHandle
+    );
     const newEdges = connectNodes({
       sourceId: nodeA.id,
       targetId: nodeB.id,
-      edges: get().edges,
+      edges: cleanEdges,
       edgeId: id.toString(),
       sourceHandle,
       targetHandle,

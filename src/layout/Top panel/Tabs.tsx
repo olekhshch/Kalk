@@ -5,14 +5,15 @@ import useAppState from "../../state/useAppState";
 import tabs from "../../state/tabs";
 import actions from "../../state/config/actions";
 import Button from "../../components/Button";
+import actionsToolbar from "../../state/config/actionsToolbar";
 
 const Tabs = () => {
-  const tabs = Object.keys(actions);
+  const tabs = Object.keys(actionsToolbar);
 
   return (
     <ul className="px-2 flex gap-0">
       <>
-        {["All", ...tabs].map((tab) => {
+        {[...tabs].map((tab) => {
           return <Tab key={tab as TabName} name={tab as TabName} />;
         })}
       </>
@@ -35,9 +36,9 @@ const Tab = ({ name }: props) => {
 
   return (
     <li
-      className={`px-1 m-0 h-100% rounded-${isActive ? "t" : "b"}-strd bg-${
-        isActive ? "sec" : "main"
-      }
+      className={`${!isActive && "tab"} px-1 m-0 h-100% rounded-${
+        isActive ? "t" : "b"
+      }-strd bg-${isActive ? "sec" : "transparent"}
       text-${isActive ? "black" : "white"}
       hover:text-black`}
     >

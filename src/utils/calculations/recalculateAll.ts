@@ -5,20 +5,21 @@ import { AppNode, NumberFunctionNode } from "../../types/nodes";
 import { AngleFormat, CalculatedValues } from "../../types/app";
 import getChainIdsFrom from "../getChainIdsFrom";
 import recalculateChain from "./recalculateChain";
+import { AppEdge } from "../../types/edges";
 
 type f = (
   nodes: AppNode[],
-  edges: Edge[],
+  edges: AppEdge[],
   constValues: CalculatedValues,
   angleFormat: AngleFormat
-) => Promise<CalculatedValues>;
+) => Promise<{ values: CalculatedValues; nodesToReplace: AppNode[] }>;
 
 const recalculateAll: f = async (nodes, edges, constValues, angleFormat) => {
   // looking for nodes that doesn't have any inputs to start from
   const startingNodes = nodes.filter(
     (node) =>
       !["text-single", "result", "constant"].includes(node.type!) &&
-      Object.keys((node as NumberFunctionNode).data.inputs).length === 0
+      Object.keys(node.data.inputs).length === 0
   );
 
   const chainsFrom = startingNodes.map((node) => getChainIdsFrom(node, edges));
