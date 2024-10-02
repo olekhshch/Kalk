@@ -155,6 +155,11 @@ export type NodeInputs = {
 
 export type OutputValue = number | Vector | Matrix | null;
 
+export type ActionResult = {
+  res: OutputValue;
+  errors: string[];
+};
+
 // general type for nodes with regular functions on numbers (e.g. adding, multiplying etc.)
 export type NumberFunctionNode = Node<
   {
@@ -269,7 +274,7 @@ export type NodeAction = (
   },
   value?: string,
   angleFormat?: AngleFormat
-) => OutputValue | Promise<OutputValue>;
+) => ActionResult | Promise<ActionResult>;
 
 export type DeconstructAction = (
   params: {
@@ -280,5 +285,8 @@ export type DeconstructAction = (
 ) => DeconstructActionResult | null;
 
 export type DeconstructActionResult = {
-  [k: string]: { possibleValues: ValueType[]; value: OutputValue };
+  outputs: {
+    [k: string]: { possibleValues: ValueType[]; value: OutputValue };
+  };
+  errors: string[];
 };

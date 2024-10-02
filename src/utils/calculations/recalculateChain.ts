@@ -9,7 +9,7 @@ type f = (
   chain: string[],
   nodes: AppNode[],
   initialValues: CalculatedValues,
-  constValues: CalculatedValues,
+  // constValues: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<{ values: CalculatedValues; nodesToReplace: AppNode[] }>;
 
@@ -17,7 +17,7 @@ const recalculateChain: f = async (
   chain,
   nodes,
   initialValues,
-  constValues,
+  // constValues,
   angleFormat
 ) => {
   const values = { ...initialValues };

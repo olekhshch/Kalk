@@ -55,10 +55,10 @@ const useContent = create<ContentStore>()((set, get) => ({
       valueType: "number",
     },
   ],
-  constValues: {
-    CONST_E: Math.E,
-    CONST_PI: Math.PI,
-  },
+  // constValues: {
+  //   CONST_E: Math.E,
+  //   CONST_PI: Math.PI,
+  // },
   anglesFormat: AngleFormat.RAD,
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
@@ -66,12 +66,12 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newValues = await recalculateAll(
         get().nodes,
         get().edges,
-        get().constValues,
         newFormat
       );
       set({ values: newValues.values });
     }
   },
+  errors: {},
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
@@ -219,7 +219,6 @@ const useContent = create<ContentStore>()((set, get) => ({
         chain,
         nodes,
         calcRes.values,
-        get().constValues,
         get().anglesFormat
       );
       set({ values: newValues.values });
@@ -395,7 +394,6 @@ const useContent = create<ContentStore>()((set, get) => ({
       chain,
       newNodes,
       get().values,
-      get().constValues,
       get().anglesFormat
     );
 
@@ -472,7 +470,6 @@ const useContent = create<ContentStore>()((set, get) => ({
       chainFrom,
       newNodes,
       get().values,
-      get().constValues,
       get().anglesFormat
     ).then((newVals) => set({ values: newVals.values }));
 

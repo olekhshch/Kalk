@@ -8,6 +8,7 @@ import CommentField from "./parts/CommentField";
 import CommentBtn from "./parts/CommentBtn";
 import generateHandleId from "../../utils/generateHandleId";
 import Output from "../ports/Output";
+import { NodeTheme } from "../../types/app";
 
 // General container for node's content
 type props = {
@@ -15,6 +16,7 @@ type props = {
   title?: string;
   id: string;
   outputValueTypes?: ValueType[];
+  theme?: NodeTheme;
   comment: string | null;
 };
 const NodeWrapper = ({
@@ -23,6 +25,7 @@ const NodeWrapper = ({
   id,
   outputValueTypes,
   comment,
+  theme,
 }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
@@ -73,13 +76,22 @@ const NodeWrapper = ({
   //   return { handleId, key: label, cssPosition };
   // });
 
+  const twClass = classNames(
+    "min-h-[1rem] transition border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col relative",
+    {
+      "hover:border-main": theme === "math" || !theme,
+      "border-sec": !theme || theme === "math",
+      "hover:border-matrix": theme === "mtx",
+      "border-sec-mtx": theme === "mtx",
+      "hover:border-red": theme === "red",
+      "border-red-sec": theme === "red",
+    }
+  );
+
   return (
     <>
       <div
-        className={`min-h-[1rem] border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col border-sec hover:border-main hover-brd-main relative`}
-        // style={{
-        //   borderColor: activeNodeId === id ? "var(--main)" : "var(--sec)",
-        // }}
+        className={twClass}
         onDoubleClick={doubleClickHandler}
         onClick={clickHandler}
         onContextMenu={onContextMenuHandler}
@@ -124,3 +136,28 @@ const OutputValues = ({ values }: pr) => {
 };
 
 export default NodeWrapper;
+
+const mainColor = (theme?: NodeTheme) => {
+  switch (theme) {
+    case "math":
+      return "main";
+    case "mtx":
+      return "vector";
+    case "const":
+      return "orange";
+    default: {
+      return "main";
+    }
+  }
+};
+
+const secondaryColor = (theme?: NodeTheme) => {
+  switch (theme) {
+    case "math":
+      return "sec";
+    case "mtx":
+      return "mtx-sec";
+    default:
+      return "sec";
+  }
+};

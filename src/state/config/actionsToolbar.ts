@@ -81,7 +81,7 @@ const actionsToolbar: Toolbar = {
             hideTitle: true,
             command: {
               type: "create",
-              data: "multiply",
+              data: "divide",
             },
           },
         ],

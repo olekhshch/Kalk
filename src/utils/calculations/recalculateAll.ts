@@ -10,11 +10,11 @@ import { AppEdge } from "../../types/edges";
 type f = (
   nodes: AppNode[],
   edges: AppEdge[],
-  constValues: CalculatedValues,
+  // constValues: CalculatedValues,
   angleFormat: AngleFormat
 ) => Promise<{ values: CalculatedValues; nodesToReplace: AppNode[] }>;
 
-const recalculateAll: f = async (nodes, edges, constValues, angleFormat) => {
+const recalculateAll: f = async (nodes, edges, angleFormat) => {
   // looking for nodes that doesn't have any inputs to start from
   const startingNodes = nodes.filter(
     (node) =>
@@ -32,7 +32,7 @@ const recalculateAll: f = async (nodes, edges, constValues, angleFormat) => {
     mergedChain,
     nodes,
     {},
-    constValues,
+    // constValues,
     angleFormat
   );
 

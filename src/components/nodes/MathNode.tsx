@@ -2,7 +2,11 @@
 
 import { useMemo } from "react";
 import NodeWrapper from "./NodeWrapper";
-import { AppNodeBase, NumberFunctionNode } from "../../types/nodes";
+import {
+  AppNodeBase,
+  MathNode as MathNodeType,
+  NumberFunctionNode,
+} from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
 import generateHandleLabel from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
@@ -16,8 +20,8 @@ import getValueType from "../../utils/getValueType";
 
 const MathNode = ({
   id,
-  data: { inputs, outputs, value, comment },
-}: NodeProps<AppNodeBase>) => {
+  data: { inputs, outputs, value, comment, tag },
+}: NodeProps<MathNodeType>) => {
   // calculated value of an output
   const calculatedValue = useContent(useShallow((store) => store.values[id]));
   const outputType = getValueType(calculatedValue);
@@ -58,6 +62,7 @@ const MathNode = ({
         outputType ? [outputType] : outputsEntries[0][1].possibleValues
       }
       comment={comment ?? null}
+      theme={tag === "I-matrix" ? "mtx" : "math"}
     >
       <div>
         <ResultOutput nodeId={id} />

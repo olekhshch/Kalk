@@ -1,4 +1,10 @@
-import { InputValue, Matrix, OutputValue, Vector } from "../../types/nodes";
+import {
+  ActionResult,
+  InputValue,
+  Matrix,
+  OutputValue,
+  Vector,
+} from "../../types/nodes";
 import getValueType from "../getValueType";
 import validate from "../validate";
 
@@ -62,24 +68,26 @@ const powerVecBase = async (a: Vector, b: number) => {
   return vec;
 };
 
-type g = (a: InputValue) => Promise<number | Vector | Matrix | null>;
+type g = (a: InputValue) => Promise<ActionResult>;
 
 // =================== Abs ========================
-const abs: g = async (a) => {
-  if (!a && a !== 0) return null;
 
-  if (!Array.isArray(a)) return Math.abs(a);
+const abs: g = async (a) => {
+  if (!a && a !== 0) return { res: null, errors: [] };
+
+  if (!Array.isArray(a)) return { res: Math.abs(a), errors: [] };
 
   // a is Vector
   if (!Array.isArray(a[0])) {
-    return absoluteForVector(a as Vector);
+    const res = await absoluteForVector(a as Vector);
+    return { res, errors: [] };
   }
 
   // a is Matrix
   const newMtx = await Promise.all(
     (a as Matrix).map((vec) => absoluteForVector(vec))
   );
-  return newMtx;
+  return { res: newMtx, errors: [] };
 };
 
 const absoluteForVector = async (vec: Vector) => {

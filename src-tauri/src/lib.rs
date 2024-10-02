@@ -1,4 +1,5 @@
 mod numbers;
+mod values;
 mod vectors;
 
 use tauri::{Emitter, Manager, WebviewWindowBuilder};
@@ -59,7 +60,11 @@ pub fn run() {
             open_project_overview,
             open_constants_window,
             open_new_constant_window,
-            emit_const_picked_event
+            emit_const_picked_event,
+            numbers::add,
+            numbers::subtract,
+            numbers::multiply,
+            numbers::divide,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,7 +1,13 @@
 // collection of all node's actions
 
 import { invoke } from "@tauri-apps/api/core";
-import { DeconstructAction, NodeAction, NodeTag } from "../../types/nodes";
+import {
+  ActionResult,
+  DeconstructAction,
+  NodeAction,
+  NodeTag,
+  OutputValue,
+} from "../../types/nodes";
 import { RustCalculations } from "../../types/app";
 import arithmetic from "../number/arithmetic";
 import numOperations from "../number/numOperations";
@@ -27,13 +33,16 @@ const nodeActions: obj = {
     const res = (await invoke("evaluate_expression", {
       expr: value,
     })) as RustCalculations;
-    if (!res.success) return null;
-    return parseFloat(res.res);
+    console.log({ res });
+    return res;
   },
-  add: ({ a, b }) => arithmetic.addTwoNumbers(a, b),
-  subtract: ({ a, b }) => arithmetic.subtractTwoNumbers(a, b),
-  multiply: ({ a, b }) => arithmetic.multiplyTwoNumbers(a, b),
-  divide: ({ a, b }) => arithmetic.divideTwoNumbers(a, b),
+  add: async ({ a, b }) => (await invoke("add", { a, b })) as RustCalculations,
+  subtract: async ({ a, b }) =>
+    (await invoke("subtract", { a, b })) as ActionResult,
+  multiply: async ({ a, b }) =>
+    (await invoke("multiply", { a, b })) as ActionResult,
+  divide: async ({ a, b }) =>
+    (await invoke("divide", { a, b })) as ActionResult,
   abs: ({ a }) => numOperations.abs(a),
   "I-matrix": ({ n }) => makeIdentityMatrix(n),
   sin: ({ a }, value, angleFormat) => trigonometry.sin(a, angleFormat!),

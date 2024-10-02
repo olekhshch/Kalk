@@ -14,7 +14,11 @@ export default {
         number: "#0A9396",
         vector: "#2563EB",
         matrix: "#8B5CF6",
+        "sec-mtx": "#A08AC4",
         gray: "#D1D5DB",
+        orange: "#FFB385",
+        red: "#6B1F1F",
+        "red-sec": "#A06D6D",
       },
       fontFamily: {
         sys: ["Nunito"],

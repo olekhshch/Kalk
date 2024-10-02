@@ -50,6 +50,7 @@ const MtxVecNode = ({
         outputType ? [outputType] : outputsEntries[0][1].possibleValues
       }
       comment={comment ?? null}
+      theme="mtx"
     >
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} />

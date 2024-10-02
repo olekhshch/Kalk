@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import {
+  ActionResult,
   AppNode,
   AppNodeBase,
   ConstructorNode,
@@ -112,30 +113,14 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
         params[inputLabel] = value;
       }
-
-      // passing default arguments to params
-      // const defInputEntries = Object.entries(defaultInputs);
-
-      // for (const [inputLabel, input] of defInputEntries) {
-      //   if (!input) return resetResult();
-
-      //   const { valueId, defValue } = input;
-
-      //   if (!valueId && !defValue) {
-      //     params[inputLabel] = null;
-      //   } else {
-      //     params[inputLabel] = valueId ? values[valueId] : defValue;
-      //   }
-      // }
     }
   }
-  console.log({ params });
 
   const res = await action(params, value, angleFormat);
+  console.log({ res });
 
   if (purpose === NodePurpose.DECONSTRUCT) {
-    const resOutputs = res;
-    console.log({ resOutputs });
+    const resOutputs = (res as DeconstructActionResult).outputs;
     const outputs: NodeOutputs = {};
     if (!resOutputs) {
       (node as DeConstructorNode).data.outputs = {};
@@ -143,18 +128,15 @@ const calculateNode: f = async (node, values, angleFormat) => {
       // #TODO Clearing all of the previous output values
       return calculations;
     }
-    Object.entries(resOutputs as DeconstructActionResult).forEach(
-      ([label, { possibleValues, value }]) => {
-        outputs[label] = { possibleValues };
-        newValues[makeValueId(node.id, label)] = value;
-      }
-    );
+    Object.entries(resOutputs).forEach(([label, { possibleValues, value }]) => {
+      outputs[label] = { possibleValues };
+      newValues[makeValueId(node.id, label)] = value;
+    });
     node.data.outputs = outputs;
-    console.log({ node });
     nodesToReplace.push(node);
     return calculations;
   } else {
-    const resValue = res as OutputValue;
+    const resValue = (res as ActionResult).res;
     valueIds.forEach((valId) => {
       newValues[valId] = resValue;
     });

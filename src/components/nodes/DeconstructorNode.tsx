@@ -32,7 +32,7 @@ const DeconstructorNode = ({
   });
 
   return (
-    <NodeWrapper id={id} comment={comment ?? null}>
+    <NodeWrapper id={id} comment={comment ?? null} theme="red">
       <div className="p-2 pl-4">
         {inputHandles.map(({ cssPosition, handleId, key }) => (
           <InputPort

@@ -70,6 +70,7 @@ const ExpressionNode = ({
           id={id}
           outputValueTypes={["number"]}
           comment={comment ?? null}
+          theme="math"
         >
           <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (

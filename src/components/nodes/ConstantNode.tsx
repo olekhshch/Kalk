@@ -31,7 +31,7 @@ export const ConstantNode = ({
   };
 
   return (
-    <NodeWrapper id={id} comment={comment ?? null}>
+    <NodeWrapper id={id} comment={comment ?? null} theme="const">
       <div className="px-2">
         <ResultOutput nodeId={id} />
         {constObj ? (

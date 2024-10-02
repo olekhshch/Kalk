@@ -55,7 +55,12 @@ const ConstructorNode = ({
   };
 
   return (
-    <NodeWrapper id={id} comment={comment ?? null}>
+    <NodeWrapper
+      id={id}
+      comment={comment ?? null}
+      theme="mtx"
+      outputValueTypes={outputsEntries[0][1]?.possibleValues}
+    >
       <div className="p-1 px-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} />
         <form className="text-sm" onSubmit={submitHandler}>

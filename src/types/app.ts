@@ -1,5 +1,6 @@
 import { AppEdge } from "./edges";
 import {
+  ActionResult,
   AppNode,
   Matrix,
   NodeTag,
@@ -93,9 +94,10 @@ export interface MathStore {
 export interface VariablesStore {
   values: CalculatedValues;
   constants: Constant[];
-  constValues: {
-    [k: string]: OutputValue;
-  };
+  errors: { [k: string]: string[] };
+  // constValues: {
+  //   [k: string]: OutputValue;
+  // };
   setValue: (varKey: string, newValue: number | null) => void;
 }
 
@@ -130,11 +132,7 @@ export type EdgeActionOutput = {
   // edgeCounter: number;
 };
 
-export type RustCalculations = {
-  success: boolean;
-  res: string;
-  msg: string;
-};
+export type RustCalculations = ActionResult;
 
 export enum AngleFormat {
   RAD = "RAD",
@@ -170,3 +168,5 @@ export type TableItem = {
   content: (string | number | null)[];
   onClick?: React.MouseEventHandler;
 };
+
+export type NodeTheme = "math" | "mtx" | "const" | "red";
