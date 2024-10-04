@@ -1,9 +1,10 @@
 use evalexpr::eval;
-use num::{Float, NumCast, Zero};
-use serde::Serialize;
+use num::Zero;
 use serde_json::Value;
 
 use crate::values::Calculations;
+
+mod operations;
 
 // #[derive(Serialize)]
 // pub struct Calculations {
@@ -29,20 +30,12 @@ pub fn evaluate_expression(expr: String) -> Calculations {
             },
             _ => {}
         },
-        _ => {}
+        _ => {
+            if expr.len() > 0 {
+                errors.push(format!("100"))
+            }
+        }
     }
-    // match evaluation {
-    //     Ok(res) => match res {
-    //         evalexpr::Value::Float(n) => res = serde_json::Value::Number(Value::Number(n)),
-    //         evalexpr::Value::Int(n) => res = Value::Number(n),
-    //     },
-    //     Err(err_msg) => {
-    //         return Calculations {
-    //             res: Value::Null,
-    //             errors,
-    //         }
-    //     }
-    // }
 
     Calculations { res, errors }
 }
@@ -67,8 +60,9 @@ pub fn add(a: Option<Value>, b: Option<Value>) -> Calculations {
                 _ => {}
             }
         }
-
-        _ => {}
+        (Some(_), None) | (None, Some(_)) => {}
+        (None, None) => {}
+        _ => errors.push(format!("101")),
     }
 
     Calculations { res, errors }
@@ -94,7 +88,9 @@ pub fn subtract(a: Option<Value>, b: Option<Value>) -> Calculations {
                 _ => {}
             }
         }
-        _ => {}
+        (Some(_), None) | (None, Some(_)) => {}
+        (None, None) => {}
+        _ => errors.push(format!("101")),
     }
 
     Calculations { res, errors }
@@ -120,7 +116,9 @@ pub fn multiply(a: Option<Value>, b: Option<Value>) -> Calculations {
                 _ => {}
             }
         }
-        _ => {}
+        (Some(_), None) | (None, Some(_)) => {}
+        (None, None) => {}
+        _ => errors.push(format!("101")),
     }
 
     Calculations { res, errors }
@@ -148,8 +146,20 @@ pub fn divide(a: Option<Value>, b: Option<Value>) -> Calculations {
                 _ => {}
             }
         }
-        _ => {}
+        (Some(_), None) | (None, Some(_)) => {}
+        (None, None) => {}
+        _ => errors.push(format!("101")),
     }
 
     Calculations { res, errors }
+}
+
+#[tauri::command]
+pub fn abs(a: Option<Value>) -> Calculations {
+    operations::abs(a)
+}
+
+#[tauri::command]
+pub fn power(a: Option<Value>, b: Option<Value>) -> Calculations {
+    operations::power(a, b)
 }

@@ -16,8 +16,12 @@ const MtxVecNode = ({
   data: { inputs, outputs, value, comment },
 }: NodeProps<MtxNode>) => {
   // calculated value of an output
-  const calculatedValue = useContent(useShallow((store) => store.values[id]));
-  const outputType = getValueType(calculatedValue);
+  const calculatedValue = useContent(
+    useShallow((store) =>
+      Object.entries(store.values).find(([label]) => label.includes(id + "."))
+    )
+  );
+  const outputType = getValueType(calculatedValue ? calculatedValue[1] : null);
 
   const inputsArray = useMemo(() => {
     const entries = Object.entries(inputs);
@@ -49,6 +53,7 @@ const MtxVecNode = ({
       outputValueTypes={
         outputType ? [outputType] : outputsEntries[0][1].possibleValues
       }
+      isDefined={outputType !== null}
       comment={comment ?? null}
       theme="mtx"
     >

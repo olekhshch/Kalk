@@ -1,6 +1,6 @@
+mod matrix;
 mod numbers;
 mod values;
-mod vectors;
 
 use tauri::{Emitter, Manager, WebviewWindowBuilder};
 
@@ -65,6 +65,9 @@ pub fn run() {
             numbers::subtract,
             numbers::multiply,
             numbers::divide,
+            numbers::abs,
+            numbers::power,
+            matrix::make_identity_mtx,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

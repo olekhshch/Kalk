@@ -23,8 +23,12 @@ const MathNode = ({
   data: { inputs, outputs, value, comment, tag },
 }: NodeProps<MathNodeType>) => {
   // calculated value of an output
-  const calculatedValue = useContent(useShallow((store) => store.values[id]));
-  const outputType = getValueType(calculatedValue);
+  const calculatedValue = useContent(
+    useShallow((store) =>
+      Object.entries(store.values).find(([label]) => label.includes(id + "."))
+    )
+  );
+  const outputType = getValueType(calculatedValue ? calculatedValue[1] : null);
 
   // #TODO: Shallow check for input keys to avoid rerenders?
 
@@ -33,11 +37,15 @@ const MathNode = ({
     const numOfInputs = entries.length;
     const step = 100 / (numOfInputs + 1);
 
-    const array = entries.map(([key, input], idx) => {
-      const handleId = generateHandleLabel(id, key, input.allowedTypes);
-      const cssPosition = `${step * (1 + idx)}%`;
-      return { handleId, cssPosition, key };
-    });
+    const array = entries
+      .map(([key, input], idx) => {
+        // #TODO: Fix undefined error
+        if (!input) return null;
+        const handleId = generateHandleLabel(id, key, input.allowedTypes);
+        const cssPosition = `${step * (1 + idx)}%`;
+        return { handleId, cssPosition, key };
+      })
+      .filter((input) => input !== null);
 
     return array;
   }, [inputs]);
@@ -49,18 +57,20 @@ const MathNode = ({
     const step = 100 / (numOfOutputs + 1);
 
     return outputsEntries.map(([key, output], idx) => {
+      if (!output) return null;
       const handleId = generateHandleLabel(id, key, output.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
       return { handleId, cssPosition, key };
     });
-  }, []);
+  }, []).filter((output) => output !== null);
 
   return (
     <NodeWrapper
       id={id}
       outputValueTypes={
-        outputType ? [outputType] : outputsEntries[0][1].possibleValues
+        outputType ? [outputType] : outputsEntries[0][1]?.possibleValues
       }
+      isDefined={outputType !== null}
       comment={comment ?? null}
       theme={tag === "I-matrix" ? "mtx" : "math"}
     >

@@ -94,13 +94,14 @@ export interface MathStore {
 export interface VariablesStore {
   values: CalculatedValues;
   constants: Constant[];
-  errors: { [k: string]: string[] };
+  errors: StoreErrors;
   // constValues: {
   //   [k: string]: OutputValue;
   // };
   setValue: (varKey: string, newValue: number | null) => void;
 }
 
+export type StoreErrors = { [k: string]: string[] };
 export type CalculatedValues = {
   [id: string]: number | Matrix | Vector | null;
 };

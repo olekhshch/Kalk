@@ -2,7 +2,7 @@
 
 import { Edge } from "@xyflow/react";
 import { AppNode, NumberFunctionNode } from "../../types/nodes";
-import { AngleFormat, CalculatedValues } from "../../types/app";
+import { AngleFormat, CalculatedValues, StoreErrors } from "../../types/app";
 import getChainIdsFrom from "../getChainIdsFrom";
 import recalculateChain from "./recalculateChain";
 import { AppEdge } from "../../types/edges";
@@ -12,9 +12,14 @@ type f = (
   edges: AppEdge[],
   // constValues: CalculatedValues,
   angleFormat: AngleFormat
-) => Promise<{ values: CalculatedValues; nodesToReplace: AppNode[] }>;
+) => Promise<{
+  values: CalculatedValues;
+  nodesToReplace: AppNode[];
+  errors: StoreErrors;
+}>;
 
 const recalculateAll: f = async (nodes, edges, angleFormat) => {
+  const errors: StoreErrors = {};
   // looking for nodes that doesn't have any inputs to start from
   const startingNodes = nodes.filter(
     (node) =>

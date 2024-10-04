@@ -10,19 +10,25 @@ import { expressionInputValues } from "../../utils/expressionInputValues";
 import { useShallow } from "zustand/react/shallow";
 import Latex from "react-latex-next";
 import generateHandleId from "../../utils/generateHandleId";
+import makeValueId from "../../utils/makeValueId";
+import getValueType from "../../utils/getValueType";
 
 const ExpressionNode = ({
   id,
   data: { value, outputs, comment },
 }: NodeProps<Expression>) => {
-  const { isActive, activateNode, editExpressionValue } = useContent(
-    useShallow((store) => ({
-      isActive: store.activeNodeId === id,
-      activateNode: store.activateNode,
-      editExpressionValue: (newValue: string) =>
-        store.editExpressionValue(id, newValue),
-    }))
+  const [isActive, activateNode, editExpressionValue] = useContent(
+    useShallow((store) => [
+      store.activeNodeId === id,
+      store.activateNode,
+      store.editExpressionValue,
+    ])
   );
+
+  const outputValue = useContent(
+    useShallow((store) => store.values[makeValueId(id, "N")])
+  );
+  const outputValueType = getValueType(outputValue);
 
   const [currentValue, onChange] = useInputChange({
     initialValue: value,
@@ -43,7 +49,7 @@ const ExpressionNode = ({
 
   useEffect(() => {
     if (!isActive && currentValue !== value) {
-      editExpressionValue(currentValue);
+      editExpressionValue(id, currentValue);
     }
   }, [isActive]);
 
@@ -71,6 +77,7 @@ const ExpressionNode = ({
           outputValueTypes={["number"]}
           comment={comment ?? null}
           theme="math"
+          isDefined={outputValueType !== null}
         >
           <div className="py-2 px-3 min-h-[1rem] flex flex-col latin-math">
             {isActive && (

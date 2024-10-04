@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import useContent from "../../state/useContent";
 import { NodeOutputs, ValueType } from "../../types/nodes";
 import classNames from "classnames";
@@ -9,6 +9,7 @@ import CommentBtn from "./parts/CommentBtn";
 import generateHandleId from "../../utils/generateHandleId";
 import Output from "../ports/Output";
 import { NodeTheme } from "../../types/app";
+import appErrors from "../../state/config/errors";
 
 // General container for node's content
 type props = {
@@ -18,6 +19,7 @@ type props = {
   outputValueTypes?: ValueType[];
   theme?: NodeTheme;
   comment: string | null;
+  isDefined?: boolean; // is calculated value !== null
 };
 const NodeWrapper = ({
   children,
@@ -26,6 +28,7 @@ const NodeWrapper = ({
   outputValueTypes,
   comment,
   theme,
+  isDefined,
 }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
@@ -77,7 +80,7 @@ const NodeWrapper = ({
   // });
 
   const twClass = classNames(
-    "min-h-[1rem] transition border-2 border-solid bg-white rounded-[4px] w-fit flex flex-col relative",
+    "min-h-[1rem] transition border-2 border-solid rounded-[4px] w-fit flex flex-col relative",
     {
       "hover:border-main": theme === "math" || !theme,
       "border-sec": !theme || theme === "math",
@@ -85,6 +88,9 @@ const NodeWrapper = ({
       "border-sec-mtx": theme === "mtx",
       "hover:border-red": theme === "red",
       "border-red-sec": theme === "red",
+      "bg-white": !isDefined || !theme,
+      "bg-sec": isDefined && theme === "math",
+      "bg-sec-mtx": isDefined && theme === "mtx",
     }
   );
 
@@ -100,6 +106,7 @@ const NodeWrapper = ({
         {commentFieldOpened && (
           <CommentField nodeId={id} text={comment ?? ""} />
         )}
+        <WarningsDot nodeId={id} />
         {title && (
           <article className="pl-[2px] bg-main text-white  h-5 rounded-t-[3px]">
             {title}
@@ -135,29 +142,67 @@ const OutputValues = ({ values }: pr) => {
   );
 };
 
+type DotProps = {
+  nodeId: string;
+};
+const WarningsDot = ({ nodeId }: DotProps) => {
+  const errors = useContent(useShallow((store) => store.errors[nodeId]));
+
+  const [listOpen, setListOpen] = useState(false);
+
+  if (!errors || errors.length === 0) {
+    return null;
+  }
+
+  const errorList = errors.map((errCode) => {
+    const errorMsg = appErrors[errCode];
+    return errorMsg ?? errCode;
+  });
+
+  return (
+    <button
+      className="nodrag absolute left-[-12px] top-[-8px] bg-orange w-2 h-2 rounded-[100%]"
+      onClick={() => setListOpen(!listOpen)}
+    >
+      {listOpen && (
+        <article className="p-1 bg-gray absolute bottom-2 right-2 text-xs min-w-[84px] w-max">
+          <ul>
+            {errorList.map((errorMsg, idx) => (
+              <li key={idx}>
+                <span className="font-bold">{idx + 1}. </span>
+                {errorMsg}
+              </li>
+            ))}
+          </ul>
+        </article>
+      )}
+    </button>
+  );
+};
+
 export default NodeWrapper;
 
-const mainColor = (theme?: NodeTheme) => {
-  switch (theme) {
-    case "math":
-      return "main";
-    case "mtx":
-      return "vector";
-    case "const":
-      return "orange";
-    default: {
-      return "main";
-    }
-  }
-};
+// const mainColor = (theme?: NodeTheme) => {
+//   switch (theme) {
+//     case "math":
+//       return "main";
+//     case "mtx":
+//       return "vector";
+//     case "const":
+//       return "orange";
+//     default: {
+//       return "main";
+//     }
+//   }
+// };
 
-const secondaryColor = (theme?: NodeTheme) => {
-  switch (theme) {
-    case "math":
-      return "sec";
-    case "mtx":
-      return "mtx-sec";
-    default:
-      return "sec";
-  }
-};
+// const secondaryColor = (theme?: NodeTheme) => {
+//   switch (theme) {
+//     case "math":
+//       return "sec";
+//     case "mtx":
+//       return "mtx-sec";
+//     default:
+//       return "sec";
+//   }
+// };

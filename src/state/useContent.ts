@@ -221,7 +221,10 @@ const useContent = create<ContentStore>()((set, get) => ({
         calcRes.values,
         get().anglesFormat
       );
-      set({ values: newValues.values });
+      set({
+        values: newValues.values,
+        errors: { ...get().errors, ...newValues.errors },
+      });
     }
 
     set({ nodes });

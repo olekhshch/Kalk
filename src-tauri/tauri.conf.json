@@ -16,11 +16,6 @@
         "height": 600,
         "decorations": false
         
-      },
-      {
-        "label": "external",
-        "title": "Tauri Docs",
-        "url": "https://tauri.app"
       }
     ],
     "security": {

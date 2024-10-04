@@ -1,7 +1,7 @@
 // recalculates results for passed chain and return new values object
 
 import { AppNode, MathNode, NumberFunctionNode } from "../../types/nodes";
-import { AngleFormat, CalculatedValues } from "../../types/app";
+import { AngleFormat, CalculatedValues, StoreErrors } from "../../types/app";
 import calculateNode from "./calculateNode";
 import makeValueId from "../makeValueId";
 
@@ -11,7 +11,11 @@ type f = (
   initialValues: CalculatedValues,
   // constValues: CalculatedValues,
   angleFormat: AngleFormat
-) => Promise<{ values: CalculatedValues; nodesToReplace: AppNode[] }>;
+) => Promise<{
+  values: CalculatedValues;
+  nodesToReplace: AppNode[];
+  errors: StoreErrors;
+}>;
 
 const recalculateChain: f = async (
   chain,
@@ -22,6 +26,7 @@ const recalculateChain: f = async (
 ) => {
   const values = { ...initialValues };
   const nodesToReplace: AppNode[] = [];
+  const errors: StoreErrors = {};
 
   for (const nodeId of chain) {
     const targetNode = nodes.find((node) => node.id === nodeId) as AppNode;
@@ -32,12 +37,13 @@ const recalculateChain: f = async (
         values[valueId] = res.values[valueId];
         // #TODO: Map set to avoid repetition
         nodesToReplace.push(...res.nodesToReplace);
+
+        errors[nodeId] = res.errors[nodeId];
       });
     }
   }
-  console.log({ values, nodesToReplace });
 
-  return { values, nodesToReplace };
+  return { values, nodesToReplace, errors };
 };
 
 export default recalculateChain;

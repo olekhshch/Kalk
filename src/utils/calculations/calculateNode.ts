@@ -21,6 +21,7 @@ import {
   AngleFormat,
   CalculatedValues,
   RustCalculations,
+  StoreErrors,
 } from "../../types/app";
 import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
 import makeVector from "../matrix/makeVector";
@@ -29,7 +30,11 @@ import makeMtxFromRows from "../matrix/makeMtxFromRows";
 import makeValueId from "../makeValueId";
 import getValueType from "../getValueType";
 
-type Calculations = { values: CalculatedValues; nodesToReplace: AppNode[] };
+type Calculations = {
+  values: CalculatedValues;
+  nodesToReplace: AppNode[];
+  errors: StoreErrors;
+};
 type f = (
   node: AppNode,
   values: CalculatedValues,
@@ -39,10 +44,12 @@ type f = (
 const calculateNode: f = async (node, values, angleFormat) => {
   const newValues: CalculatedValues = { ...values };
   const nodesToReplace: AppNode[] = [];
+  const errors: StoreErrors = {};
 
   const calculations: Calculations = {
     values: newValues,
     nodesToReplace,
+    errors,
   };
 
   const { action, inputs, outputs, value, purpose } = node.data;
@@ -117,7 +124,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
   }
 
   const res = await action(params, value, angleFormat);
-  console.log({ res });
+  errors[node.id] = res ? res.errors : [];
 
   if (purpose === NodePurpose.DECONSTRUCT) {
     const resOutputs = (res as DeconstructActionResult).outputs;
