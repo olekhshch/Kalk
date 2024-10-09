@@ -6,10 +6,8 @@ import {
   DeconstructAction,
   NodeAction,
   NodeTag,
-  OutputValue,
 } from "../../types/nodes";
 import { RustCalculations } from "../../types/app";
-import arithmetic from "../number/arithmetic";
 import numOperations from "../number/numOperations";
 import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
 import trigonometry from "../number/trigonometry";
@@ -45,22 +43,28 @@ const nodeActions: obj = {
     (await invoke("divide", { a, b })) as ActionResult,
   abs: async ({ a }) => await invoke("abs", { a }),
   "I-matrix": async ({ n }) => await invoke("make_identity_mtx", { n }),
-  sin: ({ a }, value, angleFormat) => trigonometry.sin(a, angleFormat!),
-  cos: ({ a }, value, angleFormat) => trigonometry.cos(a, angleFormat!),
-  tg: ({ a }, value, angleFormat) => trigonometry.tg(a, angleFormat!),
-  ctg: ({ a }, value, angleFormat) => trigonometry.ctg(a, angleFormat!),
+  sin: async ({ a }, value, angleFormat) =>
+    await invoke("sin", { a, format: angleFormat }),
+  cos: async ({ a }, value, angleFormat) =>
+    await invoke("cos", { a, format: angleFormat }),
+  tg: async ({ a }, value, angleFormat) =>
+    await invoke("tg", { a, format: angleFormat }),
+  ctg: async ({ a }, value, angleFormat) =>
+    await invoke("ctg", { a, format: angleFormat }),
   vec: (params) => makeVector(params),
   "mtx-rows": (params) => makeMtxFromRows(params),
-  "to-deg": ({ a }) => convertToDEG(a),
-  "to-rad": ({ a }) => convertToRAD(a),
-  "add-mtx": ({ A, B }) => Matrices.addVecOrMtx(A, B),
-  "scalar-mult": ({ a, V }) => scalarMultiplication(a, V),
+  "to-deg": async ({ a }) => await invoke("to_deg", { a }),
+  "to-rad": async ({ a }) => await invoke("to_rad", { a }),
+  "add-mtx": async ({ A, B }) =>
+    await invoke("add_vecs_matrices", { a: A, b: B }),
+  "scalar-mult": async ({ a, v }) =>
+    await invoke("scalar_multiplication", { a, v }),
   power: async ({ a, b }) => await invoke("power", { a, b }),
-  floor: ({ a }) => numOperations.floor(a),
-  ceil: ({ a }) => numOperations.ceil(a),
+  floor: async ({ a }) => await invoke("floor", { a }),
+  ceil: async ({ a }) => await invoke("ceil", { a }),
   "dot-prod": ({ v, w }) => dotProduct(v, w),
   norm: ({ v }) => vectorNorm(v),
-  "sum-all": ({ M }) => Matrices.sumAllEntries(M),
+  "sum-all": async ({ M }) => await invoke("sum_all", { a: M }),
   "mtx-cols": (params) => Matrices.fromColumns(params),
   "entries-vec": (params) => Vectors.deconstructVec(params),
   asin: ({ a }, value, angleFormat) => trigonometry.asin(a, angleFormat!),

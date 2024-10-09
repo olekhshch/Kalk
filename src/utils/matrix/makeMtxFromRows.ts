@@ -1,11 +1,13 @@
 // constructs new Matrix from passed row Vectors
 
-import { InputValue, Matrix, Vector } from "../../types/nodes";
+import { ActionResult, InputValue, Matrix, Vector } from "../../types/nodes";
 import getValueType from "../getValueType";
 
-type f = (params: { [k: string]: InputValue }) => Matrix | null;
+type f = (params: { [k: string]: InputValue }) => ActionResult;
 
 const makeMtxFromRows: f = (params) => {
+  const errors: string[] = [];
+
   const { d, n, ...vecs } = params;
 
   // default value - should be Vector
@@ -27,15 +29,16 @@ const makeMtxFromRows: f = (params) => {
     if (!valType && !(!defValue && defValue !== 0)) {
       mtx.push(defValue);
     } else if (!valType && !defValue) {
-      return null;
+      return { res: null, errors };
     } else if (valType !== "vector") {
-      return null;
+      errors.push("101");
+      return { res: null, errors };
     } else {
       mtx.push(vec as Vector);
     }
   }
 
-  return mtx;
+  return { res: mtx, errors };
 
   // checking if the same size
 

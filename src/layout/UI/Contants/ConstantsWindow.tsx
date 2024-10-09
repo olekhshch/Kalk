@@ -5,7 +5,7 @@ import SortingTable from "../../../components/table/SortingTable";
 import { FilterOptions, TableItem } from "../../../types/app";
 import { invoke } from "@tauri-apps/api/core";
 import ButtonMain from "../../../components/dialogs/ButtonMain";
-import { emit } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
 
 const ConstantsWindow = () => {
   const [constants, initLoad] = useConstants(
@@ -45,6 +45,19 @@ const ConstantsWindow = () => {
   };
 
   const columnStyles = [null, { latex: true }, null, null];
+
+  useEffect(() => {
+    // Updates list if new constant was created
+
+    const unlisten = listen("const-created", () => {
+      console.log({ localStorage });
+      initLoad();
+    });
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  });
 
   return (
     <div className="p-2 bg-white h-screen w-screen">

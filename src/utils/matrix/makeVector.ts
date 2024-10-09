@@ -1,7 +1,14 @@
-import { InputValue, Vector } from "../../types/nodes";
+import {
+  ActionResult,
+  InputValue,
+  NodeAction,
+  Vector,
+} from "../../types/nodes";
 import getValueType from "../getValueType";
 
-const makeVector = (params: { [k: string]: InputValue }) => {
+const makeVector: NodeAction = (params: { [k: string]: InputValue }) => {
+  const calc: ActionResult = { res: null, errors: [] };
+
   const { n, d, ...entries } = params;
 
   // default value - should be number
@@ -21,15 +28,18 @@ const makeVector = (params: { [k: string]: InputValue }) => {
     if (!valType && !(!defValue && defValue !== 0)) {
       vec.push(defValue as number);
     } else if (!valType && !defValue) {
-      return null;
+      return calc;
     } else if (valType !== "number") {
-      return null;
+      calc.errors.push("101");
+      return calc;
     } else {
       vec.push(value as number);
     }
   }
 
-  return vec;
+  calc.res = vec;
+
+  return calc;
 };
 
 export default makeVector;

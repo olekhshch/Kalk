@@ -6,7 +6,7 @@ import {
   NodeInput,
   NodePurpose,
 } from "../types/nodes";
-import { AngleFormat, ContentStore } from "../types/app";
+import { Constant, ContentStore } from "../types/app";
 import connectNodes from "../utils/connectNodes";
 import editNodeValue from "./actions/editNodeValue";
 import calculateNode from "../utils/calculations/calculateNode";
@@ -55,11 +55,20 @@ const useContent = create<ContentStore>()((set, get) => ({
       valueType: "number",
     },
   ],
+  updateConstants: () => {
+    const newConstJSON = localStorage.getItem("new-constant");
+
+    if (newConstJSON) {
+      const newConst = JSON.parse(newConstJSON) as Constant;
+      set({ constants: [...get().constants, newConst] });
+    }
+    console.log({ constants: get().constants });
+  },
   // constValues: {
   //   CONST_E: Math.E,
   //   CONST_PI: Math.PI,
   // },
-  anglesFormat: AngleFormat.RAD,
+  anglesFormat: "RAD",
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
       set({ anglesFormat: newFormat });
@@ -82,6 +91,11 @@ const useContent = create<ContentStore>()((set, get) => ({
     const newNode = createNode(nodeTag, id.toString(), position, data?.constId);
 
     if (!newNode) return;
+
+    if (nodeTag === "constant") {
+      // hiding constant picker dialog
+      invoke("close_window", { windowLabel: "constants" });
+    }
 
     set({ nodes: [...get().nodes, newNode], idCounter: id });
   },

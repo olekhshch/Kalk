@@ -67,7 +67,7 @@ const nodeInputs: obj = {
   },
   "scalar-mult": {
     a: { allowedTypes: ["number"], valueId: null },
-    V: { allowedTypes: ["vector", "matrix"], valueId: null },
+    v: { allowedTypes: ["vector", "matrix"], valueId: null },
   },
   constant: {},
   power: {

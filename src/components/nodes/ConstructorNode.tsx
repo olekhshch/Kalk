@@ -15,6 +15,7 @@ import useInputChange from "../../hooks/useInputChange";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import ResultOutput from "../ports/ResultOutput";
+import getValueType from "../../utils/getValueType";
 
 const ConstructorNode = ({
   id,
@@ -28,6 +29,13 @@ const ConstructorNode = ({
     initialValue: numOfInputVars,
     allowOnly: /[0-9]/,
   });
+
+  const outputValue = useContent(
+    useShallow((store) =>
+      Object.entries(store.values).find(([label]) => label.includes(id + "."))
+    )
+  );
+  const outputValueType = getValueType(outputValue ? outputValue[1] : null);
 
   const outputsEntries = Object.entries(outputs);
   const stepO = 100 / (outputsEntries.length + 1);
@@ -54,12 +62,15 @@ const ConstructorNode = ({
     }
   };
 
+  console.log(outputValue);
+
   return (
     <NodeWrapper
       id={id}
       comment={comment ?? null}
       theme="mtx"
       outputValueTypes={outputsEntries[0][1]?.possibleValues}
+      isDefined={outputValueType !== null}
     >
       <div className="p-1 px-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} />

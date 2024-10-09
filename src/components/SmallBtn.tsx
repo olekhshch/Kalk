@@ -1,5 +1,5 @@
 import React from "react";
-import { ActionToolbar } from "../types/app";
+import { ActionToolbar, ActionType } from "../types/app";
 import LateXformula from "./LateXformula";
 import useContent from "../state/useContent";
 import { useShallow } from "zustand/react/shallow";
@@ -19,6 +19,8 @@ const SmallBtn = ({
   const onClick = () => {
     if (command.type === "create") {
       setMode("create", { type: command.data });
+    } else if (command.type === "action") {
+      doAction(command.data as ActionType);
     }
   };
 

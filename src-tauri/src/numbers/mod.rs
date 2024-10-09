@@ -1,16 +1,14 @@
 use evalexpr::eval;
 use num::Zero;
+use rounding::do_rounding_operation;
 use serde_json::Value;
+use trigonometry::{trigonometric_fn, AngleFormat};
 
 use crate::values::Calculations;
 
 mod operations;
-
-// #[derive(Serialize)]
-// pub struct Calculations {
-//     msg: Vec<String>,
-//     res: Value,
-// }
+mod rounding;
+mod trigonometry;
 
 #[tauri::command]
 pub fn evaluate_expression(expr: String) -> Calculations {
@@ -141,6 +139,8 @@ pub fn divide(a: Option<Value>, b: Option<Value>) -> Calculations {
                         if let Some(n) = my_res {
                             res = Value::Number(n)
                         }
+                    } else {
+                        errors.push(format!("103"));
                     }
                 }
                 _ => {}
@@ -162,4 +162,88 @@ pub fn abs(a: Option<Value>) -> Calculations {
 #[tauri::command]
 pub fn power(a: Option<Value>, b: Option<Value>) -> Calculations {
     operations::power(a, b)
+}
+
+#[tauri::command]
+pub fn to_rad(a: Option<Value>) -> Calculations {
+    trigonometry::convert_angle(a, AngleFormat::RAD)
+}
+
+#[tauri::command]
+pub fn to_deg(a: Option<Value>) -> Calculations {
+    trigonometry::convert_angle(a, AngleFormat::DEG)
+}
+
+fn get_angle_format_from_string(value: String) -> Option<AngleFormat> {
+    match value.as_str() {
+        "DEG" => Some(AngleFormat::DEG),
+        "RAD" => Some(AngleFormat::RAD),
+        _ => None,
+    }
+}
+
+#[tauri::command]
+pub fn sin(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    if let Some(angle_format) = a_format {
+        trigonometric_fn(a, trigonometry::TrigonometricFn::SIN, angle_format)
+    } else {
+        Calculations {
+            res: Value::Null,
+            errors: vec![format!("Invalid angle format")],
+        }
+    }
+}
+
+#[tauri::command]
+pub fn cos(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    if let Some(angle_format) = a_format {
+        trigonometric_fn(a, trigonometry::TrigonometricFn::COS, angle_format)
+    } else {
+        Calculations {
+            res: Value::Null,
+            errors: vec![format!("Invalid angle format")],
+        }
+    }
+}
+
+#[tauri::command]
+pub fn tg(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    if let Some(angle_format) = a_format {
+        trigonometric_fn(a, trigonometry::TrigonometricFn::TG, angle_format)
+    } else {
+        Calculations {
+            res: Value::Null,
+            errors: vec![format!("Invalid angle format")],
+        }
+    }
+}
+
+#[tauri::command]
+pub fn ctg(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    if let Some(angle_format) = a_format {
+        trigonometric_fn(a, trigonometry::TrigonometricFn::CTG, angle_format)
+    } else {
+        Calculations {
+            res: Value::Null,
+            errors: vec![format!("Invalid angle format")],
+        }
+    }
+}
+
+#[tauri::command]
+pub fn floor(a: Option<Value>) -> Calculations {
+    do_rounding_operation(rounding::RoundingOperation::Floor, a)
+}
+
+#[tauri::command]
+pub fn ceil(a: Option<Value>) -> Calculations {
+    do_rounding_operation(rounding::RoundingOperation::Ceil, a)
 }

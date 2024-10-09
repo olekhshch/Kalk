@@ -31,9 +31,7 @@ const sin: f = async (a, angleFormat) => {
 };
 
 const sinOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const angle = (
-    angleFormat === AngleFormat.DEG ? await convertToRAD(a) : a
-  ) as number;
+  const angle = (angleFormat === "DEG" ? await convertToRAD(a) : a) as number;
   return Math.sin(angle);
 };
 
@@ -67,9 +65,7 @@ const cos: f = async (a, angleFormat) => {
 };
 
 const cosOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const angle = (
-    angleFormat === AngleFormat.DEG ? await convertToRAD(a) : a
-  ) as number;
+  const angle = (angleFormat === "DEG" ? await convertToRAD(a) : a) as number;
   return Math.cos(angle);
 };
 
@@ -103,9 +99,7 @@ const tg: f = async (a, angleFormat) => {
 };
 
 const tgOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const angle = (
-    angleFormat === AngleFormat.DEG ? await convertToRAD(a) : a
-  ) as number;
+  const angle = (angleFormat === "DEG" ? await convertToRAD(a) : a) as number;
   return Math.tan(angle);
 };
 
@@ -139,9 +133,7 @@ const ctg: f = async (a, angleFormat) => {
 };
 
 const ctgOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const angle = (
-    angleFormat === AngleFormat.DEG ? await convertToRAD(a) : a
-  ) as number;
+  const angle = (angleFormat === "DEG" ? await convertToRAD(a) : a) as number;
   const res = 1 / Math.tan(angle);
   return Number.isFinite(res) ? res : null;
 };
@@ -180,7 +172,7 @@ const asin: f = async (a, angleFormat) => {
 };
 
 const asinOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const coeff = angleFormat === AngleFormat.DEG ? 180 / Math.PI : 1;
+  const coeff = angleFormat === "DEG" ? 180 / Math.PI : 1;
   return Math.asin(a) * coeff;
 };
 
@@ -221,7 +213,7 @@ const acos: f = async (a, angleFormat) => {
 };
 
 const acosOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const coeff = angleFormat === AngleFormat.DEG ? 180 / Math.PI : 1;
+  const coeff = angleFormat === "DEG" ? 180 / Math.PI : 1;
   return Math.acos(a) * coeff;
 };
 
@@ -257,7 +249,7 @@ const atg: f = async (a, angleFormat) => {
 };
 
 const atgOfNum = async (a: number, angleFormat: AngleFormat) => {
-  const coeff = angleFormat === AngleFormat.DEG ? 180 / Math.PI : 1;
+  const coeff = angleFormat === "DEG" ? 180 / Math.PI : 1;
   return Math.atan(a) * coeff;
 };
 

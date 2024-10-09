@@ -1,8 +1,9 @@
+mod constants;
 mod matrix;
 mod numbers;
 mod values;
 
-use tauri::{Emitter, Manager, WebviewWindowBuilder};
+use tauri::{Manager, WebviewWindowBuilder};
 
 #[tauri::command]
 async fn open_project_overview(app_handle: tauri::AppHandle) {
@@ -17,38 +18,30 @@ async fn open_project_overview(app_handle: tauri::AppHandle) {
 }
 
 #[tauri::command]
-async fn open_constants_window(app_handle: tauri::AppHandle) {
-    let _new_window = WebviewWindowBuilder::new(
-        &app_handle,
-        "constants",
-        tauri::WebviewUrl::App("windows/constants.html".into()),
-    )
-    .title("Constants")
-    .build()
-    .unwrap();
-}
+async fn close_window(app_handle: tauri::AppHandle, window_label: String) {
+    let target_window = app_handle.get_webview_window(&window_label);
 
-#[tauri::command]
-async fn open_new_constant_window(app_handle: tauri::AppHandle) {
-    let _new_window = WebviewWindowBuilder::new(
-        &app_handle,
-        "new-constant",
-        tauri::WebviewUrl::App("windows/new_constant.html".into()),
-    )
-    .title("New constant")
-    .resizable(false)
-    .build()
-    .unwrap();
-}
-
-#[tauri::command]
-fn emit_const_picked_event(app_handle: tauri::AppHandle, const_id: String) {
-    let editor_window = app_handle.get_webview_window("calc");
-    match editor_window {
-        Some(window) => window.emit("const-picked", "RUST event").unwrap(),
-        None => {}
+    if let Some(window) = target_window {
+        window.close().unwrap()
     }
-    app_handle.emit("const-picked", const_id).unwrap();
+}
+
+#[tauri::command]
+async fn hide_window(app_handle: tauri::AppHandle, window_label: String) {
+    let target_window = app_handle.get_webview_window(&window_label);
+
+    if let Some(window) = target_window {
+        window.hide().unwrap()
+    }
+}
+
+#[tauri::command]
+async fn show_window(app_handle: tauri::AppHandle, window_label: String) {
+    let target_window = app_handle.get_webview_window(&window_label);
+
+    if let Some(window) = target_window {
+        window.show().unwrap()
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -57,10 +50,14 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             numbers::evaluate_expression,
+            close_window,
+            hide_window,
+            show_window,
             open_project_overview,
-            open_constants_window,
-            open_new_constant_window,
-            emit_const_picked_event,
+            constants::open_constants_window,
+            constants::open_new_constant_window,
+            constants::emit_const_picked_event,
+            constants::emit_const_created_event,
             numbers::add,
             numbers::subtract,
             numbers::multiply,
@@ -68,6 +65,17 @@ pub fn run() {
             numbers::abs,
             numbers::power,
             matrix::make_identity_mtx,
+            numbers::to_rad,
+            numbers::to_deg,
+            numbers::sin,
+            numbers::cos,
+            numbers::tg,
+            numbers::ctg,
+            matrix::scalar_multiplication,
+            matrix::add_vecs_matrices,
+            numbers::floor,
+            numbers::ceil,
+            matrix::sum_all,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

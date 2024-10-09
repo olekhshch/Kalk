@@ -99,6 +99,7 @@ export interface VariablesStore {
   //   [k: string]: OutputValue;
   // };
   setValue: (varKey: string, newValue: number | null) => void;
+  updateConstants: () => void;
 }
 
 export type StoreErrors = { [k: string]: string[] };
@@ -135,10 +136,7 @@ export type EdgeActionOutput = {
 
 export type RustCalculations = ActionResult;
 
-export enum AngleFormat {
-  RAD = "RAD",
-  DEG = "DEG",
-}
+export type AngleFormat = "RAD" | "DEG";
 
 export type ContextMenuTarget = "canvas" | "node";
 export type ContextMenuSection =

@@ -25,12 +25,12 @@ const BottomPanel = () => {
       anglesFormat: store.anglesFormat,
       toggleAngleFormat: (oldFormat: AngleFormat) => {
         switch (oldFormat) {
-          case AngleFormat.DEG: {
-            store.setAnglesFormat(AngleFormat.RAD);
+          case "DEG": {
+            store.setAnglesFormat("RAD");
             break;
           }
           default: {
-            store.setAnglesFormat(AngleFormat.DEG);
+            store.setAnglesFormat("DEG");
           }
         }
       },
