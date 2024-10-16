@@ -5,6 +5,7 @@ import {
   DeconstructAction,
   DeConstructorNode,
   ExpressionNode,
+  MarkdownNode,
   MathNode,
   MtxNode,
   MtxVecNodeTag,
@@ -80,6 +81,13 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
           value,
           inputs,
           outputs,
+          styling: {
+            italic: true,
+            bold: true,
+            underscore: false,
+            background: "rgb(102,30,89)",
+            "font-size": "16px",
+          },
         },
       };
       return newNode;
@@ -182,6 +190,29 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
       };
       return newNode;
     }
+    case "markdown": {
+      const newNode: MarkdownNode = {
+        id: nodeId,
+        position,
+        type: "markdown",
+        measured: {
+          width: 100,
+          height: 80,
+        },
+        data: {
+          inputs,
+          outputs,
+          purpose: NodePurpose.DECOR,
+          tag,
+          value,
+          styling: { background: "var(--sec)", width: "120px", height: "80px" },
+          // width: 200,
+          // height: 80,
+        },
+      };
+
+      return newNode;
+    }
     default: {
       return null;
     }
@@ -226,6 +257,8 @@ const getNodeType: f = (tag) => {
   if (tag === "text-single") return "text-single";
 
   if (tag === "constant") return "constant";
+
+  if (tag === "markdown") return "markdown";
 
   if (numFnTags.includes(tag as NumNodeTag)) return "math-fn";
 

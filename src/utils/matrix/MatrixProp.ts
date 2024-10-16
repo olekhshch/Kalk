@@ -25,6 +25,6 @@ const isSquare = (mtx: Matrix) => {
 
 // checks if all entries are defined
 
-const allEntriesDefined = (mtx: Matrix) => {};
+// const allEntriesDefined = (mtx: Matrix) => {};
 
 export default { r, c, size, areSameSize, isSquare };

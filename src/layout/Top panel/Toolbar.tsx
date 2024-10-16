@@ -70,7 +70,9 @@ const SubCategory = ({ name, content }: p) => {
             }
           })}
         </div>
-        <p className="text-xs px-1 text-center text-main">{name}</p>
+        <p className="text-xs px-1 text-center text-main hover:text-black transition">
+          {name}
+        </p>
       </div>
       <div className="w-[4px] my-1 rounded-strd bg-main bg-opacity-60"></div>
     </>

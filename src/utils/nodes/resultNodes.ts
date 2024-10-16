@@ -1,9 +1,6 @@
-import { AppNode, ResultNode, MathNode, NodeType } from "../../types/nodes";
+import { AppNode, ResultNode, MathNode } from "../../types/nodes";
 import { NodeActionOutput } from "../../types/app";
-import { Edge } from "@xyflow/react";
-import connectNodes from "../connectNodes";
 import { AppEdge } from "../../types/edges";
-import makeResultNode from "./makeResultNode";
 
 type f = (
   sourceNodeId: string,
@@ -81,61 +78,61 @@ const hideResultFor = (
   return { newNodes, newEdges };
 };
 
-const toggleResultFor = (params: {
-  sourceNode: AppNode;
-  nodes: AppNode[];
-  edges: Edge[];
-  edgeCounter: number;
-}) => {
-  // // #TODO: Rewrite better?
-  const { nodes, edges, sourceNode, edgeCounter } = params;
-  let wasShown = false;
+// const toggleResultFor = (params: {
+//   sourceNode: AppNode;
+//   nodes: AppNode[];
+//   edges: Edge[];
+//   edgeCounter: number;
+// }) => {
+//   // // #TODO: Rewrite better?
+//   const { nodes, edges, sourceNode, edgeCounter } = params;
+//   let wasShown = false;
 
-  const resNodeId = "r" + sourceNode.id;
+//   const resNodeId = "r" + sourceNode.id;
 
-  const newNodes = nodes.filter((node) => {
-    if (node.id === resNodeId) {
-      wasShown = true;
-    }
-    return node.id !== resNodeId;
-  });
+//   const newNodes = nodes.filter((node) => {
+//     if (node.id === resNodeId) {
+//       wasShown = true;
+//     }
+//     return node.id !== resNodeId;
+//   });
 
-  if (wasShown) {
-    // if resNode was shown - delete edge
-    return { newNodes, newEdges: edges };
-  }
+//   if (wasShown) {
+//     // if resNode was shown - delete edge
+//     return { newNodes, newEdges: edges };
+//   }
 
-  if (!wasShown) {
-    // if wasn't shown - new node and connection should be created
-    const resNode = makeResultNode(sourceNode);
+//   if (!wasShown) {
+//     // if wasn't shown - new node and connection should be created
+//     const resNode = makeResultNode(sourceNode);
 
-    if (resNode) {
-    }
-  }
-  // let newEdges = edges;
-  // let idCnt = idCounter;
-  // let edgeCnt = edgeCounter;
-  // const newNodes = nodes.map((node) => {
-  //   if (node.type === "result" && node.data.sourceId === sourceId) {
-  //     if (node.data.isShown) {
-  //       newEdges = edges.filter((edge) => edge.target !== node.id);
-  //       return {
-  //         ...node,
-  //         data: { ...node.data, isShown: false },
-  //       } as ResultNode;
-  //     }
-  //     const { newNode, idCounter } = showResultFor(sourceId, nodes, idCnt);
-  //     const es = connectNodes(sourceId, node.id, edges, edgeCounter);
-  //     newEdges = es.edges;
-  //     edgeCounter += 1;
+//     if (resNode) {
+//     }
+//   }
+//   // let newEdges = edges;
+//   // let idCnt = idCounter;
+//   // let edgeCnt = edgeCounter;
+//   // const newNodes = nodes.map((node) => {
+//   //   if (node.type === "result" && node.data.sourceId === sourceId) {
+//   //     if (node.data.isShown) {
+//   //       newEdges = edges.filter((edge) => edge.target !== node.id);
+//   //       return {
+//   //         ...node,
+//   //         data: { ...node.data, isShown: false },
+//   //       } as ResultNode;
+//   //     }
+//   //     const { newNode, idCounter } = showResultFor(sourceId, nodes, idCnt);
+//   //     const es = connectNodes(sourceId, node.id, edges, edgeCounter);
+//   //     newEdges = es.edges;
+//   //     edgeCounter += 1;
 
-  //     return newNode ?? node;
-  //   }
-  //   return node;
-  // });
+//   //     return newNode ?? node;
+//   //   }
+//   //   return node;
+//   // });
 
-  return { newNodes, newEdges, edgeCounter, idCounter };
-};
+//   return { newNodes, newEdges, edgeCounter, idCounter };
+// };
 
 // const showAllResults = (nodes: AppNode[], idCounter: number) => {
 //   const createdNodes: ResultNode[] = [];
@@ -156,6 +153,6 @@ const hideAllResults = (nodes: AppNode[], edges: AppEdge[]) => {
 export default {
   showResultFor,
   hideResultFor,
-  toggleResultFor,
+  // toggleResultFor,
   hideAllResults,
 };

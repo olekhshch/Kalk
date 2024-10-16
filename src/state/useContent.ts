@@ -5,6 +5,7 @@ import {
   ConstructorNode,
   NodeInput,
   NodePurpose,
+  TextSingleNode,
 } from "../types/nodes";
 import { Constant, ContentStore } from "../types/app";
 import connectNodes from "../utils/connectNodes";
@@ -512,6 +513,16 @@ const useContent = create<ContentStore>()((set, get) => ({
   deleteNodes: (nodeIds) => {
     const { newNodes } = deleteNodes(nodeIds, get().nodes);
     set({ nodes: newNodes });
+  },
+  styleTextNode: (nodeId, styling, nodeTag) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeId && nodeTag === node.data.tag) {
+          return { ...node, data: { ...node.data, styling } } as TextSingleNode;
+        }
+        return node;
+      }),
+    });
   },
 }));
 

@@ -20,27 +20,37 @@ const ScaleMenu = () => {
             title="50% (min)"
             onClick={() => zoomTo(0.5)}
             cssClasses="hover-sec"
-          />
+          >
+            <span>50% (min)</span>
+          </MenuButton>
           <MenuButton
             title="100%"
             onClick={() => zoomTo(1)}
             cssClasses="hover-sec"
-          />
+          >
+            <span>100%</span>
+          </MenuButton>
           <MenuButton
             title="150%"
             onClick={() => zoomTo(1.5)}
             cssClasses="hover-sec"
-          />
+          >
+            <span>150%</span>
+          </MenuButton>
           <MenuButton
             title="200% (max)"
             onClick={() => zoomTo(2)}
             cssClasses="hover-sec"
-          />
+          >
+            <span>200%</span>
+          </MenuButton>
           <MenuButton
             title="Fit content"
             onClick={() => fitView()}
             cssClasses="hover-sec"
-          />
+          >
+            <span>Fit content</span>
+          </MenuButton>
         </li>
       </ul>
     </Menu>

@@ -4,13 +4,12 @@ import ResultNode from "../../components/nodes/ResultNode";
 import { NodeTypes } from "@xyflow/react";
 import MathNode from "../../components/nodes/MathNode";
 import NodePreview from "../../components/NodePreview";
-import IdentityMatrix from "../../components/nodes/IdentityMatrix";
-import VectorNode from "../../components/nodes/VectorNode";
+// import IdentityMatrix from "../../components/nodes/IdentityMatrix";
 import MtxVecNode from "../../components/nodes/MtxVecNode";
-import MtxRowsNode from "../../components/nodes/MtxRowsNode";
 import { ConstantNode } from "../../components/nodes/ConstantNode";
 import ConstructorNode from "../../components/nodes/ConstructorNode";
 import DeconstructorNode from "../../components/nodes/DeconstructorNode";
+import MarkdownNode from "../../components/nodes/MarkdownNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
@@ -20,13 +19,11 @@ const nodeTypes: NodeTypes = {
   result: ResultNode,
   "num-fun": MathNode,
   preview: NodePreview,
-  "i-mtx": IdentityMatrix,
-  vec: VectorNode,
   "mtx-fn": MtxVecNode,
   "mtx-constr": ConstructorNode,
-  "mtx-rows": MtxRowsNode,
   constant: ConstantNode,
   "mtx-deconstr": DeconstructorNode,
+  markdown: MarkdownNode,
 };
 
 export default nodeTypes;

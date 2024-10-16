@@ -1,7 +1,7 @@
 import { NodeProps } from "@xyflow/react";
 import React from "react";
 import { DeConstructorNode, NodeTag } from "../../types/nodes";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import LateXformula from "../LateXformula";
 import generateHandleId from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";

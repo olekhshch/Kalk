@@ -111,6 +111,7 @@ const nodeInputs: obj = {
   atg: {
     a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
   },
+  markdown: {},
 };
 
 export default nodeInputs;

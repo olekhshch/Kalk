@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import {
   Matrix,
   ResultNode as ResultNodeType,

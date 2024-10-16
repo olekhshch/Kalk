@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import { NodeProps } from "@xyflow/react";
 import { MtxNode, MtxVecFnNode } from "../../types/nodes";
 import Latex from "react-latex-next";

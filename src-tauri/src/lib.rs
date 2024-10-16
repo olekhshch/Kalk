@@ -76,6 +76,11 @@ pub fn run() {
             numbers::floor,
             numbers::ceil,
             matrix::sum_all,
+            matrix::vec_norm,
+            matrix::dot_prod,
+            numbers::asin,
+            numbers::acos,
+            numbers::atg,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

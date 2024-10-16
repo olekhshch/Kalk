@@ -1,6 +1,6 @@
 // recalculates results for passed chain and return new values object
 
-import { AppNode, MathNode, NumberFunctionNode } from "../../types/nodes";
+import { AppNode } from "../../types/nodes";
 import { AngleFormat, CalculatedValues, StoreErrors } from "../../types/app";
 import calculateNode from "./calculateNode";
 import makeValueId from "../makeValueId";

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import { ExpressionNode as Expression } from "../../types/nodes";
 import ResultOutput from "../ports/ResultOutput";
 import useContent from "../../state/useContent";

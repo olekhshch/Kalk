@@ -45,7 +45,7 @@ export type MtxVecNodeTag =
   | "sum-all"
   | "det";
 
-export type OrganizationalNodeTag = "text-single" | "result";
+export type OrganizationalNodeTag = "text-single" | "result" | "markdown";
 export type NodeTag = OrganizationalNodeTag | NumNodeTag | MtxVecNodeTag;
 
 // export type NodeType = OrganizationalNodeType | NumNodeType | MtxVecNodeType;
@@ -57,7 +57,8 @@ export type NodeType =
   | "mtx-fn"
   | "mtx-constr"
   | "constant"
-  | "mtx-deconstr";
+  | "mtx-deconstr"
+  | "markdown";
 
 export type ValueType = "number" | "text" | "matrix" | "vector";
 
@@ -74,6 +75,7 @@ export type AppNode =
   | ConstructorNode
   | DeConstructorNode
   | TextSingleNode
+  | MarkdownNode
   | ConstantNode;
 
 export type MathNode = ExpressionNode | FnNode;
@@ -106,7 +108,29 @@ export type ExpressionNode = AppNodeBase<"expression"> & {
   };
 };
 
-export type TextSingleNode = AppNodeBase<"text-single">;
+export type TextSingleNode = AppNodeBase<"text-single"> & {
+  data: {
+    styling: TextSingleStyling;
+  };
+};
+
+export type TextSingleStyling = {
+  bold?: boolean;
+  italic?: boolean;
+  underscore?: boolean;
+  background?: string;
+  "font-size"?: string;
+};
+
+export type MarkdownNode = AppNodeBase<"markdown"> & {
+  data: { styling: MarkdownStyling };
+};
+
+export type MarkdownStyling = {
+  background: string;
+  width: string;
+  height: string;
+};
 
 export type ResultNode = AppNodeBase<"result"> & {
   data: {

@@ -4,7 +4,7 @@ import {
   AppNode,
   Matrix,
   NodeTag,
-  OutputValue,
+  TextSingleStyling,
   ValueType,
   Vector,
 } from "./nodes";
@@ -82,6 +82,11 @@ export interface NodesStore {
 
 export interface TextStore {
   editTextValue: (nodeId: string, newValue: string) => void;
+  styleTextNode: (
+    nodeId: string,
+    styling: TextSingleStyling,
+    tag: NodeTag
+  ) => void;
 }
 
 export interface MathStore {

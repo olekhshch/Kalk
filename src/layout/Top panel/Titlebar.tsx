@@ -1,9 +1,5 @@
-import React from "react";
 import useContent from "../../state/useContent";
-import { getCurrentWindow, Window } from "@tauri-apps/api/window";
-import { Webview } from "@tauri-apps/api/webview";
-import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { invoke } from "@tauri-apps/api/core";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const Header = () => {
   const { nodes, edges, values } = useContent();

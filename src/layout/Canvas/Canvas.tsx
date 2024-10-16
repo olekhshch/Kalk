@@ -126,6 +126,7 @@ const Canvas = () => {
         onMouseMove={mouseMoveHandler}
         onMouseEnter={mouseEnterHandler}
         onMouseLeave={mouseLeaveHandler}
+        className="overflow-hidden"
       >
         {/* <ValuesPanel /> */}
         <BackgroundWrapper />

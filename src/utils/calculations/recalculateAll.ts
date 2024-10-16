@@ -1,7 +1,6 @@
 // recalculation of all nodes
 
-import { Edge } from "@xyflow/react";
-import { AppNode, NumberFunctionNode } from "../../types/nodes";
+import { AppNode } from "../../types/nodes";
 import { AngleFormat, CalculatedValues, StoreErrors } from "../../types/app";
 import getChainIdsFrom from "../getChainIdsFrom";
 import recalculateChain from "./recalculateChain";
@@ -19,7 +18,6 @@ type f = (
 }>;
 
 const recalculateAll: f = async (nodes, edges, angleFormat) => {
-  const errors: StoreErrors = {};
   // looking for nodes that doesn't have any inputs to start from
   const startingNodes = nodes.filter(
     (node) =>

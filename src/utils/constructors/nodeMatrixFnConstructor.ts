@@ -2,7 +2,6 @@ import {
   Input,
   MtxVecFnAction,
   MtxVecFnNode,
-  MtxVecNodeType,
   NodeOutputs,
   Vector,
 } from "../../types/nodes";

@@ -2,7 +2,7 @@
 
 import { Node, NodeProps } from "@xyflow/react";
 import { ValueType } from "../../../types/nodes";
-import NodeWrapper from "../NodeWrapper";
+import NodeWrapper from "../wrappers/NodeWrapper";
 import LateXformula from "../../LateXformula";
 import ResultOutput from "../../ports/ResultOutput";
 

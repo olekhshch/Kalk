@@ -1,6 +1,4 @@
 // component which reterns LateX representation of the passed value
-
-import React from "react";
 import { Matrix, OutputValue, Vector } from "../types/nodes";
 import Latex from "react-latex-next";
 import getValueType from "../utils/getValueType";

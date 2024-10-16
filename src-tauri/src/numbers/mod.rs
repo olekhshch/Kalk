@@ -2,12 +2,13 @@ use evalexpr::eval;
 use num::Zero;
 use rounding::do_rounding_operation;
 use serde_json::Value;
-use trigonometry::{trigonometric_fn, AngleFormat};
+use trigonometry::{trigonometric_fn, AngleFormat, ReverseTrigFn};
 
 use crate::values::Calculations;
 
 mod operations;
 mod rounding;
+mod tests;
 mod trigonometry;
 
 #[tauri::command]
@@ -246,4 +247,49 @@ pub fn floor(a: Option<Value>) -> Calculations {
 #[tauri::command]
 pub fn ceil(a: Option<Value>) -> Calculations {
     do_rounding_operation(rounding::RoundingOperation::Ceil, a)
+}
+
+#[tauri::command]
+pub fn asin(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    match a_format {
+        Some(angle_format) => {
+            trigonometry::reverse_trigonometry(a, ReverseTrigFn::ASIN, angle_format)
+        }
+        None => Calculations {
+            res: Value::Null,
+            errors: vec![],
+        },
+    }
+}
+
+#[tauri::command]
+pub fn acos(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    match a_format {
+        Some(angle_format) => {
+            trigonometry::reverse_trigonometry(a, ReverseTrigFn::ACOS, angle_format)
+        }
+        None => Calculations {
+            res: Value::Null,
+            errors: vec![],
+        },
+    }
+}
+
+#[tauri::command]
+pub fn atg(a: Option<Value>, format: String) -> Calculations {
+    let a_format = get_angle_format_from_string(format);
+
+    match a_format {
+        Some(angle_format) => {
+            trigonometry::reverse_trigonometry(a, ReverseTrigFn::ATG, angle_format)
+        }
+        None => Calculations {
+            res: Value::Null,
+            errors: vec![],
+        },
+    }
 }

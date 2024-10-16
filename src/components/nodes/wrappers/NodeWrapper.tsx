@@ -1,15 +1,13 @@
 import React, { useCallback, useState } from "react";
-import useContent from "../../state/useContent";
-import { NodeOutputs, ValueType } from "../../types/nodes";
+import useContent from "../../../state/useContent";
+import { ValueType } from "../../../types/nodes";
 import classNames from "classnames";
-import useUI from "../../hooks/useUI";
+import useUI from "../../../hooks/useUI";
 import { useShallow } from "zustand/react/shallow";
-import CommentField from "./parts/CommentField";
-import CommentBtn from "./parts/CommentBtn";
-import generateHandleId from "../../utils/generateHandleId";
-import Output from "../ports/Output";
-import { NodeTheme } from "../../types/app";
-import appErrors from "../../state/config/errors";
+import CommentField from "../parts/CommentField";
+import CommentBtn from "../parts/CommentBtn";
+import { NodeTheme } from "../../../types/app";
+import appErrors from "../../../state/config/errors";
 
 // General container for node's content
 type props = {
@@ -20,6 +18,7 @@ type props = {
   theme?: NodeTheme;
   comment: string | null;
   isDefined?: boolean; // is calculated value !== null
+  background?: string; // for nodes with customisable bg (e.g. text nodes)
 };
 const NodeWrapper = ({
   children,
@@ -29,6 +28,7 @@ const NodeWrapper = ({
   comment,
   theme,
   isDefined,
+  background,
 }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
@@ -101,6 +101,7 @@ const NodeWrapper = ({
         onDoubleClick={doubleClickHandler}
         onClick={clickHandler}
         onContextMenu={onContextMenuHandler}
+        style={{ background: background }}
       >
         {comment && <CommentBtn nodeId={id} />}
         {commentFieldOpened && (

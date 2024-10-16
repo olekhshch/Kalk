@@ -2,7 +2,7 @@
 
 import { NodeProps } from "@xyflow/react";
 import { ConstantNode as ConstantNodeType } from "../../types/nodes";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import LateXformula from "../LateXformula";

@@ -1,10 +1,6 @@
-import React from "react";
 // import tabs from "../../state/tabs";
-import { Action, Tab as TabName } from "../../types/app";
+import { Tab as TabName } from "../../types/app";
 import useAppState from "../../state/useAppState";
-import tabs from "../../state/tabs";
-import actions from "../../state/config/actions";
-import Button from "../../components/Button";
 import actionsToolbar from "../../state/config/actionsToolbar";
 
 const Tabs = () => {

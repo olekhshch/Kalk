@@ -1,6 +1,8 @@
-use std::vec;
-
+mod matrices;
+mod props;
+mod vectors;
 use serde_json::Value;
+use vectors::vector_norm;
 
 use crate::values::Calculations;
 
@@ -277,4 +279,14 @@ fn sum_vec_entries(vec: &Vec<Value>) -> Option<f64> {
         .sum();
 
     vec_f64_sum
+}
+
+#[tauri::command]
+pub fn vec_norm(v: Option<Value>) -> Calculations {
+    vector_norm(v)
+}
+
+#[tauri::command]
+pub fn dot_prod(v: Option<Value>, w: Option<Value>) -> Calculations {
+    vectors::dot_product(v, w)
 }

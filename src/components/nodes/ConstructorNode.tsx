@@ -6,7 +6,7 @@ import {
   NodeTag,
 } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
-import NodeWrapper from "./NodeWrapper";
+import NodeWrapper from "./wrappers/NodeWrapper";
 import LateXformula from "../LateXformula";
 import generateHandleId from "../../utils/generateHandleId";
 import Output from "../ports/Output";

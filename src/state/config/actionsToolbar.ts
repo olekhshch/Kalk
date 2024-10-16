@@ -10,6 +10,7 @@ type SubCategory =
   | "Construct"
   | "Deconstruct"
   | "Other"
+  | "Describe"
   | "Nodes";
 
 export type layoutElement<T extends "action" | "group" | "multibtn"> = {
@@ -432,7 +433,20 @@ const actionsToolbar: Toolbar = {
     ],
   },
   Organize: {
-    Nodes: [
+    Describe: [
+      {
+        type: "action",
+        content: {
+          title: "Markdown block",
+          icon: "\\text{text \\ block}",
+          iconType: "latex",
+          large: true,
+          command: {
+            type: "create",
+            data: "markdown",
+          },
+        },
+      },
       {
         type: "group",
         content: [
@@ -443,6 +457,13 @@ const actionsToolbar: Toolbar = {
             hideIcon: true,
             command: { type: "create", data: "text-single" },
           },
+        ],
+      },
+    ],
+    Nodes: [
+      {
+        type: "group",
+        content: [
           {
             title: "Show all results",
             icon: "",

@@ -1,12 +1,8 @@
 // General number operations node
 
 import { useMemo } from "react";
-import NodeWrapper from "./NodeWrapper";
-import {
-  AppNodeBase,
-  MathNode as MathNodeType,
-  NumberFunctionNode,
-} from "../../types/nodes";
+import NodeWrapper from "./wrappers/NodeWrapper";
+import { MathNode as MathNodeType } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
 import generateHandleLabel from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";

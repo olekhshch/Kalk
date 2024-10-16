@@ -1,6 +1,6 @@
-use serde_json::Value;
+use serde_json::{Number, Value};
 
-use crate::values::Calculations;
+use crate::values::{in_domain, Calculations};
 
 pub enum AngleFormat {
     DEG,
@@ -12,6 +12,12 @@ pub enum TrigonometricFn {
     COS,
     TG,
     CTG,
+}
+
+pub enum ReverseTrigFn {
+    ASIN,
+    ACOS,
+    ATG,
 }
 
 // works with Numbers, Vectors and Matrices
@@ -208,4 +214,121 @@ fn trig_fn_vec(v: &Value, function: &TrigonometricFn, angle_format: &AngleFormat
     } else {
         None
     }
+}
+
+pub fn reverse_trigonometry(
+    val: Option<Value>,
+    function: ReverseTrigFn,
+    angle_format: AngleFormat,
+) -> Calculations {
+    let mut res = Value::Null;
+    let mut errors = Vec::new();
+
+    match val {
+        Some(Value::Number(n)) => {
+            let res_num = reverse_trigonometry_number(&n, &function, &angle_format);
+
+            match res_num {
+                Some(value) => res = value,
+                None => errors.push(format!("101")),
+            }
+        }
+        Some(Value::Array(vec)) if vec.iter().all(|e| e.is_number()) => {
+            let res_vec = reverse_trigonometry_vector(vec, &function, &angle_format);
+
+            match res_vec {
+                Some(values) => res = Value::Array(values),
+                None => {}
+            }
+        }
+        Some(Value::Array(mtx)) => {
+            let res_mtx = reverse_trigonometry_mtx(mtx, &function, &angle_format);
+
+            match res_mtx {
+                Some(values) => res = Value::Array(values),
+                None => {}
+            }
+        }
+        _ => {}
+    }
+
+    Calculations { res, errors }
+}
+
+fn reverse_trigonometry_number(
+    n: &Number,
+    function: &ReverseTrigFn,
+    angle_format: &AngleFormat,
+) -> Option<Value> {
+    let n_f64 = n.as_f64();
+    if let Some(arg) = n_f64 {
+        let res_0: Option<f64> = match function {
+            ReverseTrigFn::ASIN => match in_domain(&arg, &Some(-1.), &Some(1.), true, true) {
+                false => None,
+                true => Some(arg.asin()),
+            },
+            &ReverseTrigFn::ACOS => match in_domain(&arg, &Some(-1.), &Some(1.), true, true) {
+                false => None,
+                true => Some(arg.atan()),
+            },
+            &ReverseTrigFn::ATG => Some(arg.atan()),
+        };
+
+        match res_0 {
+            Some(angle_rad) => match angle_format {
+                AngleFormat::RAD => Some(serde_json::json!(angle_rad)),
+                AngleFormat::DEG => Some(serde_json::json!(angle_rad.to_degrees())),
+            },
+            None => None,
+        }
+    } else {
+        None
+    }
+}
+
+fn reverse_trigonometry_vector(
+    vector: Vec<Value>,
+    function: &ReverseTrigFn,
+    angle_format: &AngleFormat,
+) -> Option<Vec<Value>> {
+    let res_vec: Option<Vec<Value>> = vector
+        .into_iter()
+        .map(|n| {
+            if let Value::Number(num) = n {
+                let res_num = reverse_trigonometry_number(&num, function, angle_format);
+                match res_num {
+                    Some(Value::Number(num_value)) => Some(Value::Number(num_value)),
+                    _ => None,
+                }
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    res_vec
+}
+
+fn reverse_trigonometry_mtx(
+    mtx: Vec<Value>,
+    function: &ReverseTrigFn,
+    angle_format: &AngleFormat,
+) -> Option<Vec<Value>> {
+    let res_mtx: Option<Vec<Value>> = mtx
+        .into_iter()
+        .map(|v| {
+            if let Value::Array(v) = v {
+                let vec_res = reverse_trigonometry_vector(v, function, angle_format);
+
+                match vec_res {
+                    Some(vec_values) => Some(Value::Array(vec_values)),
+                    _ => None,
+                }
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    res_mtx
 }

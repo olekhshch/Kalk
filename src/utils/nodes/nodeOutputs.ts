@@ -93,6 +93,7 @@ const nodeOutputs: obj = {
   atg: {
     N: { possibleValues: ["number", "vector", "matrix"] },
   },
+  markdown: {},
 };
 
 export default nodeOutputs;

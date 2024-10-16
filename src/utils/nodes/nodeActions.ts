@@ -8,16 +8,9 @@ import {
   NodeTag,
 } from "../../types/nodes";
 import { RustCalculations } from "../../types/app";
-import numOperations from "../number/numOperations";
-import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
-import trigonometry from "../number/trigonometry";
 import makeVector from "../matrix/makeVector";
 import makeMtxFromRows from "../matrix/makeMtxFromRows";
-import convertToDEG from "../convertToDEG";
-import convertToRAD from "../convertToRAD";
-import mtxOperations from "../matrix/mtxOperations";
-import Matrices from "../matrix/main/Matrices";
-import scalarMultiplication from "../matrix/scalarMultiplication";
+// import Matrices from "../matrix/main/Matrices";
 import dotProduct from "../matrix/dotProduct";
 import vectorNorm from "../matrix/vectorNorm";
 import Vectors from "../matrix/main/Vectors";
@@ -62,14 +55,17 @@ const nodeActions: obj = {
   power: async ({ a, b }) => await invoke("power", { a, b }),
   floor: async ({ a }) => await invoke("floor", { a }),
   ceil: async ({ a }) => await invoke("ceil", { a }),
-  "dot-prod": ({ v, w }) => dotProduct(v, w),
-  norm: ({ v }) => vectorNorm(v),
+  "dot-prod": async ({ v, w }) => await invoke("dot_prod", { v, w }),
+  norm: async ({ v }) => await invoke("vec_norm", { v }),
   "sum-all": async ({ M }) => await invoke("sum_all", { a: M }),
-  "mtx-cols": (params) => Matrices.fromColumns(params),
+  // "mtx-cols": (params) => Matrices.fromColumns(params),
   "entries-vec": (params) => Vectors.deconstructVec(params),
-  asin: ({ a }, value, angleFormat) => trigonometry.asin(a, angleFormat!),
-  acos: ({ a }, value, angleFormat) => trigonometry.acos(a, angleFormat!),
-  atg: ({ a }, value, angleFormat) => trigonometry.atg(a, angleFormat!),
+  asin: async ({ a }, value, angleFormat) =>
+    await invoke("asin", { a, format: angleFormat }),
+  acos: async ({ a }, value, angleFormat) =>
+    await invoke("acos", { a, format: angleFormat }),
+  atg: async ({ a }, value, angleFormat) =>
+    await invoke("atg", { a, format: angleFormat }),
 };
 
 export default nodeActions;
