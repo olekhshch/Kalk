@@ -10,6 +10,7 @@ import { ConstantNode } from "../../components/nodes/ConstantNode";
 import ConstructorNode from "../../components/nodes/ConstructorNode";
 import DeconstructorNode from "../../components/nodes/DeconstructorNode";
 import MarkdownNode from "../../components/nodes/MarkdownNode";
+import PlotNode from "../../components/nodes/PlotNode";
 
 // node config obj for ReactFlow
 const nodeTypes: NodeTypes = {
@@ -24,6 +25,7 @@ const nodeTypes: NodeTypes = {
   constant: ConstantNode,
   "mtx-deconstr": DeconstructorNode,
   markdown: MarkdownNode,
+  plot: PlotNode,
 };
 
 export default nodeTypes;

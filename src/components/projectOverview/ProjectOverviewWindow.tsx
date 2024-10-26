@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "../../index.css";
 import Tabs from "./Tabs";
 import useProjectOverview from "../../hooks/useProjectOverview";

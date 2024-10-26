@@ -1,5 +1,4 @@
 import useAppState from "../../state/useAppState";
-import Button from "../../components/Button";
 import { BackgroundVariant, useViewport } from "@xyflow/react";
 import ButtonMode from "../../components/ButtonMode";
 import useContent from "../../state/useContent";
@@ -57,13 +56,13 @@ const BottomPanel = () => {
   return (
     <div className="bg-main px-2 text-white font-sys text-sm flex gap-2 items-center">
       <div>
-        <Button
+        {/* <Button
           icon=""
           title={`${(zoom * 100).toFixed(2)}%`}
           showIcon={false}
           onClick={(e) => toggleScaleMenu(e)}
           hoverStyle="sec"
-        />
+        /> */}
       </div>
       <div className="flex items-center gap-[2px]">
         <ButtonMode
@@ -104,13 +103,13 @@ const BottomPanel = () => {
           isActive={minimap}
           showIcon
         />
-        <Button
+        {/* <Button
           icon=""
           title={anglesFormat}
           hoverStyle="sec"
           showIcon={false}
           onClick={() => toggleAngleFormat(anglesFormat)}
-        />
+        /> */}
       </div>
     </div>
   );

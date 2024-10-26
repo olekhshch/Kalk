@@ -31,15 +31,18 @@ const recalculateChain: f = async (
   for (const nodeId of chain) {
     const targetNode = nodes.find((node) => node.id === nodeId) as AppNode;
     if (targetNode) {
+      console.log({ targetNode });
       const res = await calculateNode(targetNode, values, angleFormat);
+      console.log({ res });
       Object.keys(targetNode.data.outputs).forEach((outputLabel) => {
         const valueId = makeValueId(nodeId, outputLabel);
         values[valueId] = res.values[valueId];
         // #TODO: Map set to avoid repetition
-        nodesToReplace.push(...res.nodesToReplace);
 
         errors[nodeId] = res.errors[nodeId];
       });
+      nodesToReplace.push(...res.nodesToReplace);
+      console.log({ nodesToReplace });
     }
   }
 

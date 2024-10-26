@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import NodeWrapper from "./wrappers/NodeWrapper";
 import { NodeProps } from "@xyflow/react";
-import { MtxNode, MtxVecFnNode } from "../../types/nodes";
+import { MtxNode } from "../../types/nodes";
 import Latex from "react-latex-next";
 import generateHandleId from "../../utils/generateHandleId";
 import InputPort from "../ports/Input";
@@ -28,7 +28,7 @@ const MtxVecNode = ({
     const step = 100 / (entries.length + 1);
 
     return entries.map(([key, input], idx) => {
-      const handleId = generateHandleId(id, key, input.allowedTypes);
+      const handleId = generateHandleId(id, key, input!.allowedTypes);
       const cssPosition = `${step * (1 + idx)}%`;
 
       return { key, handleId, cssPosition };
@@ -40,7 +40,7 @@ const MtxVecNode = ({
     const step = 100 / (outputsEntries.length + 1);
 
     return outputsEntries.map(([key, output], idx) => {
-      const handleId = generateHandleId(id, key, output.possibleValues);
+      const handleId = generateHandleId(id, key, output!.possibleValues);
       const cssPosition = `${step * (1 + idx)}%`;
 
       return { key, handleId, cssPosition };
@@ -51,7 +51,7 @@ const MtxVecNode = ({
     <NodeWrapper
       id={id}
       outputValueTypes={
-        outputType ? [outputType] : outputsEntries[0][1].possibleValues
+        outputType ? [outputType] : outputsEntries[0][1]!.possibleValues
       }
       isDefined={outputType !== null}
       comment={comment ?? null}

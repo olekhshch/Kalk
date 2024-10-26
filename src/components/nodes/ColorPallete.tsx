@@ -11,7 +11,7 @@ const ColorPallete = ({ swatches, onClick, withTransparent }: props) => {
           className="w-[18px] h-[18px]"
           onClick={() => onClick("transparent")}
         >
-          X
+          <img src="./src/assets/icons/red-cross.svg" width={22} />
         </button>
       )}
       {swatches.map((color) => (

@@ -15,6 +15,7 @@ import {
   NodeTag,
   NodeType,
   NumNodeTag,
+  PlotNode,
   TextSingleNode,
   ValueType,
 } from "../../types/nodes";
@@ -85,7 +86,8 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
             italic: true,
             bold: true,
             underscore: false,
-            background: "rgb(102,30,89)",
+            border: "2px solid var(--main)",
+            background: "var(--sec)",
             "font-size": "16px",
           },
         },
@@ -213,6 +215,26 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
 
       return newNode;
     }
+    case "plot": {
+      const newNode: PlotNode = {
+        id: nodeId,
+        position,
+        type: "plot",
+        data: {
+          inputs,
+          outputs,
+          purpose: NodePurpose.PLOT,
+          tag,
+          value,
+          equations: [],
+          // defaultInputs: {
+          //   fn: { allowedTypes: ["number"], valueId: null },
+          // },
+        },
+      };
+
+      return newNode;
+    }
     default: {
       return null;
     }
@@ -267,6 +289,8 @@ const getNodeType: f = (tag) => {
   if (constrNodeTags.includes(tag)) return "mtx-constr";
 
   if (deconstrNodeTags.includes(tag)) return "mtx-deconstr";
+
+  if (["plot"].includes(tag)) return "plot";
 
   return null;
 };
@@ -325,14 +349,6 @@ const getNodeValue = (tag: NodeTag) => {
 };
 
 const constructNodes: NodeTag[] = ["vec", "mtx-rows", "mtx-cols"];
-
-// const getPurpose = (tag: NodeTag) => {
-//   if (constructNodes.includes(tag)) return NodePurpose.CONSTRUCT;
-
-//   if (numFnTags.includes(tag as NumNodeTag)) return NodePurpose.FN;
-
-//   return NodePurpose.DECOR;
-// };
 
 const getNmOfInputs = (tag: NodeTag) => {
   if (constructNodes.includes(tag)) return 3;

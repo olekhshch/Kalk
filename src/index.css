@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Sahitya:wght@400;700&display=swap');
+@import "mafs/core.css";
+@import "mafs/font.css";
 
 @tailwind base;
 @tailwind components;
@@ -14,6 +16,12 @@
     --number:var(--main);
     --vector:#2563EB;
     --matrix:#8B5CF6;
+}
+
+.MafsView {
+    --mafs-bg: var(--white);
+    --mafs-fg: var(--main);
+    --mafs-line-color: var(--sec)
 }
 
 #canvas {

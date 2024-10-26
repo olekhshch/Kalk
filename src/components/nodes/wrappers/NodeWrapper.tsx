@@ -19,6 +19,7 @@ type props = {
   comment: string | null;
   isDefined?: boolean; // is calculated value !== null
   background?: string; // for nodes with customisable bg (e.g. text nodes)
+  border?: string; // for nodes with customisable border (e.g. text nodes)
 };
 const NodeWrapper = ({
   children,
@@ -29,6 +30,7 @@ const NodeWrapper = ({
   theme,
   isDefined,
   background,
+  border,
 }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
@@ -101,7 +103,7 @@ const NodeWrapper = ({
         onDoubleClick={doubleClickHandler}
         onClick={clickHandler}
         onContextMenu={onContextMenuHandler}
-        style={{ background: background }}
+        style={{ background: background, border }}
       >
         {comment && <CommentBtn nodeId={id} />}
         {commentFieldOpened && (

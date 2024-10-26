@@ -1,40 +1,27 @@
-import { invoke } from "@tauri-apps/api/core";
 import {
   ActionResult,
   AppNode,
-  AppNodeBase,
   ConstructorNode,
   DeconstructActionResult,
   DeConstructorNode,
-  ExpressionNode,
-  IdentityMtxNode,
   InputValue,
-  Matrix,
-  MtxVecFunctionParams,
   NodeOutputs,
   NodePurpose,
-  NumberFunctionParams,
-  OutputValue,
-  Vector,
+  PlotNode,
 } from "../../types/nodes";
 import {
   AngleFormat,
   CalculatedValues,
-  RustCalculations,
+  Calculations,
   StoreErrors,
 } from "../../types/app";
-import makeIdentityMatrix from "../matrix/makeIdentityMatrix";
 import makeVector from "../matrix/makeVector";
 import validate from "../validate";
 import makeMtxFromRows from "../matrix/makeMtxFromRows";
 import makeValueId from "../makeValueId";
 import getValueType from "../getValueType";
+import preparePlotData from "./preparePlotData";
 
-type Calculations = {
-  values: CalculatedValues;
-  nodesToReplace: AppNode[];
-  errors: StoreErrors;
-};
 type f = (
   node: AppNode,
   values: CalculatedValues,
@@ -51,6 +38,13 @@ const calculateNode: f = async (node, values, angleFormat) => {
     nodesToReplace,
     errors,
   };
+
+  if (node.data.tag === "plot") {
+    console.log("CALC PLOT");
+    console.log({ node });
+    const plotCalcs = preparePlotData(node as PlotNode, newValues);
+    return plotCalcs;
+  }
 
   const { action, inputs, outputs, value, purpose } = node.data;
 
@@ -151,7 +145,5 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
   return calculations;
 };
-
-const isNumber = (value: number | Matrix | Vector) => !Array.isArray(value);
 
 export default calculateNode;

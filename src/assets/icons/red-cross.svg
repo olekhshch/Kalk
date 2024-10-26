@@ -1,0 +1,6 @@
+<svg version="1.1" width="16" height="16" xmlns="http://www.w3.org/2000/svg" stroke="red" stroke-width="1">
+    <g transform="rotate(45,8,8)">
+        <line x1="8" x2="8" y1="2" y2="14" />
+        <line x1="2" x2="14" y1="8" y2="8" />
+    </g>
+</svg>

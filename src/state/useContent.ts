@@ -16,18 +16,15 @@ import replaceNode from "../utils/replaseNode";
 import getChain from "../utils/getChainIdsFrom";
 import recalculateChain from "../utils/calculations/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
-import getChainIdsTo from "../utils/getChainIdsTo";
-import generateHandleLabel, {
-  deconstructHandleId,
-} from "../utils/generateHandleId";
+import generateHandleLabel from "../utils/generateHandleId";
 import recalculateAll from "../utils/calculations/recalculateAll";
-import isConnectable from "../utils/edges/isConnectable";
 import resultNodes from "../utils/nodes/resultNodes";
 import deleteNodes from "../utils/nodes/deleteNodes";
 import { invoke } from "@tauri-apps/api/core";
 import makeResultNode from "../utils/nodes/makeResultNode";
 import createNode from "../utils/nodes/createNode";
 import { AppEdge } from "../types/edges";
+import onNodesConnect from "../utils/nodes/onNodesConnect";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -63,12 +60,7 @@ const useContent = create<ContentStore>()((set, get) => ({
       const newConst = JSON.parse(newConstJSON) as Constant;
       set({ constants: [...get().constants, newConst] });
     }
-    console.log({ constants: get().constants });
   },
-  // constValues: {
-  //   CONST_E: Math.E,
-  //   CONST_PI: Math.PI,
-  // },
   anglesFormat: "RAD",
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
@@ -214,6 +206,8 @@ const useContent = create<ContentStore>()((set, get) => ({
     return { nodes };
   },
   editExpressionValue: async (nodeId, newValue) => {
+    const initNodes = get().nodes;
+    console.log({ initNodes });
     const { newNode, nodes } = editNodeValue(
       nodeId,
       newValue,
@@ -236,13 +230,24 @@ const useContent = create<ContentStore>()((set, get) => ({
         calcRes.values,
         get().anglesFormat
       );
+
+      const nodeIdsToReplace = newValues.nodesToReplace.map((node) => node.id);
+
+      const newNodes = nodes.filter(
+        (node) => !nodeIdsToReplace.includes(node.id)
+      );
+      newNodes.push(...newValues.nodesToReplace);
+
+      console.log({ newNodes });
+
       set({
         values: newValues.values,
         errors: { ...get().errors, ...newValues.errors },
+        nodes: newNodes,
       });
+    } else {
+      set({ nodes });
     }
-
-    set({ nodes });
   },
   showResultFor: () => {
     // const id = get().idCounter + 1;
@@ -319,115 +324,141 @@ const useContent = create<ContentStore>()((set, get) => ({
     // set({ nodes: newNodes, edges: newEdges, idCounter, edgeCounter });
   },
   connectNodes: async (connection) => {
-    const { source, sourceHandle, target, targetHandle } = connection;
-    // checking if handle labels specified
-    if (!sourceHandle || !targetHandle) return;
+    const connectionData = await onNodesConnect({
+      connection,
+      nodes: get().nodes,
+      values: get().values,
+      edges: get().edges,
+      edgeCounter: get().edgeCounter,
+    });
 
-    // checking if target is not a result node
-    if (targetHandle === "R") return;
+    if (!connectionData) return;
 
-    // checking if not connecting to the same node
-    if (target === source) return;
+    set({
+      nodes: connectionData.nodes,
+      edges: connectionData.edges,
+      edgeCounter: connectionData.edgeCounter,
+    });
 
-    // checking if possible value of the source = allowed value of the target input
-    const sourceHandleObj = deconstructHandleId(sourceHandle);
-    const targetHandleObj = deconstructHandleId(targetHandle);
-
-    if (!sourceHandleObj || !targetHandleObj) return false;
-
-    if (
-      !isConnectable(sourceHandleObj.allowedTypes, targetHandleObj.allowedTypes)
-    )
-      return;
-
-    const [nodeA, nodeB] = (await Promise.all([
-      getById(get().nodes, source)[0],
-      getById(get().nodes, target)[0],
-    ])) as [AppNode, AppNode];
-
-    // checking if not connecting into loop
-    const chainTo = getChainIdsTo(nodeA, get().edges);
-    if (chainTo.includes(target)) {
-      //#TODO: Warning for user
-      console.log("Chain includes target LOOP");
-      console.log({ chainTo, target });
-      return;
-    }
-
-    const id = get().edgeCounter + 1;
-    // const newEdge: Edge = {
-    //   id: id.toString(),
-    //   ...connection,
-    // };
-
-    const targetInput = nodeB.data.inputs[targetHandleObj.outputLabel];
-
-    if (!targetInput) {
-      console.log(
-        "Can't connect: Target " +
-          nodeB.id +
-          " doesn't have input " +
-          targetHandleObj.outputLabel
-      );
-      return;
-    }
-
-    // checking if input is connected to other node - if true then replases the edge
-    const cleanEdges = get().edges.filter(
-      (edge) => edge.targetHandle !== targetHandle
-    );
-    const newEdges = connectNodes({
-      sourceId: nodeA.id,
-      targetId: nodeB.id,
-      edges: cleanEdges,
-      edgeId: id.toString(),
-      sourceHandle,
-      targetHandle,
-    }).edges;
-    // const existingEdge = get().edges.find(
-    //   (edge) => edge.target === target && edge.targetHandle === targetHandle
-    // );
-    // const newEdges = !existingEdge
-    //   ? connectNodes({
-    //       sourceId: nodeA.id,
-    //       targetId: nodeB.id,
-    //       edges: get().edges,
-    //       edgeId: id.toString(),
-    //       sourceHandle: sourceHandleObj.outputLabel,
-    //       targetHandle: targetHandleObj.outputLabel,
-    //     }).edges
-    //   : reconnectEdge(existingEdge, connection, get().edges);
-
-    const isSourceConst = nodeA.type === "constant";
-
-    targetInput.valueId = isSourceConst
-      ? sourceHandleObj.outputLabel
-      : sourceHandleObj.label;
-
-    const newNodes = replaceNode(nodeB, get().nodes);
-
+    if (!connectionData.recalculate) return;
     // recalculates chain
-    const chain = getChainIdsFrom(nodeB, newEdges);
+    const chain = getChainIdsFrom(connectionData.nodeB, connectionData.edges);
     const calcRes = await recalculateChain(
       chain,
-      newNodes,
+      get().nodes,
       get().values,
       get().anglesFormat
     );
 
-    if (calcRes.nodesToReplace.length > 0) {
-      // #TODO: Rewrite util to accept multiple nodes
-      let newNodes0: AppNode[] = newNodes;
-      calcRes.nodesToReplace.forEach((node) => replaceNode(node, newNodes0));
-      set({ nodes: newNodes });
-    }
+    calcRes.nodesToReplace.forEach((node) => {
+      set({ nodes: replaceNode(node, get().nodes) });
+    });
+    // if (calcRes.nodesToReplace.length > 0) {
+    //   // #TODO: Rewrite util to accept multiple nodes
+    //   // let newNodes0: AppNode[] = newNodes;
+    //   // calcRes.nodesToReplace.forEach((node) => replaceNode(node, newNodes0));
+    //   // set({ nodes: newNodes });
+    // }
 
     set({
-      edges: newEdges,
-      edgeCounter: id,
       values: calcRes.values,
-      nodes: newNodes,
     });
+    // const { source, sourceHandle, target, targetHandle } = connection;
+    // // checking if handle labels specified
+    // if (!sourceHandle || !targetHandle) return;
+
+    // // checking if target is not a result node
+    // if (targetHandle === "R") return;
+
+    // // checking if not connecting to the same node
+    // if (target === source) return;
+
+    // // checking if possible value of the source = allowed value of the target input
+    // const sourceHandleObj = deconstructHandleId(sourceHandle);
+    // const targetHandleObj = deconstructHandleId(targetHandle);
+
+    // if (!sourceHandleObj || !targetHandleObj) return false;
+
+    // if (
+    //   !isConnectable(sourceHandleObj.allowedTypes, targetHandleObj.allowedTypes)
+    // )
+    //   return;
+
+    // const targetActionName = targetHandleObj.action;
+
+    // switch (targetActionName) {
+    //   case "addEq": {
+    //     break;
+    //   }
+    //   default: {
+    //   }
+    // }
+
+    // const [nodeA, nodeB] = (await Promise.all([
+    //   getById(get().nodes, source)[0],
+    //   getById(get().nodes, target)[0],
+    // ])) as [AppNode, AppNode];
+
+    // // checking if not connecting into loop
+    // const chainTo = getChainIdsTo(nodeA, get().edges);
+    // if (chainTo.includes(target)) {
+    //   //#TODO: Warning for user
+    //   console.log("Chain includes target LOOP");
+    //   console.log({ chainTo, target });
+    //   return;
+    // }
+
+    // const id = get().edgeCounter + 1;
+    // // const newEdge: Edge = {
+    // //   id: id.toString(),
+    // //   ...connection,
+    // // };
+
+    // const targetInput = nodeB.data.inputs[targetHandleObj.outputLabel];
+
+    // if (!targetInput) {
+    //   console.log(
+    //     "Can't connect: Target " +
+    //       nodeB.id +
+    //       " doesn't have input " +
+    //       targetHandleObj.outputLabel
+    //   );
+    //   return;
+    // }
+
+    // // checking if input is connected to other node - if true then replases the edge
+    // const cleanEdges = get().edges.filter(
+    //   (edge) => edge.targetHandle !== targetHandle
+    // );
+    // const newEdges = connectNodes({
+    //   sourceId: nodeA.id,
+    //   targetId: nodeB.id,
+    //   edges: cleanEdges,
+    //   edgeId: id.toString(),
+    //   sourceHandle,
+    //   targetHandle,
+    // }).edges;
+    // // const existingEdge = get().edges.find(
+    // //   (edge) => edge.target === target && edge.targetHandle === targetHandle
+    // // );
+    // // const newEdges = !existingEdge
+    // //   ? connectNodes({
+    // //       sourceId: nodeA.id,
+    // //       targetId: nodeB.id,
+    // //       edges: get().edges,
+    // //       edgeId: id.toString(),
+    // //       sourceHandle: sourceHandleObj.outputLabel,
+    // //       targetHandle: targetHandleObj.outputLabel,
+    // //     }).edges
+    // //   : reconnectEdge(existingEdge, connection, get().edges);
+
+    // const isSourceConst = nodeA.type === "constant";
+
+    // targetInput.valueId = isSourceConst
+    //   ? sourceHandleObj.outputLabel
+    //   : sourceHandleObj.label;
+
+    // const newNodes = replaceNode(nodeB, get().nodes);
   },
   setValue: (valKey, newValue) =>
     set((state) => {
@@ -523,6 +554,9 @@ const useContent = create<ContentStore>()((set, get) => ({
         return node;
       }),
     });
+  },
+  addEquation: () => {
+    console.log("Add equation");
   },
 }));
 

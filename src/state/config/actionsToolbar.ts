@@ -11,7 +11,8 @@ type SubCategory =
   | "Deconstruct"
   | "Other"
   | "Describe"
-  | "Nodes";
+  | "Nodes"
+  | "Plots";
 
 export type layoutElement<T extends "action" | "group" | "multibtn"> = {
   type: T;
@@ -429,6 +430,23 @@ const actionsToolbar: Toolbar = {
             },
           },
         ],
+      },
+    ],
+  },
+  "Plots and functions": {
+    Plots: [
+      {
+        type: "action",
+        content: {
+          title: "2D graph",
+          icon: "f(x)",
+          iconType: "latex",
+          large: true,
+          command: {
+            type: "create",
+            data: "plot",
+          },
+        },
       },
     ],
   },

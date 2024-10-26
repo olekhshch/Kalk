@@ -112,6 +112,9 @@ const nodeInputs: obj = {
     a: { allowedTypes: ["number", "vector", "matrix"], valueId: null },
   },
   markdown: {},
+  plot: {
+    // fn: { allowedTypes: ["number"], valueId: null },
+  },
 };
 
 export default nodeInputs;

@@ -43,7 +43,7 @@ const TextSingleNode = ({
   const zoom = useViewport().zoom;
 
   const [openSelection, setOpenSelection] = useState<
-    null | "background" | "font-size"
+    null | "background" | "font-size" | "border" | "font-color"
   >(null);
 
   useEffect(() => {
@@ -86,10 +86,17 @@ const TextSingleNode = ({
     "nodrag text-[16px] w-[1.25rem] h-[1.25rem] outline-none p-0 m-0 text-left leading-normal bg-transparent"
   );
 
-  const onStyleClick = (newStyling: TextSingleStyling) => {
-    const newStyle: TextSingleStyling = { ...styling, ...newStyling };
-    setNodeStyling(id, newStyle, tag);
-  };
+  const onStyleClick = useCallback(
+    (newStyling: TextSingleStyling) => {
+      const newStyle: TextSingleStyling = { ...styling, ...newStyling };
+      setNodeStyling(id, newStyle, tag);
+    },
+    [styling, setNodeStyling]
+  );
+
+  useEffect(() => {
+    console.log("TS render");
+  });
 
   return (
     <>
@@ -97,6 +104,7 @@ const TextSingleNode = ({
         id={id}
         comment={comment ?? null}
         background={styling.background}
+        border={styling.border}
       >
         <div className={twClassSpan}>
           <NodeToolbar
@@ -121,6 +129,26 @@ const TextSingleNode = ({
                   swatches={["var(--white)", "var(--main)", "var(--sec)"]}
                   withTransparent
                   onClick={(color) => onStyleClick({ background: color })}
+                />
+              </div>
+            )}
+            <NodeToolbarBtn className=":hover:bg-white" isActive={false}>
+              <div
+                className="w-full h-full bg-white"
+                style={{ border: styling.border }}
+                onClick={() =>
+                  setOpenSelection(openSelection === "border" ? null : "border")
+                }
+              />
+            </NodeToolbarBtn>
+            {openSelection === "border" && (
+              <div className="p-1 bg-white absolute top-[-36px] border-sec border-solid border-[1px]">
+                <ColorPallete
+                  swatches={["var(--white)", "var(--main)", "var(--sec)"]}
+                  withTransparent
+                  onClick={(color) =>
+                    onStyleClick({ border: "2px solid " + color })
+                  }
                 />
               </div>
             )}

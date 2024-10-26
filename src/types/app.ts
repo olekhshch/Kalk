@@ -10,7 +10,13 @@ import {
 } from "./nodes";
 import { Connection, Edge, NodeChange, XYPosition } from "@xyflow/react";
 
-export type Tab = "All" | "Math" | "Matrices" | "Organize" | "Project";
+export type Tab =
+  | "All"
+  | "Math"
+  | "Matrices"
+  | "Organize"
+  | "Project"
+  | "Plots and functions";
 
 export type Action = {
   title: string;
@@ -53,7 +59,11 @@ export type Mode =
   | "create" // when click on canvas specifies position of new node
   | "calculation"; // blocks changes while recalculating nodes values
 
-export type ContentStore = NodesStore & TextStore & VariablesStore & MathStore;
+export type ContentStore = NodesStore &
+  TextStore &
+  VariablesStore &
+  MathStore &
+  PlotStore;
 
 export interface NodesStore {
   nodes: AppNode[];
@@ -107,7 +117,12 @@ export interface VariablesStore {
   updateConstants: () => void;
 }
 
+export type PlotStore = {
+  addEquation: () => void;
+};
+
 export type StoreErrors = { [k: string]: string[] };
+
 export type CalculatedValues = {
   [id: string]: number | Matrix | Vector | null;
 };
@@ -174,3 +189,12 @@ export type TableItem = {
 };
 
 export type NodeTheme = "math" | "mtx" | "const" | "red";
+
+export type Calculations = {
+  values: CalculatedValues;
+  nodesToReplace: AppNode[];
+  errors: StoreErrors;
+};
+
+// actions to fire on connect
+export type ConnectAction = "addEq";

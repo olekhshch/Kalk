@@ -6,6 +6,7 @@ export enum NodePurpose {
   CONSTRUCT, // constructs new values based on dinamic number of inputs
   DECONSTRUCT, // de-constructs values into new values
   DECOR, // no action (e.g. text nodes, constants)
+  PLOT,
 }
 
 // _ functions on numbers (...nums) => num
@@ -45,8 +46,14 @@ export type MtxVecNodeTag =
   | "sum-all"
   | "det";
 
+export type PlotNodeTag = "plot";
+
 export type OrganizationalNodeTag = "text-single" | "result" | "markdown";
-export type NodeTag = OrganizationalNodeTag | NumNodeTag | MtxVecNodeTag;
+export type NodeTag =
+  | OrganizationalNodeTag
+  | NumNodeTag
+  | MtxVecNodeTag
+  | PlotNodeTag;
 
 // export type NodeType = OrganizationalNodeType | NumNodeType | MtxVecNodeType;
 export type NodeType =
@@ -58,9 +65,10 @@ export type NodeType =
   | "mtx-constr"
   | "constant"
   | "mtx-deconstr"
-  | "markdown";
+  | "markdown"
+  | "plot";
 
-export type ValueType = "number" | "text" | "matrix" | "vector";
+export type ValueType = "number" | "text" | "matrix" | "vector" | "interval";
 
 export type Vector = number[];
 
@@ -76,7 +84,8 @@ export type AppNode =
   | DeConstructorNode
   | TextSingleNode
   | MarkdownNode
-  | ConstantNode;
+  | ConstantNode
+  | PlotNode;
 
 export type MathNode = ExpressionNode | FnNode;
 
@@ -120,6 +129,7 @@ export type TextSingleStyling = {
   underscore?: boolean;
   background?: string;
   "font-size"?: string;
+  border?: string;
 };
 
 export type MarkdownNode = AppNodeBase<"markdown"> & {
@@ -213,7 +223,7 @@ export type NodeOutputs = {
 };
 
 // value that can be get from the Values Store
-export type InputValue = number | Vector | Matrix | null | undefined;
+export type InputValue = number | Vector | Matrix | Interval | null | undefined;
 
 export type NumberFunctionParams = {
   [k: string]: InputValue;
@@ -225,20 +235,6 @@ export type Input = {
   type: ValueType;
   allowedTypes: ValueType[];
 };
-
-export type IdentityMtxNode = Node<
-  {
-    showResult: boolean;
-    inputs: {
-      n: Input;
-    };
-    outputs: {
-      M?: NodeOutput;
-    };
-    comment?: string | null;
-  },
-  "i-mtx"
->;
 
 // vector = array of numbers (row of Matrix)
 export type VectorNode = Node<
@@ -269,20 +265,20 @@ export type MtxFromRowsNode = Node<
   "mtx-rows"
 >;
 
-export type MtxVecFnNode = Node<
-  {
-    label: string;
-    tag: NodeType;
-    showResult: boolean;
-    inputs: {
-      [k: string]: Input;
-    };
-    outputs: NodeOutputs;
-    action: MtxVecFnAction;
-    comment?: string | null;
-  },
-  "mtx-fn"
->;
+// export type MtxVecFnNode = Node<
+//   {
+//     label: string;
+//     tag: NodeType;
+//     showResult: boolean;
+//     inputs: {
+//       [k: string]: Input;
+//     };
+//     outputs: NodeOutputs;
+//     action: MtxVecFnAction;
+//     comment?: string | null;
+//   },
+//   "mtx-fn"
+// >;
 
 export type MtxVecFunctionParams = {
   [k: string]: InputValue;
@@ -313,4 +309,40 @@ export type DeconstructActionResult = {
     [k: string]: { possibleValues: ValueType[]; value: OutputValue };
   };
   errors: string[];
+};
+
+// ============= Plot types =================
+
+export type PlotNode = AppNodeBase<"plot"> & {
+  data: {
+    equations: PlotEquation[];
+    purpose: NodePurpose.PLOT;
+  };
+};
+
+export type PlotEquation = VectorOnPlot | FunctionOnPlot;
+
+export type EquationType = "function" | "vector" | "points";
+
+export type EquationBase<T extends EquationType> = {
+  type: T;
+  of: "x" | "y";
+  color: string;
+  id: number;
+};
+
+export type VectorOnPlot = EquationBase<"vector"> & {
+  tip: [number, number];
+};
+
+export type FunctionOnPlot = EquationBase<"function"> & {
+  fn: (arg?: number) => number;
+};
+
+export type PlotValue<T extends "interval" | "function"> = {
+  type: T;
+};
+
+export type Interval = PlotValue<"interval"> & {
+  value: [number, number][];
 };

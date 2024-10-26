@@ -94,6 +94,7 @@ const nodeOutputs: obj = {
     N: { possibleValues: ["number", "vector", "matrix"] },
   },
   markdown: {},
+  plot: {},
 };
 
 export default nodeOutputs;
