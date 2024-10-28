@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import { AngleFormat } from "../../types/app";
 import Tips from "./Tips";
 import useUI from "../../hooks/useUI";
+import BPButton from "./BPButton";
 
 const BottomPanel = () => {
   const { grid_type, setGridType, mode, minimap, showHideMinimap } =
@@ -56,13 +57,9 @@ const BottomPanel = () => {
   return (
     <div className="bg-main px-2 text-white font-sys text-sm flex gap-2 items-center">
       <div>
-        {/* <Button
-          icon=""
-          title={`${(zoom * 100).toFixed(2)}%`}
-          showIcon={false}
-          onClick={(e) => toggleScaleMenu(e)}
-          hoverStyle="sec"
-        /> */}
+        <BPButton onClick={toggleScaleMenu} style="w-[58px]">
+          <span>{`${(zoom * 100).toFixed(1)}%`}</span>
+        </BPButton>
       </div>
       <div className="flex items-center gap-[2px]">
         <ButtonMode
@@ -103,13 +100,9 @@ const BottomPanel = () => {
           isActive={minimap}
           showIcon
         />
-        {/* <Button
-          icon=""
-          title={anglesFormat}
-          hoverStyle="sec"
-          showIcon={false}
-          onClick={() => toggleAngleFormat(anglesFormat)}
-        /> */}
+        <BPButton onClick={() => toggleAngleFormat(anglesFormat)}>
+          <span>{anglesFormat}</span>
+        </BPButton>
       </div>
     </div>
   );

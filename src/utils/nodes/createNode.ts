@@ -227,6 +227,7 @@ const createNode: Factory = (tag, nodeId, position, constId) => {
           tag,
           value,
           equations: [],
+          minSize: 600,
           // defaultInputs: {
           //   fn: { allowedTypes: ["number"], valueId: null },
           // },
@@ -268,6 +269,7 @@ const mtxNodeTags: MtxVecNodeTag[] = [
   "dot-prod",
   "norm",
   "sum-all",
+  "transpose",
 ];
 const constrNodeTags: NodeTag[] = ["vec", "mtx-rows", "mtx-cols"];
 const deconstrNodeTags: NodeTag[] = ["entries-vec"];
@@ -343,6 +345,8 @@ const getNodeValue = (tag: NodeTag) => {
       return "\\arccos(a)";
     case "atg":
       return "\\arctan(a)";
+    case "transpose":
+      return "M^T";
     default:
       return "";
   }

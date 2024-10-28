@@ -66,6 +66,7 @@ const nodeActions: obj = {
     await invoke("acos", { a, format: angleFormat }),
   atg: async ({ a }, value, angleFormat) =>
     await invoke("atg", { a, format: angleFormat }),
+  transpose: async ({ M }) => await invoke("transpose", { m: M }),
 };
 
 export default nodeActions;

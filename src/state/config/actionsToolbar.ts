@@ -194,33 +194,6 @@ const actionsToolbar: Toolbar = {
           },
         ],
       },
-      // {
-      //   type: "group",
-      //   content: [
-      //     {
-      //       title: "RAD",
-      //       icon: "",
-      //       iconType: "latex",
-      //       hideIcon: true,
-      //       // hideTitle: true,
-      //       command: {
-      //         type: "create",
-      //         data: "to-rad",
-      //       },
-      //     },
-      //     {
-      //       title: "DEG",
-      //       icon: "",
-      //       iconType: "latex",
-      //       hideIcon: true,
-      //       // hideTitle: true,
-      //       command: {
-      //         type: "create",
-      //         data: "to-deg",
-      //       },
-      //     },
-      //   ],
-      // },
       {
         type: "group",
         content: [
@@ -398,6 +371,20 @@ const actionsToolbar: Toolbar = {
             command: {
               type: "create",
               data: "sum-all",
+            },
+          },
+        ],
+      },
+      {
+        type: "group",
+        content: [
+          {
+            title: "Transpose",
+            icon: "A^T",
+            iconType: "latex",
+            command: {
+              type: "create",
+              data: "transpose",
             },
           },
         ],

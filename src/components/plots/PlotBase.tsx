@@ -7,12 +7,13 @@ type props = {
   h: number;
   pan: boolean;
   equations: PlotEquation[];
+  viewBox: { x?: [number, number] };
 };
 
-const PlotBase = ({ w, h, pan, equations }: props) => {
+const PlotBase = ({ w, h, pan, equations, viewBox }: props) => {
   return (
     <div className="bg-sec w-full h-full">
-      <Mafs viewBox={{ x: [-4, 4] }} width={w} height={h} pan={pan}>
+      <Mafs viewBox={viewBox} width={w} height={h} pan={pan}>
         <Coordinates.Cartesian />
         {equations.map((eq, idx) => {
           switch (eq.type) {

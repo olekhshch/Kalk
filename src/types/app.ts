@@ -33,8 +33,12 @@ export type Action = {
 };
 
 // specifies how action should appear on the Toolbar
-export type ActionToolbar = {
+
+export type ActionBase = {
   title: string;
+  cb?: React.MouseEventHandler;
+};
+export type ActionToolbar = ActionBase & {
   large?: boolean;
   iconType: "url" | "latex";
   icon: string;

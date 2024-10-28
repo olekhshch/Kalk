@@ -115,6 +115,7 @@ const nodeInputs: obj = {
   plot: {
     // fn: { allowedTypes: ["number"], valueId: null },
   },
+  transpose: { M: { allowedTypes: ["matrix"], valueId: null } },
 };
 
 export default nodeInputs;

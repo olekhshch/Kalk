@@ -1,4 +1,3 @@
-import React from "react";
 import { ActionToolbar, ActionType } from "../types/app";
 import LateXformula from "./LateXformula";
 import useContent from "../state/useContent";
@@ -11,9 +10,7 @@ type props = {
 const SmallBtn = ({
   action: { title, iconType, icon, hideTitle, command, hideIcon },
 }: props) => {
-  const [addNode, doAction] = useContent(
-    useShallow((store) => [store.addNode, store.doAction])
-  );
+  const [doAction] = useContent(useShallow((store) => [store.doAction]));
   const setMode = useAppState(useShallow((store) => store.setMode));
 
   const onClick = () => {

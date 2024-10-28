@@ -11,7 +11,6 @@ import {
   NodeInputs,
   PlotNode as PlotNodeType,
 } from "../../types/nodes";
-import InputPort from "../ports/Input";
 import generateHandleId from "../../utils/generateHandleId";
 import PlotInput from "../ports/PlotInput";
 import useContent from "../../state/useContent";
@@ -21,9 +20,9 @@ const PlotNode = ({
   id,
   data: { inputs, equations },
 }: NodeProps<PlotNodeType>) => {
-  const [plotSize, setPlotSize] = useState({ w: 360, h: 360 });
+  const [plotSize, setPlotSize] = useState({ w: 560, h: 560 });
 
-  useEffect(() => console.log("PLOT render"));
+  // useEffect(() => console.log("PLOT render"));
   return (
     <div className="flex border-solid border-matrix border-[1px] rounded-[4px]">
       <InputSection inputs={inputs} nodeId={id} />
@@ -33,6 +32,7 @@ const PlotNode = ({
           h={plotSize.h}
           pan={false}
           equations={equations}
+          viewBox={{ x: [-8, 8] }}
         />
       </div>
     </div>

@@ -1,5 +1,7 @@
-mod matrices;
+pub mod matrices;
 mod props;
+mod test_props;
+mod tests;
 mod vectors;
 use serde_json::Value;
 use vectors::vector_norm;

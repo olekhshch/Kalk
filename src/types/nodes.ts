@@ -44,6 +44,7 @@ export type MtxVecNodeTag =
   | "dot-prod"
   | "cross-prod"
   | "sum-all"
+  | "transpose"
   | "det";
 
 export type PlotNodeTag = "plot";
@@ -317,12 +318,13 @@ export type PlotNode = AppNodeBase<"plot"> & {
   data: {
     equations: PlotEquation[];
     purpose: NodePurpose.PLOT;
+    minSize: number;
   };
 };
 
-export type PlotEquation = VectorOnPlot | FunctionOnPlot;
+export type PlotEquation = VectorOnPlot | FunctionOnPlot | PointsOnPlot;
 
-export type EquationType = "function" | "vector" | "points";
+export type EquationType = "function" | "vec" | "points";
 
 export type EquationBase<T extends EquationType> = {
   type: T;
@@ -331,12 +333,16 @@ export type EquationBase<T extends EquationType> = {
   id: number;
 };
 
-export type VectorOnPlot = EquationBase<"vector"> & {
+export type VectorOnPlot = EquationBase<"vec"> & {
   tip: [number, number];
 };
 
 export type FunctionOnPlot = EquationBase<"function"> & {
   fn: (arg?: number) => number;
+};
+
+export type PointsOnPlot = EquationBase<"points"> & {
+  points: [number, number][];
 };
 
 export type PlotValue<T extends "interval" | "function"> = {

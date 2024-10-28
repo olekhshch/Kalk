@@ -1,6 +1,5 @@
 import React from "react";
-import { NodeType } from "../../types/nodes";
-import { ActionType, Mode } from "../../types/app";
+import { Mode } from "../../types/app";
 import { modeData } from "../../state/useAppState";
 
 type props = {

@@ -84,26 +84,27 @@ const onNodesConnect: f = async ({
 
       if (!newPlotNodeData) return null;
 
-      const eqs: PlotEquation[] = [newPlotNodeData.eq];
+      // const eqs: PlotEquation[] = [...nodeB.data.equations, newPlotNodeData.eq];
 
-      const newPlotNode: PlotNode = {
-        id: nodeB.id,
-        position: nodeB.position,
-        type: nodeB.type,
-        data: {
-          purpose: NodePurpose.PLOT,
-          value: nodeB.data.value,
-          inputs: { ...newPlotNodeData.node.data.inputs },
-          outputs: { ...newPlotNodeData.node.data.outputs },
-          tag: nodeB.data.tag,
-          equations: eqs.map((eq) => {
-            if (eq.type === "function") {
-              return { ...eq, fn: eq.fn };
-            }
-            return eq;
-          }),
-        },
-      };
+      // const newPlotNode: PlotNode = {
+      //   id: nodeB.id,
+      //   position: nodeB.position,
+      //   type: nodeB.type,
+      //   data: {
+      //     purpose: NodePurpose.PLOT,
+      //     value: nodeB.data.value,
+      //     inputs: { ...newPlotNodeData.node.data.inputs },
+      //     outputs: { ...newPlotNodeData.node.data.outputs },
+      //     tag: nodeB.data.tag,
+      //     equations: eqs.map((eq) => {
+      //       if (eq.type === "function") {
+      //         return { ...eq, fn: eq.fn };
+      //       }
+      //       return eq;
+      //     }),
+
+      //   },
+      // };
 
       edgeCount += 1;
       const newEdgesData = connectNodes({
@@ -115,7 +116,7 @@ const onNodesConnect: f = async ({
         sourceHandle,
       });
 
-      const newNodes = replaceNode(newPlotNode, nodes);
+      const newNodes = replaceNode(newPlotNodeData.node, nodes);
 
       return {
         nodes: newNodes,
