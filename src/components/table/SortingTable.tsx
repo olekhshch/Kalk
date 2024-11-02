@@ -1,6 +1,5 @@
 // general table with filtering, sorting etc
 
-import React from "react";
 import { FilterOptions, TableItem as Item } from "../../types/app";
 import TableItem from "./TableItem";
 import classNames from "classnames";
@@ -22,7 +21,7 @@ type props = {
 };
 
 const SortingTable = ({
-  filters,
+  // filters,
   items,
   columns,
   minWidths,

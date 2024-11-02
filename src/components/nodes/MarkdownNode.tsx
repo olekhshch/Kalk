@@ -1,4 +1,4 @@
-import { NodeProps, NodeResizer } from "@xyflow/react";
+import { NodeProps } from "@xyflow/react";
 import {
   MarkdownNode as MarkdownNodeType,
   MarkdownStyling,
@@ -72,7 +72,7 @@ type p = {
   styling: MarkdownStyling;
 };
 
-const MarkdownView = ({ w, h, content, styling }: p) => {
+const MarkdownView = ({ content, styling }: p) => {
   return (
     <div
       style={{

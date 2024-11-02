@@ -11,8 +11,6 @@ import { RustCalculations } from "../../types/app";
 import makeVector from "../matrix/makeVector";
 import makeMtxFromRows from "../matrix/makeMtxFromRows";
 // import Matrices from "../matrix/main/Matrices";
-import dotProduct from "../matrix/dotProduct";
-import vectorNorm from "../matrix/vectorNorm";
 import Vectors from "../matrix/main/Vectors";
 
 type obj = {
@@ -36,13 +34,13 @@ const nodeActions: obj = {
     (await invoke("divide", { a, b })) as ActionResult,
   abs: async ({ a }) => await invoke("abs", { a }),
   "I-matrix": async ({ n }) => await invoke("make_identity_mtx", { n }),
-  sin: async ({ a }, value, angleFormat) =>
+  sin: async ({ a }, _, angleFormat) =>
     await invoke("sin", { a, format: angleFormat }),
-  cos: async ({ a }, value, angleFormat) =>
+  cos: async ({ a }, _, angleFormat) =>
     await invoke("cos", { a, format: angleFormat }),
-  tg: async ({ a }, value, angleFormat) =>
+  tg: async ({ a }, _, angleFormat) =>
     await invoke("tg", { a, format: angleFormat }),
-  ctg: async ({ a }, value, angleFormat) =>
+  ctg: async ({ a }, _, angleFormat) =>
     await invoke("ctg", { a, format: angleFormat }),
   vec: (params) => makeVector(params),
   "mtx-rows": (params) => makeMtxFromRows(params),
@@ -60,13 +58,15 @@ const nodeActions: obj = {
   "sum-all": async ({ M }) => await invoke("sum_all", { a: M }),
   // "mtx-cols": (params) => Matrices.fromColumns(params),
   "entries-vec": (params) => Vectors.deconstructVec(params),
-  asin: async ({ a }, value, angleFormat) =>
+  asin: async ({ a }, _, angleFormat) =>
     await invoke("asin", { a, format: angleFormat }),
-  acos: async ({ a }, value, angleFormat) =>
+  acos: async ({ a }, _, angleFormat) =>
     await invoke("acos", { a, format: angleFormat }),
-  atg: async ({ a }, value, angleFormat) =>
+  atg: async ({ a }, _, angleFormat) =>
     await invoke("atg", { a, format: angleFormat }),
   transpose: async ({ M }) => await invoke("transpose", { m: M }),
+  "multiply-mtx": async ({ A, B }) =>
+    await invoke("multiply_matrices", { a: A, b: B }),
 };
 
 export default nodeActions;

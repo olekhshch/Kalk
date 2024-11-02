@@ -41,7 +41,7 @@ pub fn in_domain<T: num::traits::Num + PartialOrd>(
                 true => x.ge(&min),
                 false => x.gt(&min),
             };
-            if (!min_ok) {
+            if !min_ok {
                 false
             } else {
                 let max_ok = match max_included {
@@ -52,6 +52,5 @@ pub fn in_domain<T: num::traits::Num + PartialOrd>(
                 max_ok
             }
         }
-        _ => false,
     }
 }

@@ -270,6 +270,7 @@ const mtxNodeTags: MtxVecNodeTag[] = [
   "norm",
   "sum-all",
   "transpose",
+  "multiply-mtx",
 ];
 const constrNodeTags: NodeTag[] = ["vec", "mtx-rows", "mtx-cols"];
 const deconstrNodeTags: NodeTag[] = ["entries-vec"];
@@ -347,6 +348,8 @@ const getNodeValue = (tag: NodeTag) => {
       return "\\arctan(a)";
     case "transpose":
       return "M^T";
+    case "multiply-mtx":
+      return "A B";
     default:
       return "";
   }

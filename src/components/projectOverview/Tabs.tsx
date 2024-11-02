@@ -1,4 +1,3 @@
-import React from "react";
 import useProjectOverview from "../../hooks/useProjectOverview";
 import { useShallow } from "zustand/react/shallow";
 import classNames from "classnames";

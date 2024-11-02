@@ -3,7 +3,6 @@ import "../../index.css";
 import Tabs from "./Tabs";
 import useProjectOverview from "../../hooks/useProjectOverview";
 import { useShallow } from "zustand/react/shallow";
-import General from "./General";
 import Nodes from "./Nodes";
 
 const ProjectOverviewWindow = () => {
@@ -19,10 +18,7 @@ const ProjectOverviewWindow = () => {
   return (
     <div className="flex w-screen h-screen">
       <Tabs />
-      <main className="p-2">
-        {activeTab === "General" && <General />}
-        {activeTab === "Nodes" && <Nodes />}
-      </main>
+      <main className="p-2">{activeTab === "Nodes" && <Nodes />}</main>
     </div>
   );
 };

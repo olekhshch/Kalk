@@ -82,6 +82,7 @@ pub fn run() {
             numbers::acos,
             numbers::atg,
             matrix::matrices::transpose,
+            matrix::matrices::multiply_matrices,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

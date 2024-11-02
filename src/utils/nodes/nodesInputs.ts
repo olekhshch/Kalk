@@ -116,6 +116,10 @@ const nodeInputs: obj = {
     // fn: { allowedTypes: ["number"], valueId: null },
   },
   transpose: { M: { allowedTypes: ["matrix"], valueId: null } },
+  "multiply-mtx": {
+    A: { allowedTypes: ["matrix"], valueId: null },
+    B: { allowedTypes: ["matrix"], valueId: null },
+  },
 };
 
 export default nodeInputs;

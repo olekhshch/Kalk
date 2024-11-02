@@ -6,7 +6,6 @@ import actionsToolbar, {
 } from "../../state/config/actionsToolbar";
 import LargeBtn from "../../components/LargeBtn";
 import SmallBtn from "../../components/SmallBtn";
-import MultiBtn from "./MultiBtn";
 
 const Toolbar = () => {
   const [activeTab] = useAppState(useShallow((store) => [store.active_tab]));
@@ -59,7 +58,7 @@ const SubCategory = ({ name, content }: p) => {
             }
 
             if (type === "multibtn") {
-              return <MultiBtn content={content} />;
+              return null;
             }
           })}
         </div>

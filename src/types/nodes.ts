@@ -40,6 +40,7 @@ export type MtxVecNodeTag =
   | "vec"
   | "norm"
   | "add-mtx"
+  | "multiply-mtx"
   | "scalar-mult"
   | "dot-prod"
   | "cross-prod"

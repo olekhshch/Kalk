@@ -1,4 +1,3 @@
-import React from "react";
 import WindowWrapper from "../../components/WindowWrapper";
 
 const Constants = () => {

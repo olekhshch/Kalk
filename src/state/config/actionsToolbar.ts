@@ -387,6 +387,15 @@ const actionsToolbar: Toolbar = {
               data: "transpose",
             },
           },
+          {
+            title: "Multiply matrices",
+            icon: "A B",
+            iconType: "latex",
+            command: {
+              type: "create",
+              data: "multiply-mtx",
+            },
+          },
         ],
       },
     ],

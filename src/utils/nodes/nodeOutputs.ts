@@ -96,6 +96,9 @@ const nodeOutputs: obj = {
   markdown: {},
   plot: {},
   transpose: { M: { possibleValues: ["matrix"] } },
+  "multiply-mtx": {
+    M: { possibleValues: ["matrix"] },
+  },
 };
 
 export default nodeOutputs;

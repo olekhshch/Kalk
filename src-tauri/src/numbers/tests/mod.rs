@@ -9,6 +9,8 @@ use crate::{
 
 use super::add;
 
+mod operations;
+
 #[test]
 pub fn arithmetic_invalid_values() {
     let add_nulls = add(Some(Value::Null), Some(Value::Null));

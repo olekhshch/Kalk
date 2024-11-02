@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import NodeWrapper from "./wrappers/NodeWrapper";
 import {
   Matrix,
@@ -14,14 +14,10 @@ import getValueType from "../../utils/getValueType";
 
 const ResultNode = ({
   id,
-  data: { comment, isShown, valueId },
+  data: { comment, valueId },
 }: NodeProps<ResultNodeType>) => {
   const value = useContent(useShallow((store) => store.values[valueId]));
 
-  useEffect(() => console.log("RES RERENDERED"));
-  // if (!isShown) {
-  //   return null;
-  // }
   return (
     <>
       <NodeWrapper id={id} comment={comment ?? null}>

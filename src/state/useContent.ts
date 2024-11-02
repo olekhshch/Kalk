@@ -206,8 +206,6 @@ const useContent = create<ContentStore>()((set, get) => ({
     return { nodes };
   },
   editExpressionValue: async (nodeId, newValue) => {
-    const initNodes = get().nodes;
-    console.log({ initNodes });
     const { newNode, nodes } = editNodeValue(
       nodeId,
       newValue,
@@ -237,8 +235,6 @@ const useContent = create<ContentStore>()((set, get) => ({
         (node) => !nodeIdsToReplace.includes(node.id)
       );
       newNodes.push(...newValues.nodesToReplace);
-
-      console.log({ newNodes });
 
       set({
         values: newValues.values,

@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useConstants from "../../../hooks/useConstants";
 import { useShallow } from "zustand/react/shallow";
 import SortingTable from "../../../components/table/SortingTable";
 import { FilterOptions, TableItem } from "../../../types/app";
 import { invoke } from "@tauri-apps/api/core";
 import ButtonMain from "../../../components/dialogs/ButtonMain";
-import { emit, listen } from "@tauri-apps/api/event";
+import { listen } from "@tauri-apps/api/event";
 
 const ConstantsWindow = () => {
   const [constants, initLoad] = useConstants(
