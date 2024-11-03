@@ -15,11 +15,7 @@ import {
   Calculations,
   StoreErrors,
 } from "../../types/app";
-import makeVector from "../matrix/makeVector";
-import validate from "../validate";
-import makeMtxFromRows from "../matrix/makeMtxFromRows";
 import makeValueId from "../makeValueId";
-import getValueType from "../getValueType";
 import preparePlotData from "./preparePlotData";
 
 type f = (
@@ -51,7 +47,7 @@ const calculateNode: f = async (node, values, angleFormat) => {
   // no action = node doesn't calculate any value(s)
   if (!action || purpose === NodePurpose.DECOR) return calculations;
 
-  const inputEntries = Object.entries(inputs);
+  // const inputEntries = Object.entries(inputs);
   const outputKeys = Object.keys(outputs);
   const valueIds = outputKeys.map((key) => makeValueId(node.id, key));
 
@@ -66,26 +62,34 @@ const calculateNode: f = async (node, values, angleFormat) => {
 
   // ========== FN Node =================
   if (purpose === NodePurpose.FN || purpose === NodePurpose.DECONSTRUCT) {
-    for (const [inputLabel, input] of inputEntries) {
-      if (!input) {
-        return resetResult();
-      }
+    for (const ipt of inputs) {
+      const { valueId, label } = ipt;
 
-      const { valueId } = input;
+      if (!valueId) return resetResult();
 
-      if (!valueId) {
-        return resetResult();
-      }
-
-      const value = values[valueId];
-      const valType = getValueType(value);
-
-      if (!valType || !input.allowedTypes.includes(valType)) {
-        return resetResult();
-      }
-
-      params[inputLabel] = value;
+      const paramValue = values[valueId];
+      params[label] = paramValue;
     }
+    // for (const [inputLabel, input] of inputEntries) {
+    //   if (!input) {
+    //     return resetResult();
+    //   }
+
+    //   const { valueId } = input;
+
+    //   if (!valueId) {
+    //     return resetResult();
+    //   }
+
+    //   const value = values[valueId];
+    //   const valType = getValueType(value);
+
+    //   if (!valType || !input.allowedTypes.includes(valType)) {
+    //     return resetResult();
+    //   }
+
+    //   params[inputLabel] = value;
+    // }
   }
 
   // ============== CONSTRUCTOR =============
@@ -93,28 +97,40 @@ const calculateNode: f = async (node, values, angleFormat) => {
   if (purpose === NodePurpose.CONSTRUCT) {
     const { numOfInputVars } = (node as ConstructorNode).data;
     params.n = numOfInputVars;
-    for (const [inputLabel, input] of inputEntries) {
-      if (!input && input !== 0) {
-        return resetResult();
-      }
 
-      const { valueId } = input;
+    for (const inp of inputs) {
+      const { valueId, label } = inp;
+
       if (!valueId) {
         // if no value is passed calculations will continue because od the default inputs
-        params[inputLabel] = null;
+        params[label] = null;
       } else {
-        // if value is not defined or is not valid calculations will not continue
-        const value = values[valueId];
-        if (
-          (!value && value !== 0) ||
-          !input.allowedTypes.includes(getValueType(value)!)
-        ) {
-          return resetResult();
-        }
-
-        params[inputLabel] = value;
+        const paramVal = values[valueId];
+        params[label] = paramVal;
       }
     }
+    // for (const [inputLabel, input] of inputEntries) {
+    //   if (!input && input !== 0) {
+    //     return resetResult();
+    //   }
+
+    //   const { valueId } = input;
+    //   if (!valueId) {
+    //     // if no value is passed calculations will continue because od the default inputs
+    //     params[inputLabel] = null;
+    //   } else {
+    //     // if value is not defined or is not valid calculations will not continue
+    //     const value = values[valueId];
+    //     if (
+    //       (!value && value !== 0) ||
+    //       !input.allowedTypes.includes(getValueType(value)!)
+    //     ) {
+    //       return resetResult();
+    //     }
+
+    //     params[inputLabel] = value;
+    //   }
+    // }
   }
 
   const res = await action(params, value, angleFormat);

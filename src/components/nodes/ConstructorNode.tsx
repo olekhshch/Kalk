@@ -10,7 +10,6 @@ import NodeWrapper from "./wrappers/NodeWrapper";
 import LateXformula from "../LateXformula";
 import generateHandleId from "../../utils/generateHandleId";
 import Output from "../ports/Output";
-import InputPort from "../ports/Input";
 import useInputChange from "../../hooks/useInputChange";
 import useContent from "../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
@@ -45,14 +44,14 @@ const ConstructorNode = ({
     return { handleId, key: label, cssPosition };
   });
 
-  const inputEntries = Object.entries(inputs);
+  // const inputEntries = Object.entries(inputs);
 
-  const stepI = 100 / (inputEntries.length + 1);
-  const inputsHandleObjs = inputEntries.map(([label, input], idx) => {
-    const handleId = generateHandleId(id, label, input!.allowedTypes);
-    const cssPosition = `${stepI * (1 + idx)}%`;
-    return { handleId, key: label, cssPosition };
-  });
+  // const stepI = 100 / (inputEntries.length + 1);
+  // const inputsHandleObjs = inputEntries.map(([label, input], idx) => {
+  //   const handleId = generateHandleId(id, label, input!.allowedTypes);
+  //   const cssPosition = `${stepI * (1 + idx)}%`;
+  //   return { handleId, key: label, cssPosition };
+  // });
 
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +70,7 @@ const ConstructorNode = ({
       theme="mtx"
       outputValueTypes={outputsEntries[0][1]?.possibleValues}
       isDefined={outputValueType !== null}
+      inputs={inputs}
     >
       <div className="p-1 px-2 pl-6 flex flex-col gap-1">
         <ResultOutput nodeId={id} />
@@ -84,7 +84,7 @@ const ConstructorNode = ({
             className="px-1 w-[40px] bg-transparent border-b-gray border-b-solid border-b-[1px] nodrag"
           />
         </form>
-        {inputsHandleObjs.map(({ handleId, cssPosition, key }) => (
+        {/* {inputsHandleObjs.map(({ handleId, cssPosition, key }) => (
           <InputPort
             key={key}
             id={handleId}
@@ -92,7 +92,7 @@ const ConstructorNode = ({
             label={key}
             showLabel
           />
-        ))}
+        ))} */}
         {outputsHandleObjs.map(({ handleId, cssPosition, key }) => (
           <Output key={key} cssPosition={cssPosition} id={handleId} />
         ))}

@@ -10,7 +10,7 @@ import {
   MtxNode,
   MtxVecNodeTag,
   NodeAction,
-  NodeInputs,
+  NodeInput,
   NodePurpose,
   NodeTag,
   NodeType,
@@ -362,7 +362,7 @@ const getNmOfInputs = (tag: NodeTag) => {
 };
 
 type g = (tag: NodeTag) => {
-  defaultInputs: NodeInputs | undefined;
+  defaultInputs: NodeInput[] | undefined;
   inputLabelTemplate: ((...params: (number | string)[]) => string) | undefined;
   allowedVariableTypes: ValueType[] | undefined;
 };
@@ -370,9 +370,9 @@ type g = (tag: NodeTag) => {
 const getConstructorData: g = (tag) => {
   if (tag === "vec") {
     return {
-      defaultInputs: {
-        d: { allowedTypes: ["number"], valueId: null, defValue: 0 },
-      },
+      defaultInputs: [
+        { label: "d", allowedTypes: ["number"], valueId: null, defValue: 0 },
+      ],
       inputLabelTemplate: (n) => `v${n}`,
       allowedVariableTypes: ["number"],
     };
@@ -380,9 +380,8 @@ const getConstructorData: g = (tag) => {
 
   if (tag === "mtx-rows") {
     return {
-      defaultInputs: {
-        d: { allowedTypes: ["vector"], valueId: null },
-      },
+      defaultInputs: [{ label: "d", allowedTypes: ["vector"], valueId: null }],
+
       allowedVariableTypes: ["vector"],
       inputLabelTemplate: (n) => `v${n}`,
     };
@@ -390,9 +389,7 @@ const getConstructorData: g = (tag) => {
 
   if (tag === "mtx-cols") {
     return {
-      defaultInputs: {
-        d: { allowedTypes: ["vector"], valueId: null },
-      },
+      defaultInputs: [{ label: "d", allowedTypes: ["vector"], valueId: null }],
       allowedVariableTypes: ["vector"],
       inputLabelTemplate: (n) => `v${n}`,
     };

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import useContent from "../../../state/useContent";
-import { ValueType } from "../../../types/nodes";
+import { NodeInput, ValueType } from "../../../types/nodes";
 import classNames from "classnames";
 import useUI from "../../../hooks/useUI";
 import { useShallow } from "zustand/react/shallow";
@@ -8,6 +8,8 @@ import CommentField from "../parts/CommentField";
 import CommentBtn from "../parts/CommentBtn";
 import { NodeTheme } from "../../../types/app";
 import appErrors from "../../../state/config/errors";
+import generateHandleId from "../../../utils/generateHandleId";
+import InputPort from "../../ports/Input";
 
 // General container for node's content
 type props = {
@@ -20,6 +22,7 @@ type props = {
   isDefined?: boolean; // is calculated value !== null
   background?: string; // for nodes with customisable bg (e.g. text nodes)
   border?: string; // for nodes with customisable border (e.g. text nodes)
+  inputs?: NodeInput[];
 };
 const NodeWrapper = ({
   children,
@@ -31,6 +34,7 @@ const NodeWrapper = ({
   isDefined,
   background,
   border,
+  inputs,
 }: props) => {
   const { activeNodeId, activateNode, higlightById } = useContent();
 
@@ -105,6 +109,7 @@ const NodeWrapper = ({
         onContextMenu={onContextMenuHandler}
         style={{ background: background, border }}
       >
+        {inputs && <InputsSection nodeId={id} inputs={inputs} />}
         {comment && <CommentBtn nodeId={id} />}
         {commentFieldOpened && (
           <CommentField nodeId={id} text={comment ?? ""} />
@@ -209,3 +214,33 @@ export default NodeWrapper;
 //       return "sec";
 //   }
 // };
+
+type inputsProps = {
+  inputs: NodeInput[];
+  nodeId: string;
+};
+
+const InputsSection = ({ inputs, nodeId }: inputsProps) => {
+  const numOfInputs = inputs.length;
+  const step = 100 / (numOfInputs + 1);
+
+  return (
+    <>
+      {inputs.map(({ label, allowedTypes, descr }, idx) => {
+        const handleId = generateHandleId(nodeId, label, allowedTypes);
+        const cssPosition = `${step * (1 + idx)}%`;
+
+        return (
+          <InputPort
+            key={label}
+            id={handleId}
+            label={label}
+            descr={descr}
+            cssPosition={cssPosition}
+            showLabel
+          />
+        );
+      })}
+    </>
+  );
+};

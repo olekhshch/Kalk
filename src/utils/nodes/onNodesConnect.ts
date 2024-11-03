@@ -3,12 +3,7 @@
 import { Connection } from "@xyflow/react";
 import { deconstructHandleId } from "../generateHandleId";
 import isConnectable from "../edges/isConnectable";
-import {
-  AppNode,
-  NodePurpose,
-  PlotEquation,
-  PlotNode,
-} from "../../types/nodes";
+import { AppNode } from "../../types/nodes";
 import getById from "../getById";
 import addEquation from "../plots/addEquation";
 import { CalculatedValues } from "../../types/app";
@@ -70,7 +65,6 @@ const onNodesConnect: f = async ({
 
   // checking if action should be performed on connect instead of a regular connection
   const targetActionName = targetHandleObj.action;
-  console.log({ targetActionName });
 
   switch (targetActionName) {
     case "addEq": {
@@ -83,28 +77,6 @@ const onNodesConnect: f = async ({
       const newPlotNodeData = addEquation(nodeB, passedValue, valId);
 
       if (!newPlotNodeData) return null;
-
-      // const eqs: PlotEquation[] = [...nodeB.data.equations, newPlotNodeData.eq];
-
-      // const newPlotNode: PlotNode = {
-      //   id: nodeB.id,
-      //   position: nodeB.position,
-      //   type: nodeB.type,
-      //   data: {
-      //     purpose: NodePurpose.PLOT,
-      //     value: nodeB.data.value,
-      //     inputs: { ...newPlotNodeData.node.data.inputs },
-      //     outputs: { ...newPlotNodeData.node.data.outputs },
-      //     tag: nodeB.data.tag,
-      //     equations: eqs.map((eq) => {
-      //       if (eq.type === "function") {
-      //         return { ...eq, fn: eq.fn };
-      //       }
-      //       return eq;
-      //     }),
-
-      //   },
-      // };
 
       edgeCount += 1;
       const newEdgesData = connectNodes({
@@ -140,7 +112,9 @@ const onNodesConnect: f = async ({
       }
 
       edgeCount += 1;
-      const targetInput = nodeB.data.inputs[targetHandleObj.outputLabel];
+      const targetInput = nodeB.data.inputs.find(
+        (inp) => inp.label === targetHandleObj.outputLabel
+      );
 
       if (!targetInput) {
         console.log(

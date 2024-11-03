@@ -3,6 +3,7 @@ import { Handle, Position } from "@xyflow/react";
 type props = {
   id: string;
   label: string;
+  descr?: string;
   showLabel?: boolean;
   cssPosition: string;
 };
@@ -19,7 +20,9 @@ const InputPort = ({ id, label, cssPosition, showLabel }: props) => {
       }}
     >
       {showLabel && (
-        <span className="text-xs relative top-[-14px] left-[8px]">{label}</span>
+        <span className="text-xs relative top-[-14px] left-[8px] font-bold">
+          {label}
+        </span>
       )}
     </Handle>
   );

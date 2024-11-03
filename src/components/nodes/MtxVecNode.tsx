@@ -4,7 +4,7 @@ import { NodeProps } from "@xyflow/react";
 import { MtxNode } from "../../types/nodes";
 import Latex from "react-latex-next";
 import generateHandleId from "../../utils/generateHandleId";
-import InputPort from "../ports/Input";
+// import InputPort from "../ports/Input";
 import ResultOutput from "../ports/ResultOutput";
 import Output from "../ports/Output";
 import useContent from "../../state/useContent";
@@ -23,17 +23,17 @@ const MtxVecNode = ({
   );
   const outputType = getValueType(calculatedValue ? calculatedValue[1] : null);
 
-  const inputsArray = useMemo(() => {
-    const entries = Object.entries(inputs);
-    const step = 100 / (entries.length + 1);
+  // const inputsArray = useMemo(() => {
+  //   const entries = Object.entries(inputs);
+  //   const step = 100 / (entries.length + 1);
 
-    return entries.map(([key, input], idx) => {
-      const handleId = generateHandleId(id, key, input!.allowedTypes);
-      const cssPosition = `${step * (1 + idx)}%`;
+  //   return entries.map(([key, input], idx) => {
+  //     const handleId = generateHandleId(id, key, input!.allowedTypes);
+  //     const cssPosition = `${step * (1 + idx)}%`;
 
-      return { key, handleId, cssPosition };
-    });
-  }, []);
+  //     return { key, handleId, cssPosition };
+  //   });
+  // }, []);
 
   const outputsEntries = Object.entries(outputs);
   const outputsArray = useMemo(() => {
@@ -56,10 +56,11 @@ const MtxVecNode = ({
       isDefined={outputType !== null}
       comment={comment ?? null}
       theme="mtx"
+      inputs={inputs}
     >
       <div className="p-2 pl-4">
         <ResultOutput nodeId={id} />
-        {inputsArray.map(({ cssPosition, handleId, key }) => {
+        {/* {inputsArray.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort
               key={key}
@@ -69,7 +70,7 @@ const MtxVecNode = ({
               showLabel
             />
           );
-        })}
+        })} */}
         <Latex>${value}$</Latex>
         {outputsArray.map(({ cssPosition, handleId, key }) => {
           return <Output key={key} id={handleId} cssPosition={cssPosition} />;

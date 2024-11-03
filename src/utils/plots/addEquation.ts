@@ -1,12 +1,11 @@
 import {
-  FunctionOnPlot,
   InputValue,
-  NodeInputs,
+  NodeInput,
   PlotEquation,
   PlotNode,
+  ValueType,
 } from "../../types/nodes";
 import generateHandleId from "../generateHandleId";
-import getValueType from "../getValueType";
 import createEquation from "./createEquation";
 
 type g = (
@@ -26,27 +25,54 @@ const addEquation: g = (plotNode: PlotNode, input: InputValue, inputId) => {
 
   const newEq = { ...newEqBase, color };
 
-  if (!newEq) return null;
+  // if (!newEq) return null;
 
   const newPlotNode: PlotNode = { ...plotNode };
 
-  const newInputs: NodeInputs = { ...plotNode.data.inputs };
-  newInputs["fn" + id] = { allowedTypes: ["number"], valueId: inputId };
+  const newInputs: NodeInput[] = [...plotNode.data.inputs];
+  const allowedInputTypes: ValueType[] = [];
 
   switch (newEq.type) {
     case "function": {
-      newInputs["x" + id] = { allowedTypes: ["interval"], valueId: null };
+      allowedInputTypes.push("number");
+      const newFnInput: NodeInput = {
+        label: "fn" + id,
+        allowedTypes: allowedInputTypes,
+        valueId: inputId,
+      };
+      const newDomainInput: NodeInput = {
+        label: "x" + id,
+        allowedTypes: ["interval"],
+        valueId: null,
+        descr: "domain",
+      };
+      newInputs.push(newFnInput, newDomainInput);
+      break;
+    }
+    case "vec": {
+      allowedInputTypes.push("vector");
+      const newVecInput: NodeInput = {
+        label: "fn" + id,
+        allowedTypes: allowedInputTypes,
+        valueId: inputId,
+      };
+      const newTailInput: NodeInput = {
+        label: "tail" + id,
+        allowedTypes: ["vector"],
+        valueId: null,
+      };
+      newInputs.push(newVecInput, newTailInput);
       break;
     }
   }
 
-  newPlotNode.data.inputs = { ...newInputs };
+  newPlotNode.data.inputs = [...newInputs];
   newPlotNode.data.equations.push(newEq);
 
   return {
     node: newPlotNode,
     eq: newEq,
-    inputId: generateHandleId(plotNode.id, "fn" + id, ["number"]),
+    inputId: generateHandleId(plotNode.id, "fn" + id, allowedInputTypes),
   };
 
   // switch (inputValueType) {

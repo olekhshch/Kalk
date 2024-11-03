@@ -1,5 +1,11 @@
-import { FunctionOnPlot, InputValue, PlotEquation } from "../../types/nodes";
+import {
+  FunctionOnPlot,
+  InputValue,
+  PlotEquation,
+  VectorOnPlot,
+} from "../../types/nodes";
 import getValueType from "../getValueType";
+import getFirstNEntries from "../vectors/getNFirstEntries";
 
 // util that return equation for the Plot (mafs) for a passed value
 type f = (input: InputValue) => PlotEquation | null;
@@ -18,6 +24,20 @@ const createEquation: f = (input) => {
       };
 
       return newEq;
+    }
+    case "vector": {
+      const vec2D = getFirstNEntries(input, 2) as [number, number];
+      if (!vec2D) return null;
+
+      const newVec: VectorOnPlot = {
+        id: 1,
+        type: "vec",
+        of: "x",
+        color: "blue",
+        tip: vec2D,
+      };
+
+      return newVec;
     }
     default: {
       return null;

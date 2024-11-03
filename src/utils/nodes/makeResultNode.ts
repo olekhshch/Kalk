@@ -41,7 +41,7 @@ const makeResultNode = (node: AppNode) => {
       sourceNodeId: node.id,
       tag: "result",
       valueId,
-      inputs: {},
+      inputs: [],
       outputs: {},
       value: "",
       purpose: NodePurpose.DECOR,

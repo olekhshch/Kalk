@@ -4,13 +4,13 @@ import { ValueType } from "../types/nodes";
 // constructor for node handles labels
 type f = (
   nodeId: string,
-  outputKey: string,
+  label: string,
   allowedTypes: ValueType[],
   action?: ConnectAction // some inputs should perform certain action instead (e.g. create a new input)
 ) => string;
 
-const generateHandleId: f = (nodeId, outputKey, allowedTypes, action) => {
-  return `${nodeId}.${outputKey}-${allowedTypes.join("/")}${
+const generateHandleId: f = (nodeId, label, allowedTypes, action) => {
+  return `${nodeId}.${label}-${allowedTypes.join("/")}${
     action ? "-" + action : ""
   }`;
 };

@@ -5,7 +5,7 @@ import NodeWrapper from "./wrappers/NodeWrapper";
 import { MathNode as MathNodeType } from "../../types/nodes";
 import { NodeProps } from "@xyflow/system";
 import generateHandleLabel from "../../utils/generateHandleId";
-import InputPort from "../ports/Input";
+// import InputPort from "../ports/Input";
 import Output from "../ports/Output";
 import ResultOutput from "../ports/ResultOutput";
 import Latex from "react-latex-next";
@@ -26,25 +26,23 @@ const MathNode = ({
   );
   const outputType = getValueType(calculatedValue ? calculatedValue[1] : null);
 
-  // #TODO: Shallow check for input keys to avoid rerenders?
+  // const inputsArray = useMemo(() => {
+  //   const entries = Object.entries(inputs);
+  //   const numOfInputs = entries.length;
+  //   const step = 100 / (numOfInputs + 1);
 
-  const inputsArray = useMemo(() => {
-    const entries = Object.entries(inputs);
-    const numOfInputs = entries.length;
-    const step = 100 / (numOfInputs + 1);
+  //   const array = entries
+  //     .map(([key, input], idx) => {
+  //       // #TODO: Fix undefined error
+  //       if (!input) return null;
+  //       const handleId = generateHandleLabel(id, key, input.allowedTypes);
+  //       const cssPosition = `${step * (1 + idx)}%`;
+  //       return { handleId, cssPosition, key };
+  //     })
+  //     .filter((input) => input !== null);
 
-    const array = entries
-      .map(([key, input], idx) => {
-        // #TODO: Fix undefined error
-        if (!input) return null;
-        const handleId = generateHandleLabel(id, key, input.allowedTypes);
-        const cssPosition = `${step * (1 + idx)}%`;
-        return { handleId, cssPosition, key };
-      })
-      .filter((input) => input !== null);
-
-    return array;
-  }, [inputs]);
+  //   return array;
+  // }, [inputs]);
 
   const outputsEntries = Object.entries(outputs);
 
@@ -69,10 +67,11 @@ const MathNode = ({
       isDefined={outputType !== null}
       comment={comment ?? null}
       theme={tag === "I-matrix" ? "mtx" : "math"}
+      inputs={inputs}
     >
       <div>
         <ResultOutput nodeId={id} />
-        {inputsArray.map(({ cssPosition, handleId, key }) => {
+        {/* {inputsArray.map(({ cssPosition, handleId, key }) => {
           return (
             <InputPort
               key={key}
@@ -82,7 +81,7 @@ const MathNode = ({
               showLabel
             />
           );
-        })}
+        })} */}
         <div className="p-2 pl-4 italic font-bold">
           <Latex>${value}$</Latex>
         </div>

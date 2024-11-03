@@ -98,7 +98,7 @@ export type FnNode = AppNodeBase<"math-fn">;
 export type AppNodeBase<NT extends NodeType> = Node<
   {
     comment?: string;
-    inputs: NodeInputs;
+    inputs: NodeInput[];
     outputs: NodeOutputs;
     tag: NodeTag;
     value: string;
@@ -179,15 +179,22 @@ export type ConstantNode = AppNodeBase<"constant"> & {
 // labels of node's handles
 export type handleLabel = "a" | "b" | "n" | "v" | "N" | "M" | "d" | string;
 
+// export type NodeInput = {
+//   valueId: string | null;
+//   allowedTypes: ValueType[];
+//   defValue?: InputValue;
+// };
 export type NodeInput = {
+  label: string;
   valueId: string | null;
   allowedTypes: ValueType[];
   defValue?: InputValue;
+  descr?: string;
 };
 
-export type NodeInputs = {
-  [k in keyof handleLabel as handleLabel]?: NodeInput;
-};
+// export type NodeInputs = {
+//   [k in keyof handleLabel as handleLabel]?: NodeInput;
+// };
 
 export type OutputValue = number | Vector | Matrix | null;
 

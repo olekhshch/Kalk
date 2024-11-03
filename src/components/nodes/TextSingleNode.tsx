@@ -11,7 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 import classNames from "classnames";
 import NodeToolbarBtn from "./parts/NodeToolbarBtn";
 import ToolbarSeparator from "./parts/ToolbarSeparator";
-import ColorPallete from "./ColorPallete";
+import ColorPallete from "./parts/ColorPallete";
 
 // type Selector = {
 //   isActive: boolean;
@@ -93,10 +93,6 @@ const TextSingleNode = ({
     },
     [styling, setNodeStyling]
   );
-
-  useEffect(() => {
-    console.log("TS render");
-  });
 
   return (
     <>

@@ -3,7 +3,6 @@ import { create } from "zustand";
 import {
   AppNode,
   ConstructorNode,
-  NodeInput,
   NodePurpose,
   TextSingleNode,
 } from "../types/nodes";
@@ -16,7 +15,6 @@ import replaceNode from "../utils/replaseNode";
 import getChain from "../utils/getChainIdsFrom";
 import recalculateChain from "../utils/calculations/recalculateChain";
 import getChainIdsFrom from "../utils/getChainIdsFrom";
-import generateHandleLabel from "../utils/generateHandleId";
 import recalculateAll from "../utils/calculations/recalculateAll";
 import resultNodes from "../utils/nodes/resultNodes";
 import deleteNodes from "../utils/nodes/deleteNodes";
@@ -25,6 +23,7 @@ import makeResultNode from "../utils/nodes/makeResultNode";
 import createNode from "../utils/nodes/createNode";
 import { AppEdge } from "../types/edges";
 import onNodesConnect from "../utils/nodes/onNodesConnect";
+import setNumOfEntries from "../utils/constructors/setNumOfEntries";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -460,69 +459,72 @@ const useContent = create<ContentStore>()((set, get) => ({
     set((state) => {
       return { values: { ...state.values, [valKey]: newValue } };
     }),
-  setNumOfEntriesFor: (nodeId, newNum) => {
+  setNumOfEntriesFor: async (nodeId, newNum) => {
     const targetNode = getById(get().nodes, nodeId)[0] as ConstructorNode;
 
     // checking if exists and is constructor
     if (!targetNode || targetNode.data.purpose !== NodePurpose.CONSTRUCT)
       return;
 
-    const { allowedVariableTypes, numOfInputVars, inputs, inputLabelTemplate } =
-      targetNode.data;
-    // checking if new number is not the same
-    if (newNum === numOfInputVars) return;
+    // const { allowedVariableTypes, numOfInputVars, inputs, inputLabelTemplate } =
+    //   targetNode.data;
+    // // checking if new number is not the same
+    // if (newNum === numOfInputVars) return;
 
-    // const { inputs } = targetNode.data;
+    // // const { inputs } = targetNode.data;
 
-    if (newNum > numOfInputVars) {
-      // adding new entries
-      for (let i = numOfInputVars + 1; i <= newNum; i++) {
-        const key = inputLabelTemplate(i);
-        targetNode.data.inputs[key] = {
-          ...initialInput,
-          allowedTypes: [...allowedVariableTypes],
-        };
-      }
-    } else {
-      // removing last entries and connected to them edges
-      let newEdges = get().edges;
+    // if (newNum > numOfInputVars) {
+    //   // adding new entries
+    //   for (let i = numOfInputVars + 1; i <= newNum; i++) {
+    //     const key = inputLabelTemplate(i);
+    //     targetNode.data.inputs[key] = {
+    //       ...initialInput,
+    //       allowedTypes: [...allowedVariableTypes],
+    //     };
+    //   }
+    // } else {
+    //   // removing last entries and connected to them edges
+    //   let newEdges = get().edges;
 
-      for (let i = numOfInputVars; i > newNum; i--) {
-        const key = inputLabelTemplate(i);
-        const inputToRemove = targetNode.data.inputs[key];
-        if (inputToRemove) {
-          const { valueId, allowedTypes } = inputToRemove;
-          if (valueId) {
-            const handleId = generateHandleLabel(nodeId, key, allowedTypes);
-            const edges = newEdges.filter(({ target, targetHandle }) => {
-              return !(targetHandle === handleId && target === targetNode.id);
-            });
-            newEdges = edges;
-          }
-        }
+    //   for (let i = numOfInputVars; i > newNum; i--) {
+    //     const key = inputLabelTemplate(i);
+    //     const inputToRemove = targetNode.data.inputs[key];
+    //     if (inputToRemove) {
+    //       const { valueId, allowedTypes } = inputToRemove;
+    //       if (valueId) {
+    //         const handleId = generateHandleLabel(nodeId, key, allowedTypes);
+    //         const edges = newEdges.filter(({ target, targetHandle }) => {
+    //           return !(targetHandle === handleId && target === targetNode.id);
+    //         });
+    //         newEdges = edges;
+    //       }
+    //     }
 
-        delete inputs[key];
-      }
+    //     delete inputs[key];
+    //   }
 
-      set({ edges: newEdges });
-    }
+    //   set({ edges: newEdges });
+    // }
+    const { newNode, newEdges } = setNumOfEntries(
+      targetNode,
+      newNum,
+      get().edges
+    );
 
-    targetNode.data.numOfInputVars = newNum;
-    const newNodes = replaceNode(targetNode, get().nodes);
+    const newNodes = replaceNode(newNode, get().nodes);
     // recalculate node and chainFrom it
-    const chainFrom = getChainIdsFrom(targetNode, get().edges);
-    recalculateChain(
+    const chainFrom = getChainIdsFrom(newNode, newEdges);
+    const calculations = await recalculateChain(
       chainFrom,
       newNodes,
       get().values,
       get().anglesFormat
-    ).then((newVals) => set({ values: newVals.values }));
+    );
 
     set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === nodeId) return { ...targetNode };
-        return node;
-      }),
+      nodes: newNodes,
+      edges: newEdges,
+      values: calculations.values,
     });
   },
   setCommentFor: (nodeId, comm) => {
@@ -555,10 +557,5 @@ const useContent = create<ContentStore>()((set, get) => ({
     console.log("Add equation");
   },
 }));
-
-const initialInput: NodeInput = {
-  allowedTypes: ["number"],
-  valueId: null,
-};
 
 export default useContent;

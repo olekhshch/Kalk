@@ -1,25 +1,24 @@
 import { NodeProps } from "@xyflow/react";
-import React from "react";
 import { DeConstructorNode, NodeTag } from "../../types/nodes";
 import NodeWrapper from "./wrappers/NodeWrapper";
 import LateXformula from "../LateXformula";
 import generateHandleId from "../../utils/generateHandleId";
-import InputPort from "../ports/Input";
+// import InputPort from "../ports/Input";
 import Output from "../ports/Output";
 
 const DeconstructorNode = ({
   id,
   data: { inputs, comment, tag, outputs },
 }: NodeProps<DeConstructorNode>) => {
-  const inputEntries = Object.entries(inputs);
-  const stepI = 100 / (inputEntries.length + 1);
+  // const inputEntries = Object.entries(inputs);
+  // const stepI = 100 / (inputEntries.length + 1);
 
-  const inputHandles = inputEntries.map(([label, input], idx) => {
-    const handleId = generateHandleId(id, label, input!.allowedTypes);
-    const cssPosition = `${stepI * (1 + idx)}%`;
+  // const inputHandles = inputEntries.map(([label, input], idx) => {
+  //   const handleId = generateHandleId(id, label, input!.allowedTypes);
+  //   const cssPosition = `${stepI * (1 + idx)}%`;
 
-    return { key: label, handleId, cssPosition };
-  });
+  //   return { key: label, handleId, cssPosition };
+  // });
 
   const outputEntries = Object.entries(outputs);
   const stepO = 100 / (outputEntries.length + 1);
@@ -32,9 +31,9 @@ const DeconstructorNode = ({
   });
 
   return (
-    <NodeWrapper id={id} comment={comment ?? null} theme="red">
+    <NodeWrapper id={id} comment={comment ?? null} theme="red" inputs={inputs}>
       <div className="p-2 pl-4">
-        {inputHandles.map(({ cssPosition, handleId, key }) => (
+        {/* {inputHandles.map(({ cssPosition, handleId, key }) => (
           <InputPort
             id={handleId}
             key={key}
@@ -42,7 +41,7 @@ const DeconstructorNode = ({
             label={key}
             showLabel
           />
-        ))}
+        ))} */}
         <Label tag={tag} numOfOutputs={outputHandles.length} />
         {outputHandles.map(({ handleId, key, cssPosition }) => (
           <Output key={key} id={handleId} cssPosition={cssPosition} />
