@@ -10,6 +10,8 @@ import { useShallow } from "zustand/react/shallow";
 import UILayer from "./layout/UI/UILayer";
 import { listen } from "@tauri-apps/api/event";
 import useContent from "./state/useContent";
+import customEvents from "./state/config/customEvents";
+import useUI from "./hooks/useUI";
 
 const App = () => {
   const [setMode] = useAppState(useShallow((store) => [store.setMode]));
@@ -17,6 +19,8 @@ const App = () => {
   const [updateConstants] = useContent(
     useShallow((store) => [store.updateConstants])
   );
+
+  const openNodeOverview = useUI(useShallow((store) => store.openNodeOverview));
 
   useEffect(() => {
     console.log("APP RERENDERED");
@@ -45,6 +49,16 @@ const App = () => {
       if (payload) {
         setMode("create", { type: "constant", id: payload as string });
       }
+    });
+
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
+
+  useEffect(() => {
+    const unlisten = listen(customEvents.openNodeOverview, () => {
+      openNodeOverview();
     });
 
     return () => {

@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import useConstants from "../../../hooks/useConstants";
 import { useShallow } from "zustand/react/shallow";
-import SortingTable from "../../../components/table/SortingTable";
-import { FilterOptions, TableItem } from "../../../types/app";
+// import SortingTable from "../../../components/table/SortingTable";
+import { TableItem } from "../../../types/app";
 import { invoke } from "@tauri-apps/api/core";
 import ButtonMain from "../../../components/dialogs/ButtonMain";
 import { listen } from "@tauri-apps/api/event";
+import MenuTable from "../../../components/table/MenuTable";
 
 const ConstantsWindow = () => {
   const [constants, initLoad] = useConstants(
@@ -30,21 +31,18 @@ const ConstantsWindow = () => {
   //   c.valueType,
   // ]);
   const constItems: TableItem[] = constants.map((c) => ({
-    content: [c.name, c.viewLabel, JSON.stringify(c.value), c.valueType],
+    // content: [c.name, c.viewLabel, JSON.stringify(c.value), c.valueType],
+    content: [
+      { value: c.name },
+      { value: c.viewLabel, latex: true },
+      { value: JSON.stringify(c.value) },
+    ],
     onClick: () => {
-      console.log(c.id);
       invoke("emit_const_picked_event", { constId: c.id }).catch((err) =>
         console.log({ err })
       );
     },
   }));
-
-  const tableFilters = {
-    Name: FilterOptions.TEXT,
-    Label: FilterOptions.NONE,
-  };
-
-  const columnStyles = [null, { latex: true }, null, null];
 
   useEffect(() => {
     // Updates list if new constant was created
@@ -63,14 +61,15 @@ const ConstantsWindow = () => {
     <div className="p-2 bg-white h-screen w-screen">
       <p>Choose a constant from the list to place it on canvas:</p>
       <div className="p-2 border-gray border-solid border-[1px] w-full rounded-strd min-w-fit">
-        <SortingTable
+        {/* <SortingTable
           cursor="pointer"
           columns={tableColumns}
           items={constItems}
           filters={tableFilters}
           minWidths={{ Value: 200 }}
           columnStyles={columnStyles}
-        />
+        /> */}
+        <MenuTable headerColumns={tableColumns} items={constItems} />
       </div>
       <div className="flex gap-2 mt-2">
         <ButtonMain onClick={openConstCreator}>

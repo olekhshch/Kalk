@@ -29,6 +29,7 @@ export type NumNodeTag =
   | "atg"
   | "floor"
   | "ceil"
+  | "round"
   | "constant";
 
 // _ mtx/vecs functions ( (...nums | Matrices | Vectors) => Matrix | Vector | num

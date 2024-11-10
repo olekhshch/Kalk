@@ -5,6 +5,7 @@ use crate::values::Calculations;
 pub enum RoundingOperation {
     Floor,
     Ceil,
+    Round,
 }
 
 pub fn do_rounding_operation(operation: RoundingOperation, a: Option<Value>) -> Calculations {
@@ -50,6 +51,7 @@ fn rounding_on_num(operation: &RoundingOperation, a: &Value) -> Option<Value> {
                 let res_f64 = match operation {
                     RoundingOperation::Ceil => a_f64.ceil(),
                     RoundingOperation::Floor => a_f64.floor(),
+                    RoundingOperation::Round => a_f64.round(),
                 };
                 if let Some(res_val) = serde_json::Number::from_f64(res_f64) {
                     Some(Value::Number(res_val))

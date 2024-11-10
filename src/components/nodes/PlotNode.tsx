@@ -20,7 +20,7 @@ const PlotNode = ({
   id,
   data: { inputs, equations },
 }: NodeProps<PlotNodeType>) => {
-  const [plotSize, setPlotSize] = useState({ w: 560, h: 560 });
+  const [plotSize] = useState({ w: 560, h: 560 });
 
   // useEffect(() => console.log("PLOT render"));
   return (

@@ -102,3 +102,15 @@ animation: tabHovering 0.2s forwards;
 .main-bg-hover:hover {
     animation: hoveringBgToMain 0.2s forwards;
 }
+
+/* layout for big fixed dialogs inside the window */
+.ui-dialog-container {
+    display: grid;
+    grid-template-columns: 8rem 1fr 8rem;
+    grid-template-rows: 6rem 1fr 6rem;
+}
+
+.dialog-main {
+    grid-row-start: 2;
+    grid-column-start: 2;
+}

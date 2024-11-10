@@ -56,6 +56,7 @@ export type ActionType =
   | "show-res"
   | "hide-res"
   | "project-overview"
+  | "node-overview"
   | "constant"; // opens constant creation window
 
 export type Mode =
@@ -179,17 +180,21 @@ export type Constant = {
   value: number | Matrix | Vector;
 };
 
-// what filters should table offer for a column
-export enum FilterOptions {
-  NONE,
-  NUMBER,
-  TEXT,
-  LIST,
-}
 // items passing to a table
+// export type TableItem = {
+//   content: (string | number | null)[];
+//   onClick?: React.MouseEventHandler;
+// };
+
 export type TableItem = {
-  content: (string | number | null)[];
+  content: TableItemCell[];
   onClick?: React.MouseEventHandler;
+  onDelete?: React.MouseEventHandler;
+};
+
+export type TableItemCell = {
+  value: (string | number | undefined) | (string | number | undefined)[];
+  latex?: boolean;
 };
 
 export type NodeTheme = "math" | "mtx" | "const" | "red";

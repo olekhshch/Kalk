@@ -4,19 +4,20 @@ use serde_json::{json, Value};
 
 use crate::{
     numbers::{divide, multiply, subtract},
-    values::Calculations,
+    // values::Calculations,
 };
 
 use super::add;
 
 mod operations;
+mod rounding;
 
 #[test]
 pub fn arithmetic_invalid_values() {
     let add_nulls = add(Some(Value::Null), Some(Value::Null));
     assert_eq!(add_nulls.res, Value::Null);
 
-    let add_undefined: Calculations = add(None, None);
+    let add_undefined = add(None, None);
     assert_eq!(add_undefined.res, Value::Null);
 
     let num_1 = serde_json::Number::from(1);

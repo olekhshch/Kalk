@@ -250,6 +250,11 @@ pub fn ceil(a: Option<Value>) -> Calculations {
 }
 
 #[tauri::command]
+pub fn round(a: Option<Value>) -> Calculations {
+    do_rounding_operation(rounding::RoundingOperation::Round, a)
+}
+
+#[tauri::command]
 pub fn asin(a: Option<Value>, format: String) -> Calculations {
     let a_format = get_angle_format_from_string(format);
 

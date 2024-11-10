@@ -1,3 +1,4 @@
+mod app;
 mod constants;
 mod matrix;
 mod numbers;
@@ -83,6 +84,8 @@ pub fn run() {
             numbers::atg,
             matrix::matrices::transpose,
             matrix::matrices::multiply_matrices,
+            app::emit_event,
+            numbers::round
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

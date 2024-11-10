@@ -7,6 +7,7 @@ type UIStore = {
   scale: boolean;
   openScale: () => void;
   closeScale: () => void;
+
   contextMenu: boolean;
   contextMenuContent: {
     components: ContextMenuSection[];
@@ -21,10 +22,15 @@ type UIStore = {
     comment?: boolean // if node has any comment
   ) => void;
   closeContext: () => void;
+
   nodeCommentFieldFor: string[]; // Id of the node with an opened comment field
   openNodeCommentField: (n: string) => void;
   closeAllNodeComments: () => void;
   closeCommentFielFor: (nodeId: string) => void;
+
+  nodesOverview: boolean;
+  closeNodeOverview: () => void;
+  openNodeOverview: () => void;
 };
 
 const useUI = create<UIStore>((set, get) => ({
@@ -82,6 +88,10 @@ const useUI = create<UIStore>((set, get) => ({
     const comments = get().nodeCommentFieldFor.filter((id) => id !== nodeId);
     set({ nodeCommentFieldFor: comments });
   },
+
+  nodesOverview: false,
+  closeNodeOverview: () => set({ nodesOverview: false }),
+  openNodeOverview: () => set({ nodesOverview: true }),
 }));
 
 export default useUI;

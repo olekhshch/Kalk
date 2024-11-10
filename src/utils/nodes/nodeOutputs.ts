@@ -99,6 +99,9 @@ const nodeOutputs: obj = {
   "multiply-mtx": {
     M: { possibleValues: ["matrix"] },
   },
+  round: {
+    N: { possibleValues: ["matrix", "vector", "number"] },
+  },
 };
 
 export default nodeOutputs;

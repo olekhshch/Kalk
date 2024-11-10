@@ -1,15 +1,8 @@
-import { CalculatedValues, Calculations, StoreErrors } from "../../types/app";
-import {
-  AppNode,
-  FunctionOnPlot,
-  PlotEquation,
-  PlotNode,
-  Vector,
-  VectorOnPlot,
-} from "../../types/nodes";
-import getValueType from "../getValueType";
-import addEquation from "../plots/addEquation";
+import { CalculatedValues, Calculations } from "../../types/app";
+import { PlotEquation, PlotNode } from "../../types/nodes";
 import createEquation from "../plots/createEquation";
+
+// checks passed input values and converts it into equations to plot
 
 type f = (node: PlotNode, values: CalculatedValues) => Calculations;
 
@@ -23,22 +16,36 @@ const preparePlotData: f = (node, values) => {
   const targetNode = { ...node };
 
   const { inputs } = node.data;
-  const inputEntries = Object.entries(inputs).filter(([label]) =>
-    label.includes("fn")
-  );
+  const fnInputs = inputs.filter(({ label }) => label.includes("fn"));
+  // const inputEntries = Object.entries(inputs).filter(([label]) =>
+  //   label.includes("fn")
+  // );
 
   const newEquations: PlotEquation[] = [];
 
-  inputEntries.forEach(([_, input]) => {
-    if (input && input.valueId) {
-      const passedValue = values[input.valueId];
+  fnInputs.forEach(({ valueId }) => {
+    if (valueId) {
+      const passedValue = values[valueId];
       const newEq = createEquation(passedValue);
       if (newEq) {
         const id = newEquations.length + 1;
         newEquations.push({ ...newEq, id });
       }
+
+      // #TODO: Check corresponding inputs (e.g. domain for FunctionOnPlot) to set other properties of equation;
     }
   });
+
+  // inputEntries.forEach(([_, input]) => {
+  //   if (input && input.valueId) {
+  //     const passedValue = values[input.valueId];
+  //     const newEq = createEquation(passedValue);
+  //     if (newEq) {
+  //       const id = newEquations.length + 1;
+  //       newEquations.push({ ...newEq, id });
+  //     }
+  //   }
+  // });
 
   targetNode.data.equations = newEquations;
   calculations.nodesToReplace.push(targetNode);

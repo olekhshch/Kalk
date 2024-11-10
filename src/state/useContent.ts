@@ -24,6 +24,7 @@ import createNode from "../utils/nodes/createNode";
 import { AppEdge } from "../types/edges";
 import onNodesConnect from "../utils/nodes/onNodesConnect";
 import setNumOfEntries from "../utils/constructors/setNumOfEntries";
+import customEvents from "./config/customEvents";
 
 const useContent = create<ContentStore>()((set, get) => ({
   nodes: [],
@@ -61,6 +62,7 @@ const useContent = create<ContentStore>()((set, get) => ({
     }
   },
   anglesFormat: "RAD",
+
   setAnglesFormat: async (newFormat) => {
     if (newFormat !== get().anglesFormat) {
       set({ anglesFormat: newFormat });
@@ -72,11 +74,14 @@ const useContent = create<ContentStore>()((set, get) => ({
       set({ values: newValues.values });
     }
   },
+
   errors: {},
+
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as AppNode[];
     set({ nodes: newNodes });
   },
+
   addNode: (nodeTag, position, data) => {
     let id = get().idCounter + 1;
 
@@ -91,6 +96,7 @@ const useContent = create<ContentStore>()((set, get) => ({
 
     set({ nodes: [...get().nodes, newNode], idCounter: id });
   },
+
   doAction: (action) => {
     switch (action) {
       case "select-all":
@@ -160,6 +166,13 @@ const useContent = create<ContentStore>()((set, get) => ({
           edges: [...get().edges, ...newEdges],
         });
 
+        break;
+      }
+      case "node-overview": {
+        invoke("emit_event", {
+          eventName: customEvents.openNodeOverview,
+          targetWindowName: "main",
+        });
         break;
       }
       default:

@@ -1,4 +1,4 @@
-use num::NumCast;
+use num::{traits::float, Float};
 use serde::Serialize;
 use serde_json::Value;
 
@@ -10,6 +10,12 @@ pub struct Calculations {
     // pub suc: bool,
     pub res: Value,
     pub errors: Vec<String>,
+}
+
+pub enum Comparison {
+    EQ,
+    GREATER,
+    LESS,
 }
 
 // checks if number (f64, u32 etc) x is in domain [x_min; x_max]

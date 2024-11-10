@@ -1,17 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Background,
-  MiniMap,
-  Panel,
-  ReactFlow,
-  useReactFlow,
-} from "@xyflow/react";
+import React, { useEffect, useRef, useState } from "react";
+import { Background, MiniMap, ReactFlow, useReactFlow } from "@xyflow/react";
 import useContent from "../../state/useContent";
 import useAppState from "../../state/useAppState";
 import nodeTypes from "../../state/config/nodeTypes";
 import { useShallow } from "zustand/react/shallow";
 import { NodeTag } from "../../types/nodes";
-import { PreviewNode } from "../../components/NodePreview";
+// import { PreviewNode } from "../../components/NodePreview";
 import useUI from "../../hooks/useUI";
 import edgeTypes from "../../state/config/edgeTypes";
 
@@ -45,14 +39,14 @@ const Canvas = () => {
   const { screenToFlowPosition } = useReactFlow();
 
   const [prevPosition, setPrevPosition] = useState({ x: 0, y: 0 });
-  const [showPreview, setShowPreview] = useState(true);
+  const [_, setShowPreview] = useState(true);
 
   useEffect(() => {
     if (vpRef.current) {
       vpRef.current.addEventListener("contextmenu", (e) => {
         e.preventDefault();
         const { clientX, clientY } = e;
-        const { width, height } = document.body.getBoundingClientRect();
+        const { width } = document.body.getBoundingClientRect();
 
         const x = clientX > width - 220 ? clientX - 220 : clientX;
         openContext("canvas", null, { x, y: clientY });
@@ -60,17 +54,17 @@ const Canvas = () => {
     }
   }, [vpRef.current]);
 
-  const nodePreview = useMemo(() => {
-    const node: PreviewNode = {
-      id: "preview",
-      type: "preview",
+  // const nodePreview = useMemo(() => {
+  //   const node: PreviewNode = {
+  //     id: "preview",
+  //     type: "preview",
 
-      data: { visible: showPreview },
-      position: prevPosition,
-    };
+  //     data: { visible: showPreview },
+  //     position: prevPosition,
+  //   };
 
-    return node;
-  }, [prevPosition, showPreview]);
+  //   return node;
+  // }, [prevPosition, showPreview]);
 
   const mouseEnterHandler = () => {
     // checks if preview should be visible
@@ -143,22 +137,4 @@ const BackgroundWrapper = () => {
   return <Background variant={grid_type} color="#94D2BD" bgColor="#F0F4F8" />;
 };
 
-const ValuesPanel = () => {
-  const valEntries = useContent(
-    useShallow((store) => Object.entries(store.values))
-  );
-
-  return (
-    <Panel position="top-right">
-      <h2>Values</h2>
-      <ol>
-        {valEntries.map(([id, value]) => (
-          <li key={id}>
-            {id}. {!Array.isArray(value) && value ? value.toFixed(3) : value}
-          </li>
-        ))}
-      </ol>
-    </Panel>
-  );
-};
 export default Canvas;

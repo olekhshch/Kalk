@@ -1,6 +1,4 @@
-import React from "react";
-import ResizeHandle from "../../ports/ResizeHandle";
-import { NodeResizer, Position } from "@xyflow/react";
+import { NodeResizer } from "@xyflow/react";
 import useContent from "../../../state/useContent";
 import { useShallow } from "zustand/react/shallow";
 import classNames from "classnames";

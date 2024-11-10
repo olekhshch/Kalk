@@ -1,6 +1,7 @@
-import { AppNode, ResultNode, MathNode } from "../../types/nodes";
+import { AppNode, ResultNode, MathNode, NodePurpose } from "../../types/nodes";
 import { NodeActionOutput } from "../../types/app";
 import { AppEdge } from "../../types/edges";
+import makeValueId from "../makeValueId";
 
 type f = (
   sourceNodeId: string,
@@ -11,7 +12,7 @@ type f = (
 const showResultFor: f = (sourceNodeId, nodes, idCounter) => {
   const sourceNode = nodes.find((node) => node.id === sourceNodeId);
   const resNode = nodes.find(
-    (node) => node.type === "result" && node.data.sourceId === sourceNodeId
+    (node) => node.type === "result" && node.data.sourceNodeId === sourceNodeId
   ) as ResultNode;
 
   if (!sourceNode) return { newNode: null, nodes };
@@ -30,8 +31,14 @@ const showResultFor: f = (sourceNodeId, nodes, idCounter) => {
       type: "result",
       position: { x, y },
       data: {
-        sourceId: sourceNodeId,
+        inputs: [],
+        outputs: {},
         isShown: true,
+        purpose: NodePurpose.DECOR,
+        sourceNodeId,
+        tag: "result",
+        value: "",
+        valueId: makeValueId(sourceNodeId, "c"),
       },
     };
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { ActionType, Mode, Tab } from "../types/app";
 import { BackgroundVariant } from "@xyflow/react";
-import { NodeTag, NodeType } from "../types/nodes";
+import { NodeTag } from "../types/nodes";
 
 export type modeData = {
   type?: NodeTag | ActionType;

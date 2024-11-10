@@ -67,6 +67,7 @@ const nodeActions: obj = {
   transpose: async ({ M }) => await invoke("transpose", { m: M }),
   "multiply-mtx": async ({ A, B }) =>
     await invoke("multiply_matrices", { a: A, b: B }),
+  round: async ({ a }) => await invoke("round", { a }),
 };
 
 export default nodeActions;

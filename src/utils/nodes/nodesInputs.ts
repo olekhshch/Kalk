@@ -133,6 +133,9 @@ const nodeInputs: obj = {
     { label: "A", allowedTypes: ["matrix"], valueId: null },
     { label: "B", allowedTypes: ["matrix"], valueId: null },
   ],
+  round: [
+    { label: "a", allowedTypes: ["matrix", "vector", "number"], valueId: null },
+  ],
 };
 
 export default nodeInputs;

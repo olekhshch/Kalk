@@ -256,6 +256,17 @@ const actionsToolbar: Toolbar = {
               data: "ceil",
             },
           },
+          {
+            title: "round",
+            icon: "",
+            iconType: "latex",
+            hideIcon: true,
+            // hideTitle: true,
+            command: {
+              type: "create",
+              data: "round",
+            },
+          },
         ],
       },
     ],
@@ -503,7 +514,23 @@ const actionsToolbar: Toolbar = {
       },
     ],
   },
-  Project: {},
+  Project: {
+    Nodes: [
+      {
+        type: "action",
+        content: {
+          title: "Nodes",
+          icon: "\\text{Nodes}",
+          iconType: "latex",
+          large: true,
+          command: {
+            type: "action",
+            data: "node-overview",
+          },
+        },
+      },
+    ],
+  },
 };
 
 export default actionsToolbar;

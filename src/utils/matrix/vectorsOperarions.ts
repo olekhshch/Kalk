@@ -1,4 +1,4 @@
-import { MtxVecFnAction, OutputValue, Vector } from "../../types/nodes";
+import { OutputValue, Vector } from "../../types/nodes";
 
 type f = (v: Vector, w: Vector) => OutputValue | Promise<OutputValue>;
 
